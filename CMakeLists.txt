@@ -4,6 +4,6 @@ project(CLAP_HELPERS C CXX)
 
 add_library(clap-helpers INTERFACE)
 target_include_directories(clap-helpers INTERFACE include)
-target_link_libraries(clap-helpers clap-core)
+target_link_libraries(clap-helpers INTERFACE clap-core)
 
 install(DIRECTORY include DESTINATION "${CMAKE_INSTALL_PREFIX}")
