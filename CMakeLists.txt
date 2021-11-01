@@ -1,7 +1,9 @@
 cmake_minimum_required(VERSION 3.17)
 cmake_policy(SET CMP0100 NEW)  # handle .hh files
-project(CLAP_PLUGINS C CXX)
+project(CLAP_HELPERS C CXX)
 
-add_subdirectory(clap)
-add_subdirectory(glue)
-add_subdirectory(plugins)
+add_library(clap-helpers INTERFACE)
+target_include_directories(clap-helpers INTERFACE include)
+target_link_libraries(clap-helpers clap-core)
+
+install(DIRECTORY include DESTINATION "${CMAKE_INSTALL_PREFIX}")
