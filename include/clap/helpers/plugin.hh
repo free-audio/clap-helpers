@@ -33,7 +33,7 @@ namespace clap {
       // clap_plugin //
       //-------------//
       virtual bool init() noexcept { return true; }
-      virtual bool activate(double sampleRate) noexcept { return true; }
+      virtual bool activate(double sampleRate, uint32_t minFrameCount, uint32_t maxFrameCount) noexcept { return true; }
       virtual void deactivate() noexcept {}
       virtual bool startProcessing() noexcept { return true; }
       virtual void stopProcessing() noexcept {}
@@ -273,7 +273,7 @@ namespace clap {
       // clap_plugin
       static bool clapInit(const clap_plugin *plugin) noexcept;
       static void clapDestroy(const clap_plugin *plugin) noexcept;
-      static bool clapActivate(const clap_plugin *plugin, double sample_rate) noexcept;
+      static bool clapActivate(const clap_plugin *plugin, double sample_rate, uint32_t minFrameCount, uint32_t maxFrameCount) noexcept;
       static void clapDeactivate(const clap_plugin *plugin) noexcept;
       static bool clapStartProcessing(const clap_plugin *plugin) noexcept;
       static void clapStopProcessing(const clap_plugin *plugin) noexcept;

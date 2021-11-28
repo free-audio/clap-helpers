@@ -60,7 +60,10 @@ namespace clap {
       self.onMainThread();
    }
 
-   bool Plugin::clapActivate(const clap_plugin *plugin, double sample_rate) noexcept {
+   bool Plugin::clapActivate(const clap_plugin *plugin,
+                             double sample_rate,
+                             uint32_t minFrameCount,
+                             uint32_t maxFrameCount) noexcept {
       auto &self = from(plugin);
       self.ensureMainThread("clap_plugin.activate");
 
@@ -85,10 +88,33 @@ namespace clap {
          return false;
       }
 
+      if (minFrameCount < 1) {
+         std::ostringstream msg;
+         msg << "The plugin was activated with an invalid minimum frame count: " << minFrameCount;
+         self.hostMisbehaving(msg.str());
+         return false;
+      }
+
+      if (maxFrameCount > INT32_MAX) {
+         std::ostringstream msg;
+         msg << "The plugin was activated with an invalid maximum frame count: " << maxFrameCount;
+         self.hostMisbehaving(msg.str());
+         return false;
+      }
+
+      if (minFrameCount > maxFrameCount) {
+         std::ostringstream msg;
+         msg << "The plugin was activated with an invalid minmum and maximum frame count: min > "
+                "max: "
+             << minFrameCount << " > " << maxFrameCount;
+         self.hostMisbehaving(msg.str());
+         return false;
+      }
+
       assert(!self._isActive);
       assert(self._sampleRate == 0);
 
-      if (!self.activate(sample_rate)) {
+      if (!self.activate(sample_rate, minFrameCount, maxFrameCount)) {
          assert(!self._isActive);
          assert(self._sampleRate == 0);
          return false;
@@ -445,27 +471,30 @@ namespace clap {
       self.ensureParamThread("clap_plugin_params.flush");
 
       if (!input_parameter_changes)
-         self.hostMisbehaving("clap_plugin_params.flush called with an null input parameter change list");
+         self.hostMisbehaving(
+            "clap_plugin_params.flush called with an null input parameter change list");
       else {
          uint32_t N = input_parameter_changes->size(input_parameter_changes);
-         for (uint32_t i = 0; i < N; ++i)
-         {
+         for (uint32_t i = 0; i < N; ++i) {
             auto ev = input_parameter_changes->get(input_parameter_changes, i);
             if (!ev) {
                std::ostringstream msg;
-               msg << "clap_plugin_params.flush called null event inside the input list at index: " << i;
+               msg << "clap_plugin_params.flush called null event inside the input list at index: "
+                   << i;
                self.hostMisbehaving(msg.str());
                continue;
             }
 
             if (ev->type != CLAP_EVENT_PARAM_VALUE) {
-               self.hostMisbehaving("clap_plugin_params.flush must only contain CLAP_EVENT_PARAM_VALUE event type");
+               self.hostMisbehaving(
+                  "clap_plugin_params.flush must only contain CLAP_EVENT_PARAM_VALUE event type");
                continue;
             }
 
             if (!self.isValidParamId(ev->param_value.param_id)) {
                std::ostringstream msg;
-               msg << "clap_plugin_params.flush called unknown paramId: " << ev->param_value.param_id;
+               msg << "clap_plugin_params.flush called unknown paramId: "
+                   << ev->param_value.param_id;
                self.hostMisbehaving(msg.str());
                continue;
             }
@@ -475,9 +504,11 @@ namespace clap {
       }
 
       if (!output_parameter_changes)
-         self.hostMisbehaving("clap_plugin_params.flush called with an null output parameter change list");
+         self.hostMisbehaving(
+            "clap_plugin_params.flush called with an null output parameter change list");
       else if (output_parameter_changes->size(output_parameter_changes) > 0)
-         self.hostMisbehaving("clap_plugin_params.flush called with an non-empty output parameter change list");
+         self.hostMisbehaving(
+            "clap_plugin_params.flush called with an non-empty output parameter change list");
 
       self.paramsFlush(input_parameter_changes, output_parameter_changes);
    }
