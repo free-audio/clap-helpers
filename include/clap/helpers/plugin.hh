@@ -7,10 +7,23 @@
 
 #include <clap/all.h>
 
-namespace clap {
+namespace clap { namespace helpers {
+
+   enum class MisbehaviourHandler {
+      Ignore,
+      Terminate,
+   };
+
+   enum class CheckingLevel {
+      None,
+      Minimal,
+      Maximal,
+   };
+
    /// @brief C++ glue and checks
    ///
    /// @note for an higher level implementation, see @ref PluginHelper
+   template <MisbehaviourHandler h, CheckingLevel l>
    class Plugin {
    public:
       const clap_plugin *clapPlugin() noexcept { return &_plugin; }
@@ -33,7 +46,10 @@ namespace clap {
       // clap_plugin //
       //-------------//
       virtual bool init() noexcept { return true; }
-      virtual bool activate(double sampleRate, uint32_t minFrameCount, uint32_t maxFrameCount) noexcept { return true; }
+      virtual bool
+      activate(double sampleRate, uint32_t minFrameCount, uint32_t maxFrameCount) noexcept {
+         return true;
+      }
       virtual void deactivate() noexcept {}
       virtual bool startProcessing() noexcept { return true; }
       virtual void stopProcessing() noexcept {}
@@ -273,7 +289,10 @@ namespace clap {
       // clap_plugin
       static bool clapInit(const clap_plugin *plugin) noexcept;
       static void clapDestroy(const clap_plugin *plugin) noexcept;
-      static bool clapActivate(const clap_plugin *plugin, double sample_rate, uint32_t minFrameCount, uint32_t maxFrameCount) noexcept;
+      static bool clapActivate(const clap_plugin *plugin,
+                               double sample_rate,
+                               uint32_t minFrameCount,
+                               uint32_t maxFrameCount) noexcept;
       static void clapDeactivate(const clap_plugin *plugin) noexcept;
       static bool clapStartProcessing(const clap_plugin *plugin) noexcept;
       static void clapStopProcessing(const clap_plugin *plugin) noexcept;
@@ -410,4 +429,4 @@ namespace clap {
       bool _isGuiCreated = false;
       bool _isGuiAttached = false;
    };
-} // namespace clap
+}} // namespace clap::helpers
