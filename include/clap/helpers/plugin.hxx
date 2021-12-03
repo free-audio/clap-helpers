@@ -659,7 +659,7 @@ namespace clap { namespace helpers {
                   continue;
                }
 
-               if (self.clapIsMainThread() && !self.isValidParamId(ev->param_value.param_id)) {
+               if (self.canUseThreadCheck() && self._hostThreadCheck->is_main_thread(self.host_) && !self.isValidParamId(ev->param_value.param_id)) {
                   std::ostringstream msg;
                   msg << "clap_plugin_params.flush called unknown paramId: "
                       << ev->param_value.param_id;

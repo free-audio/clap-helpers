@@ -6,5 +6,9 @@
 
 int main(int argc, char **argv)
 {
+    clap::helpers::Plugin<clap::helpers::MisbehaviourHandler::Terminate, clap::helpers::CheckingLevel::Maximal> *p0 = nullptr;
+    clap::helpers::Plugin<clap::helpers::MisbehaviourHandler::Terminate, clap::helpers::CheckingLevel::Minimal> *p1 = nullptr;
+    clap::helpers::Plugin<clap::helpers::MisbehaviourHandler::Terminate, clap::helpers::CheckingLevel::None> *p2 = nullptr;
+    clap::helpers::Plugin<clap::helpers::MisbehaviourHandler::Ignore, clap::helpers::CheckingLevel::Maximal> *p3 = nullptr;
     return 0;
 }
