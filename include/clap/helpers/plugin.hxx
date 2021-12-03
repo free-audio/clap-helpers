@@ -10,6 +10,95 @@
 
 namespace clap {
 
+   const clap_plugin_render Plugin::_pluginRender = {
+      clapRenderSetMode,
+   };
+
+   const clap_plugin_thread_pool Plugin::_pluginThreadPool = {
+      clapThreadPoolExec,
+   };
+
+   const clap_plugin_state Plugin::_pluginState = {
+      clapStateSave,
+      clapStateLoad,
+   };
+
+   const clap_plugin_preset_load Plugin::_pluginPresetLoad = {
+      clapPresetLoadFromFile,
+   };
+
+   const clap_plugin_track_info Plugin::_pluginTrackInfo = {
+      clapTrackInfoChanged,
+   };
+
+   const clap_plugin_audio_ports Plugin::_pluginAudioPorts = {clapAudioPortsCount,
+                                                                               clapAudioPortsInfo};
+
+   const clap_plugin_audio_ports_config Plugin::_pluginAudioPortsConfig = {
+      clapAudioPortsConfigCount,
+      clapAudioPortsGetConfig,
+      clapAudioPortsSetConfig,
+   };
+
+   const clap_plugin_params Plugin::_pluginParams = {
+      clapParamsCount,
+      clapParamsInfo,
+      clapParamsValue,
+      clapParamsValueToText,
+      clapParamsTextToValue,
+      clapParamsFlush,
+   };
+
+   const clap_plugin_quick_controls Plugin::_pluginQuickControls = {
+      clapQuickControlsPageCount,
+      clapQuickControlsPageInfo,
+      clapQuickControlsSelectPage,
+      clapQuickControlsSelectedPage,
+   };
+
+   const clap_plugin_latency Plugin::_pluginLatency = {
+      clapLatencyGet,
+   };
+
+   const clap_plugin_note_name Plugin::_pluginNoteName = {
+      clapNoteNameCount,
+      clapNoteNameGet,
+   };
+
+   const clap_plugin_timer_support Plugin::_pluginTimerSupport = {clapOnTimer};
+
+   const clap_plugin_fd_support Plugin::_pluginFdSupport = {
+      clapOnFd,
+   };
+
+   const clap_plugin_gui Plugin::_pluginGui = {
+      clapGuiCreate,
+      clapGuiDestroy,
+      clapGuiSetScale,
+      clapGuiSize,
+      clapGuiCanResize,
+      clapGuiRoundSize,
+      clapGuiSetSize,
+      clapGuiShow,
+      clapGuiHide,
+   };
+
+   const clap_plugin_gui_x11 Plugin::_pluginGuiX11 = {
+      clapGuiX11Attach,
+   };
+
+   const clap_plugin_gui_win32 Plugin::_pluginGuiWin32 = {
+      clapGuiWin32Attach,
+   };
+
+   const clap_plugin_gui_cocoa Plugin::_pluginGuiCocoa = {
+      clapGuiCocoaAttach,
+   };
+
+   const clap_plugin_gui_free_standing Plugin::_pluginGuiFreeStanding = {
+      clapGuiFreeStandingOpen,
+   };
+
    Plugin::Plugin(const clap_plugin_descriptor *desc, const clap_host *host) : _host(host) {
       _plugin.plugin_data = this;
       _plugin.desc = desc;

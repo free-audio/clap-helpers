@@ -383,94 +383,24 @@ namespace clap {
       static bool clapGuiFreeStandingOpen(const clap_plugin *plugin) noexcept;
 
       // interfaces
-      static const constexpr clap_plugin_render _pluginRender = {
-         clapRenderSetMode,
-      };
-
-      static const constexpr clap_plugin_thread_pool _pluginThreadPool = {
-         clapThreadPoolExec,
-      };
-
-      static const constexpr clap_plugin_state _pluginState = {
-         clapStateSave,
-         clapStateLoad,
-      };
-
-      static const constexpr clap_plugin_preset_load _pluginPresetLoad = {
-         clapPresetLoadFromFile,
-      };
-
-      static const constexpr clap_plugin_track_info _pluginTrackInfo = {
-         clapTrackInfoChanged,
-      };
-
-      static const constexpr clap_plugin_audio_ports _pluginAudioPorts = {clapAudioPortsCount,
-                                                                          clapAudioPortsInfo};
-
-      static const constexpr clap_plugin_audio_ports_config _pluginAudioPortsConfig = {
-         clapAudioPortsConfigCount,
-         clapAudioPortsGetConfig,
-         clapAudioPortsSetConfig,
-      };
-
-      static const constexpr clap_plugin_params _pluginParams = {
-         clapParamsCount,
-         clapParamsInfo,
-         clapParamsValue,
-         clapParamsValueToText,
-         clapParamsTextToValue,
-         clapParamsFlush,
-      };
-
-      static const constexpr clap_plugin_quick_controls _pluginQuickControls = {
-         clapQuickControlsPageCount,
-         clapQuickControlsPageInfo,
-         clapQuickControlsSelectPage,
-         clapQuickControlsSelectedPage,
-      };
-
-      static const constexpr clap_plugin_latency _pluginLatency = {
-         clapLatencyGet,
-      };
-
-      static const constexpr clap_plugin_note_name _pluginNoteName = {
-         clapNoteNameCount,
-         clapNoteNameGet,
-      };
-
-      static const constexpr clap_plugin_timer_support _pluginTimerSupport = {clapOnTimer};
-
-      static const constexpr clap_plugin_fd_support _pluginFdSupport = {
-         clapOnFd,
-      };
-
-      static const constexpr clap_plugin_gui _pluginGui = {
-         clapGuiCreate,
-         clapGuiDestroy,
-         clapGuiSetScale,
-         clapGuiSize,
-         clapGuiCanResize,
-         clapGuiRoundSize,
-         clapGuiSetSize,
-         clapGuiShow,
-         clapGuiHide,
-      };
-
-      static const constexpr clap_plugin_gui_x11 _pluginGuiX11 = {
-         clapGuiX11Attach,
-      };
-
-      static const constexpr clap_plugin_gui_win32 _pluginGuiWin32 = {
-         clapGuiWin32Attach,
-      };
-
-      static const constexpr clap_plugin_gui_cocoa _pluginGuiCocoa = {
-         clapGuiCocoaAttach,
-      };
-
-      static const constexpr clap_plugin_gui_free_standing _pluginGuiFreeStanding = {
-         clapGuiFreeStandingOpen,
-      };
+      static const clap_plugin_render _pluginRender;
+      static const clap_plugin_thread_pool _pluginThreadPool;
+      static const clap_plugin_state _pluginState;
+      static const clap_plugin_preset_load _pluginPresetLoad;
+      static const clap_plugin_track_info _pluginTrackInfo;
+      static const clap_plugin_audio_ports _pluginAudioPorts;
+      static const clap_plugin_audio_ports_config _pluginAudioPortsConfig;
+      static const clap_plugin_params _pluginParams;
+      static const clap_plugin_quick_controls _pluginQuickControls;
+      static const clap_plugin_latency _pluginLatency;
+      static const clap_plugin_note_name _pluginNoteName;
+      static const clap_plugin_timer_support _pluginTimerSupport;
+      static const clap_plugin_fd_support _pluginFdSupport;
+      static const clap_plugin_gui _pluginGui;
+      static const clap_plugin_gui_x11 _pluginGuiX11;
+      static const clap_plugin_gui_win32 _pluginGuiWin32;
+      static const clap_plugin_gui_cocoa _pluginGuiCocoa;
+      static const clap_plugin_gui_free_standing _pluginGuiFreeStanding;
 
       // state
       bool _isActive = false;

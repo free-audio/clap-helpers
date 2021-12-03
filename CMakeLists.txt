@@ -6,4 +6,8 @@ add_library(clap-helpers INTERFACE)
 target_include_directories(clap-helpers INTERFACE include)
 target_link_libraries(clap-helpers INTERFACE clap-core)
 
+add_executable(clap-helpers-cxx11-compilation-test EXCLUDE_FROM_ALL tests/c++11-compile.cc)
+set_target_properties(clap-helpers-cxx11-compilation-test PROPERTIES CXX_STANDARD 11)
+target_link_libraries(clap-helpers-cxx11-compilation-test clap-helpers clap-core)
+
 install(DIRECTORY include DESTINATION "${CMAKE_INSTALL_PREFIX}")
