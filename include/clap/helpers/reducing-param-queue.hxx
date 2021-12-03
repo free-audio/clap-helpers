@@ -4,7 +4,7 @@
 
 #include "reducing-param-queue.hh"
 
-namespace clap::helpers {
+namespace clap { namespace helpers {
    template <typename K, typename V>
    ReducingParamQueue<K, V>::ReducingParamQueue() {
       reset();
@@ -62,4 +62,4 @@ namespace clap::helpers {
       _free = _consumer.load();
       _consumer = nullptr;
    }
-} // namespace clap::helpers
+}} // namespace clap::helpers

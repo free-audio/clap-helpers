@@ -4,7 +4,7 @@
 #include <atomic>
 #include <cstddef>
 
-namespace clap::helpers {
+namespace clap { namespace helpers {
    template <typename T, size_t CAPACITY>
    class ParamQueue {
    public:
@@ -51,4 +51,4 @@ namespace clap::helpers {
       std::atomic<int> _writeOffset = {0};
       std::atomic<int> _readOffset = {0};
    };
-} // namespace clap::helpers
+}} // namespace clap::helpers

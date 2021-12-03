@@ -5,7 +5,7 @@
 #include <functional>
 #include <unordered_map>
 
-namespace clap::helpers {
+namespace clap { namespace helpers {
    template <typename K, typename V>
    class ReducingParamQueue {
    public:
@@ -30,4 +30,4 @@ namespace clap::helpers {
       std::atomic<queue_type *> _producer = nullptr;
       std::atomic<queue_type *> _consumer = nullptr;
    };
-} // namespace clap::helpers
+}} // namespace clap::helpers
