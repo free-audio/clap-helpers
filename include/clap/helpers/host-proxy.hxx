@@ -11,38 +11,33 @@ namespace clap { namespace helpers {
 
    template <MisbehaviourHandler h, CheckingLevel l>
    void HostProxy<h, l>::init() {
-      initInterfaces();
+      getExtension(_hostLog, CLAP_EXT_LOG);
+      getExtension(_hostThreadCheck, CLAP_EXT_THREAD_CHECK);
+      getExtension(_hostThreadPool, CLAP_EXT_THREAD_POOL);
+      getExtension(_hostAudioPorts, CLAP_EXT_AUDIO_PORTS);
+      getExtension(_hostAudioPortsConfig, CLAP_EXT_AUDIO_PORTS_CONFIG);
+      getExtension(_hostNotePorts, CLAP_EXT_NOTE_PORTS);
+      getExtension(_hostTimerSupport, CLAP_EXT_TIMER_SUPPORT);
+      getExtension(_hostFdSupport, CLAP_EXT_FD_SUPPORT);
+      getExtension(_hostEventFilter, CLAP_EXT_EVENT_FILTER);
+      getExtension(_hostFileReference, CLAP_EXT_FILE_REFERENCE);
+      getExtension(_hostLatency, CLAP_EXT_LATENCY);
+      getExtension(_hostGui, CLAP_EXT_GUI);
+      getExtension(_hostParams, CLAP_EXT_PARAMS);
+      getExtension(_hostTrackInfo, CLAP_EXT_TRACK_INFO);
+      getExtension(_hostState, CLAP_EXT_STATE);
+      getExtension(_hostNoteName, CLAP_EXT_NOTE_NAME);
+      getExtension(_hostQuickControls, CLAP_EXT_QUICK_CONTROLS);
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
    template <typename T>
-   void HostProxy<h, l>::initInterface(const T *&ptr, const char *id) noexcept {
+   void HostProxy<h, l>::getExtension(const T *&ptr, const char *id) noexcept {
       assert(!ptr);
       assert(id);
 
       if (_host->get_extension)
          ptr = static_cast<const T *>(_host->get_extension(_host, id));
-   }
-
-   template <MisbehaviourHandler h, CheckingLevel l>
-   void HostProxy<h, l>::initInterfaces() noexcept {
-      initInterface(_hostLog, CLAP_EXT_LOG);
-      initInterface(_hostThreadCheck, CLAP_EXT_THREAD_CHECK);
-      initInterface(_hostThreadPool, CLAP_EXT_THREAD_POOL);
-      initInterface(_hostAudioPorts, CLAP_EXT_AUDIO_PORTS);
-      initInterface(_hostAudioPortsConfig, CLAP_EXT_AUDIO_PORTS_CONFIG);
-      initInterface(_hostNotePorts, CLAP_EXT_NOTE_PORTS);
-      initInterface(_hostTimerSupport, CLAP_EXT_TIMER_SUPPORT);
-      initInterface(_hostFdSupport, CLAP_EXT_FD_SUPPORT);
-      initInterface(_hostEventFilter, CLAP_EXT_EVENT_FILTER);
-      initInterface(_hostFileReference, CLAP_EXT_FILE_REFERENCE);
-      initInterface(_hostLatency, CLAP_EXT_LATENCY);
-      initInterface(_hostGui, CLAP_EXT_GUI);
-      initInterface(_hostParams, CLAP_EXT_PARAMS);
-      initInterface(_hostTrackInfo, CLAP_EXT_TRACK_INFO);
-      initInterface(_hostState, CLAP_EXT_STATE);
-      initInterface(_hostNoteName, CLAP_EXT_NOTE_NAME);
-      initInterface(_hostQuickControls, CLAP_EXT_QUICK_CONTROLS);
    }
 
    /////////////////////////////////

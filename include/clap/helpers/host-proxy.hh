@@ -15,6 +15,9 @@ namespace clap { namespace helpers {
 
       void init();
 
+      template <typename T>
+      void getExtension(const T *&ptr, const char *id) noexcept;
+
       ///////////////////
       // clap_host_log //
       ///////////////////
@@ -114,10 +117,6 @@ namespace clap { namespace helpers {
       bool canUseNoteName() const noexcept;
 
    protected:
-      template <typename T>
-      void initInterface(const T *&ptr, const char *id) noexcept;
-      void initInterfaces() noexcept;
-
       const clap_host *const _host;
 
       const clap_host_log *_hostLog = nullptr;
