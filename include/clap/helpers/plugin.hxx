@@ -153,7 +153,7 @@ namespace clap { namespace helpers {
       self._plugin.stop_processing = Plugin<h, l>::clapStopProcessing;
       self._plugin.on_main_thread = Plugin<h, l>::clapOnMainThread;
 
-      self.initInterfaces();
+      self._host.init();
       self.ensureMainThread("clap_plugin.init");
       return self.init();
    }
@@ -368,35 +368,6 @@ namespace clap { namespace helpers {
       return from(plugin).extension(id);
    }
 
-   template <MisbehaviourHandler h, CheckingLevel l>
-   template <typename T>
-   void Plugin<h, l>::initInterface(const T *&ptr, const char *id) noexcept {
-      assert(!ptr);
-      assert(id);
-
-      if (_host->get_extension)
-         ptr = static_cast<const T *>(_host->get_extension(_host, id));
-   }
-
-   template <MisbehaviourHandler h, CheckingLevel l>
-   void Plugin<h, l>::initInterfaces() noexcept {
-      initInterface(_hostLog, CLAP_EXT_LOG);
-      initInterface(_hostThreadCheck, CLAP_EXT_THREAD_CHECK);
-      initInterface(_hostThreadPool, CLAP_EXT_THREAD_POOL);
-      initInterface(_hostAudioPorts, CLAP_EXT_AUDIO_PORTS);
-      initInterface(_hostTimerSupport, CLAP_EXT_TIMER_SUPPORT);
-      initInterface(_hostFdSupport, CLAP_EXT_FD_SUPPORT);
-      initInterface(_hostEventFilter, CLAP_EXT_EVENT_FILTER);
-      initInterface(_hostFileReference, CLAP_EXT_FILE_REFERENCE);
-      initInterface(_hostLatency, CLAP_EXT_LATENCY);
-      initInterface(_hostGui, CLAP_EXT_GUI);
-      initInterface(_hostParams, CLAP_EXT_PARAMS);
-      initInterface(_hostTrackInfo, CLAP_EXT_TRACK_INFO);
-      initInterface(_hostState, CLAP_EXT_STATE);
-      initInterface(_hostNoteName, CLAP_EXT_NOTE_NAME);
-      initInterface(_hostQuickControls, CLAP_EXT_QUICK_CONTROLS);
-   }
-
    //-------------------//
    // clap_plugin_state //
    //-------------------//
@@ -490,7 +461,7 @@ namespace clap { namespace helpers {
       self.ensureMainThread("clap_plugin_track_info.changed");
 
       if (l >= CheckingLevel::Minimal) {
-         if (!self.canUseTrackInfo()) {
+         if (!self._host.canUseTrackInfo()) {
             self.hostMisbehaving(
                "host called clap_plugin_track_info.changed() but does not provide a "
                "complete clap_host_track_info interface");
@@ -659,7 +630,7 @@ namespace clap { namespace helpers {
                   continue;
                }
 
-               if (self.canUseThreadCheck() && self._hostThreadCheck->is_main_thread(self._host) && !self.isValidParamId(ev->param_value.param_id)) {
+               if (self._host.canUseThreadCheck() && self._host.isMainThread() && !self.isValidParamId(ev->param_value.param_id)) {
                   std::ostringstream msg;
                   msg << "clap_plugin_params.flush called unknown paramId: "
                       << ev->param_value.param_id;
@@ -1183,10 +1154,7 @@ namespace clap { namespace helpers {
    /////////////
    template <MisbehaviourHandler h, CheckingLevel l>
    void Plugin<h, l>::log(clap_log_severity severity, const char *msg) const noexcept {
-      if (canUseHostLog())
-         _hostLog->log(_host, severity, msg);
-      else
-         std::clog << msg << std::endl;
+      _host.log(severity, msg);
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
@@ -1197,106 +1165,6 @@ namespace clap { namespace helpers {
          std::terminate();
    }
 
-   /////////////////////////////////
-   // Interface consistency check //
-   /////////////////////////////////
-   template <MisbehaviourHandler h, CheckingLevel l>
-   bool Plugin<h, l>::canUseHostLog() const noexcept {
-      return _hostLog && _hostLog->log;
-   }
-
-   template <MisbehaviourHandler h, CheckingLevel l>
-   bool Plugin<h, l>::canUseThreadCheck() const noexcept {
-      return _hostThreadCheck && _hostThreadCheck->is_audio_thread &&
-             _hostThreadCheck->is_main_thread;
-   }
-
-   template <MisbehaviourHandler h, CheckingLevel l>
-   bool Plugin<h, l>::canUseTimerSupport() const noexcept {
-      if (!_hostTimerSupport)
-         return false;
-
-      auto &x = *_hostTimerSupport;
-      if (x.register_timer && x.unregister_timer)
-         return true;
-
-      hostMisbehaving("clap_timer_support is partially implemented");
-      return false;
-   }
-
-   template <MisbehaviourHandler h, CheckingLevel l>
-   bool Plugin<h, l>::canUseFdSupport() const noexcept {
-      if (!_hostFdSupport)
-         return false;
-
-      auto &x = *_hostFdSupport;
-      if (x.modify_fd && x.register_fd && x.unregister_fd)
-         return true;
-
-      hostMisbehaving("clap_fd_support is partially implemented");
-      return false;
-   }
-
-   template <MisbehaviourHandler h, CheckingLevel l>
-   bool Plugin<h, l>::canUseParams() const noexcept {
-      if (!_hostParams)
-         return false;
-
-      if (_hostParams->rescan && _hostParams->clear && _hostParams->request_flush)
-         return true;
-
-      hostMisbehaving("clap_host_params is partially implemented");
-      return false;
-   }
-
-   template <MisbehaviourHandler h, CheckingLevel l>
-   bool Plugin<h, l>::canUseLatency() const noexcept {
-      if (!_hostLatency)
-         return false;
-
-      if (_hostLatency->changed)
-         return true;
-
-      hostMisbehaving("clap_host_latency is partially implemented");
-      return false;
-   }
-
-   template <MisbehaviourHandler h, CheckingLevel l>
-   bool Plugin<h, l>::canUseQuickControls() const noexcept {
-      if (!_hostQuickControls)
-         return false;
-
-      if (_hostQuickControls->changed)
-         return true;
-
-      hostMisbehaving("clap_host_quick_controls is partially implemented");
-      return false;
-   }
-
-   template <MisbehaviourHandler h, CheckingLevel l>
-   bool Plugin<h, l>::canUseState() const noexcept {
-      if (!_hostState)
-         return false;
-
-      if (_hostState->mark_dirty)
-         return true;
-
-      hostMisbehaving("clap_host_state is partially implemented");
-      return false;
-   }
-
-   template <MisbehaviourHandler h, CheckingLevel l>
-   bool Plugin<h, l>::canUseTrackInfo() const noexcept {
-      if (!_hostTrackInfo)
-         return false;
-
-      if (_hostTrackInfo->get)
-         return true;
-
-      hostMisbehaving("clap_host_track_info is partially implemented");
-      return false;
-   }
-
    /////////////////////
    // Thread Checking //
    /////////////////////
@@ -1305,8 +1173,7 @@ namespace clap { namespace helpers {
       if (l == CheckingLevel::None)
          return;
 
-      if (!_hostThreadCheck || !_hostThreadCheck->is_main_thread ||
-          _hostThreadCheck->is_main_thread(_host))
+      if (!_host.canUseThreadCheck() || _host.isMainThread())
          return;
 
       std::terminate();
@@ -1317,8 +1184,7 @@ namespace clap { namespace helpers {
       if (l == CheckingLevel::None)
          return;
 
-      if (!_hostThreadCheck || !_hostThreadCheck->is_audio_thread ||
-          _hostThreadCheck->is_audio_thread(_host))
+      if (_host.canUseThreadCheck() || _host.isAudioThread())
          return;
 
       std::terminate();
@@ -1351,8 +1217,7 @@ namespace clap { namespace helpers {
       if (l == CheckingLevel::None)
          return;
 
-      if (!_hostThreadCheck || !_hostThreadCheck->is_main_thread ||
-          _hostThreadCheck->is_main_thread(_host))
+      if (!_host.canUseThreadCheck() || _host.isMainThread())
          return;
 
       std::ostringstream msg;
@@ -1366,8 +1231,7 @@ namespace clap { namespace helpers {
       if (l == CheckingLevel::None)
          return;
 
-      if (!_hostThreadCheck || !_hostThreadCheck->is_audio_thread ||
-          _hostThreadCheck->is_audio_thread(_host))
+      if (!_host.canUseThreadCheck() || _host.isAudioThread())
          return;
 
       std::ostringstream msg;

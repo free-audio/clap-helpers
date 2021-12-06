@@ -7,18 +7,11 @@
 
 #include <clap/all.h>
 
+#include "checking-level.hh"
+#include "misbehaviour-handler.hh"
+#include "host-proxy.hh"
+
 namespace clap { namespace helpers {
-
-   enum class MisbehaviourHandler {
-      Ignore,
-      Terminate,
-   };
-
-   enum class CheckingLevel {
-      None,
-      Minimal,
-      Maximal,
-   };
 
    /// @brief C++ glue and checks
    ///
@@ -83,10 +76,6 @@ namespace clap { namespace helpers {
       virtual bool implementsState() const noexcept { return false; }
       virtual bool stateSave(clap_ostream *stream) noexcept { return false; }
       virtual bool stateLoad(clap_istream *stream) noexcept { return false; }
-      void stateMarkDirty() const noexcept {
-         if (canUseState())
-            _hostState->mark_dirty(_host);
-      }
 
       //-------------------------//
       // clap_plugin_preset_load //
@@ -263,22 +252,7 @@ namespace clap { namespace helpers {
       }
 
    protected:
-      const clap_host *const _host = nullptr;
-      const clap_host_log *_hostLog = nullptr;
-      const clap_host_thread_check *_hostThreadCheck = nullptr;
-      const clap_host_thread_pool *_hostThreadPool = nullptr;
-      const clap_host_audio_ports *_hostAudioPorts = nullptr;
-      const clap_host_event_filter *_hostEventFilter = nullptr;
-      const clap_host_file_reference *_hostFileReference = nullptr;
-      const clap_host_latency *_hostLatency = nullptr;
-      const clap_host_gui *_hostGui = nullptr;
-      const clap_host_timer_support *_hostTimerSupport = nullptr;
-      const clap_host_fd_support *_hostFdSupport = nullptr;
-      const clap_host_params *_hostParams = nullptr;
-      const clap_host_track_info *_hostTrackInfo = nullptr;
-      const clap_host_state *_hostState = nullptr;
-      const clap_host_note_name *_hostNoteName = nullptr;
-      const clap_host_quick_controls *_hostQuickControls = nullptr;
+      HostProxy<h, l> _host;
 
    private:
       /////////////////////
