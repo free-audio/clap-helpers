@@ -205,19 +205,6 @@ namespace clap { namespace helpers {
       void hostMisbehaving(const char *msg) const noexcept;
       void hostMisbehaving(const std::string &msg) const noexcept { hostMisbehaving(msg.c_str()); }
 
-      /////////////////////////////////
-      // Interface consistency check //
-      /////////////////////////////////
-      bool canUseHostLog() const noexcept;
-      bool canUseThreadCheck() const noexcept;
-      bool canUseTrackInfo() const noexcept;
-      bool canUseState() const noexcept;
-      bool canUseTimerSupport() const noexcept;
-      bool canUseFdSupport() const noexcept;
-      bool canUseParams() const noexcept;
-      bool canUseLatency() const noexcept;
-      bool canUseQuickControls() const noexcept;
-
       /////////////////////
       // Thread Checking //
       /////////////////////

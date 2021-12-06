@@ -381,4 +381,25 @@ namespace clap { namespace helpers {
       assert(canUseTimerSupport());
       return _hostTimerSupport->unregister_timer(_host, timer_id);
    }
+
+   //////////////////////////
+   // clap_host_fd_support //
+   //////////////////////////
+   template <MisbehaviourHandler h, CheckingLevel l>
+   bool HostProxy<h, l>::fdSupportRegisterFD(clap_fd fd, clap_fd_flags flags) const noexcept {
+      assert(canUseFdSupport());
+      return _hostFdSupport->register_fd(_host, fd, flags);
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   bool HostProxy<h, l>::fdSupportModifyFD(clap_fd fd, clap_fd_flags flags) const noexcept {
+      assert(canUseFdSupport());
+      return _hostFdSupport->modify_fd(_host, fd, flags);
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   bool HostProxy<h, l>::fdSupportUnregisterFD(clap_fd fd) const noexcept {
+      assert(canUseFdSupport());
+      return _hostFdSupport->unregister_fd(_host, fd);
+   }
 }} // namespace clap::helpers
