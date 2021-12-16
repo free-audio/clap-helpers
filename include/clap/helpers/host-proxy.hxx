@@ -213,6 +213,18 @@ namespace clap { namespace helpers {
       return false;
    }
 
+   template <MisbehaviourHandler h, CheckingLevel l>
+   bool HostProxy<h, l>::canUseThreadPool() const noexcept {
+      if (!_hostThreadPool)
+         return false;
+
+      if (_hostThreadPool->request_exec)
+         return true;
+
+      hostMisbehaving("clap_host_thread_pool is partially implemented");
+      return false;
+   }
+
    /////////////
    // Logging //
    /////////////
@@ -455,5 +467,15 @@ namespace clap { namespace helpers {
       assert(canUseFdSupport());
       ensureMainThread("fd_support.unregister_fd");
       return _hostFdSupport->unregister_fd(_host, fd);
+   }
+
+   ///////////////////////////
+   // clap_host_thread_pool //
+   ///////////////////////////
+   template <MisbehaviourHandler h, CheckingLevel l>
+   bool HostProxy<h, l>::threadPoolRequestExec(uint32_t numTasks) const noexcept {
+      assert(canUseThreadPool());
+      ensureAudioThread("thread_pool.request_exec");
+      return _hostThreadPool->request_exec(_host, numTasks);
    }
 }} // namespace clap::helpers

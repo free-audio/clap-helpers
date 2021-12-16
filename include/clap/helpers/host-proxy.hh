@@ -101,6 +101,11 @@ namespace clap { namespace helpers {
       bool fdSupportModifyFD(clap_fd fd, clap_fd_flags flags) const noexcept;
       bool fdSupportUnregisterFD(clap_fd fd) const noexcept;
 
+      ///////////////////////////
+      // clap_host_thread_pool //
+      ///////////////////////////
+      bool threadPoolRequestExec(uint32_t numTasks) const noexcept;
+
       /////////////////////////////////
       // Interface consistency check //
       /////////////////////////////////
@@ -119,6 +124,7 @@ namespace clap { namespace helpers {
       bool canUseNotePorts() const noexcept;
       bool canUseEventFilter() const noexcept;
       bool canUseNoteName() const noexcept;
+      bool canUseThreadPool() const noexcept;
 
    protected:
       void ensureMainThread(const char *method) const noexcept;
