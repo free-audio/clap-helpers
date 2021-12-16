@@ -24,6 +24,10 @@ namespace clap { namespace helpers {
       void log(clap_log_severity severity, const char *msg) const noexcept;
       void hostMisbehaving(const char *msg) const noexcept;
       void hostMisbehaving(const std::string &msg) const noexcept { hostMisbehaving(msg.c_str()); }
+      void pluginMisbehaving(const char *msg) const noexcept;
+      void pluginMisbehaving(const std::string &msg) const noexcept {
+         pluginMisbehaving(msg.c_str());
+      }
 
       ////////////////////////////
       // clap_host_thread_check //
@@ -117,6 +121,9 @@ namespace clap { namespace helpers {
       bool canUseNoteName() const noexcept;
 
    protected:
+      void ensureMainThread(const char *method) const noexcept;
+      void ensureAudioThread(const char *method) const noexcept;
+
       const clap_host *const _host;
 
       const clap_host_log *_hostLog = nullptr;

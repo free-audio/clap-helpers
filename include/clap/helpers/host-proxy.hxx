@@ -2,6 +2,7 @@
 
 #include <cassert>
 #include <iostream>
+#include <sstream>
 
 #include "host-proxy.hh"
 
@@ -242,6 +243,14 @@ namespace clap { namespace helpers {
          std::terminate();
    }
 
+   template <MisbehaviourHandler h, CheckingLevel l>
+   void HostProxy<h, l>::pluginMisbehaving(const char *msg) const noexcept {
+      log(CLAP_LOG_PLUGIN_MISBEHAVING, msg);
+
+      if (h == MisbehaviourHandler::Terminate)
+         std::terminate();
+   }
+
    //////////////////
    // Thread Check //
    //////////////////
@@ -257,12 +266,41 @@ namespace clap { namespace helpers {
       return _hostThreadCheck->is_audio_thread(_host);
    }
 
+   template <MisbehaviourHandler h, CheckingLevel l>
+   void HostProxy<h, l>::ensureMainThread(const char *method) const noexcept {
+      if (l == CheckingLevel::None)
+         return;
+
+      if (!canUseThreadCheck() || isMainThread())
+         return;
+
+      std::ostringstream msg;
+      msg << "Host called the method " << method
+          << "() on wrong thread! It must be called on main thread!";
+      pluginMisbehaving(msg.str());
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   void HostProxy<h, l>::ensureAudioThread(const char *method) const noexcept {
+      if (l == CheckingLevel::None)
+         return;
+
+      if (!canUseThreadCheck() || isAudioThread())
+         return;
+
+      std::ostringstream msg;
+      msg << "Host called the method " << method
+          << "() on wrong thread! It must be called on audio thread!";
+      pluginMisbehaving(msg.str());
+   }
+
    //////////////////////////////////
    // clap_host_audio_ports_config //
    //////////////////////////////////
    template <MisbehaviourHandler h, CheckingLevel l>
    void HostProxy<h, l>::audioPortsConfigRescan() const noexcept {
       assert(canUseAudioPortsConfig());
+      ensureMainThread("audio_ports_config.rescan");
       _hostAudioPortsConfig->rescan(_host);
    }
 
@@ -272,12 +310,14 @@ namespace clap { namespace helpers {
    template <MisbehaviourHandler h, CheckingLevel l>
    uint32_t HostProxy<h, l>::audioPortsGetPreferredSampleSize() const noexcept {
       assert(canUseAudioPorts());
+      ensureMainThread("audio_ports.get_preferred_sample_size");
       return _hostAudioPorts->get_preferred_sample_size(_host);
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
    void HostProxy<h, l>::audioPortsRescan(uint32_t flags) const noexcept {
       assert(canUseAudioPorts());
+      ensureMainThread("audio_ports.rescan");
       _hostAudioPorts->rescan(_host, flags);
    }
 
@@ -287,6 +327,7 @@ namespace clap { namespace helpers {
    template <MisbehaviourHandler h, CheckingLevel l>
    void HostProxy<h, l>::notePortsRescan(uint32_t flags) const noexcept {
       assert(canUseNotePorts());
+      ensureMainThread("note_ports.rescan");
       _hostNotePorts->rescan(_host, flags);
    }
 
@@ -296,6 +337,7 @@ namespace clap { namespace helpers {
    template <MisbehaviourHandler h, CheckingLevel l>
    void HostProxy<h, l>::stateMarkDirty() const noexcept {
       assert(canUseState());
+      ensureMainThread("state.mark_dirty");
       _hostState->mark_dirty(_host);
    }
 
@@ -305,6 +347,7 @@ namespace clap { namespace helpers {
    template <MisbehaviourHandler h, CheckingLevel l>
    void HostProxy<h, l>::latencyChanged() const noexcept {
       assert(canUseLatency());
+      ensureMainThread("latency.changed");
       _hostLatency->changed(_host);
    }
 
@@ -314,6 +357,7 @@ namespace clap { namespace helpers {
    template <MisbehaviourHandler h, CheckingLevel l>
    void HostProxy<h, l>::eventFilterChanged() const noexcept {
       assert(canUseEventFilter());
+      ensureMainThread("event_filter.changed");
       _hostEventFilter->changed(_host);
    }
 
@@ -323,6 +367,7 @@ namespace clap { namespace helpers {
    template <MisbehaviourHandler h, CheckingLevel l>
    void HostProxy<h, l>::noteNameChanged() const noexcept {
       assert(canUseNoteName());
+      ensureMainThread("note_name.changed");
       _hostNoteName->changed(_host);
    }
 
@@ -332,6 +377,7 @@ namespace clap { namespace helpers {
    template <MisbehaviourHandler h, CheckingLevel l>
    void HostProxy<h, l>::paramsRescan(clap_param_rescan_flags flags) const noexcept {
       assert(canUseParams());
+      ensureMainThread("params.rescan");
       _hostParams->rescan(_host, flags);
    }
 
@@ -339,6 +385,7 @@ namespace clap { namespace helpers {
    void HostProxy<h, l>::paramsClear(clap_id param_id,
                                      clap_param_clear_flags flags) const noexcept {
       assert(canUseParams());
+      ensureMainThread("params.clear");
       _hostParams->clear(_host, param_id, flags);
    }
 
@@ -354,6 +401,7 @@ namespace clap { namespace helpers {
    template <MisbehaviourHandler h, CheckingLevel l>
    bool HostProxy<h, l>::trackInfoGet(clap_track_info *info) const noexcept {
       assert(canUseTrackInfo());
+      ensureMainThread("track_info.get");
       return _hostTrackInfo->get(_host, info);
    }
 
@@ -363,6 +411,7 @@ namespace clap { namespace helpers {
    template <MisbehaviourHandler h, CheckingLevel l>
    bool HostProxy<h, l>::guiResize(uint32_t width, uint32_t height) const noexcept {
       assert(canUseGui());
+      ensureMainThread("gui.resize");
       return _hostGui->resize(_host, width, height);
    }
 
@@ -373,12 +422,14 @@ namespace clap { namespace helpers {
    bool HostProxy<h, l>::timerSupportRegisterTimer(uint32_t period_ms,
                                                    clap_id *timer_id) const noexcept {
       assert(canUseTimerSupport());
+      ensureMainThread("timer_support.register_timer");
       return _hostTimerSupport->register_timer(_host, period_ms, timer_id);
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
    bool HostProxy<h, l>::timerSupportUnregisterTimer(clap_id timer_id) const noexcept {
       assert(canUseTimerSupport());
+      ensureMainThread("timer_support.unregister_timer");
       return _hostTimerSupport->unregister_timer(_host, timer_id);
    }
 
@@ -388,18 +439,21 @@ namespace clap { namespace helpers {
    template <MisbehaviourHandler h, CheckingLevel l>
    bool HostProxy<h, l>::fdSupportRegisterFD(clap_fd fd, clap_fd_flags flags) const noexcept {
       assert(canUseFdSupport());
+      ensureMainThread("fd_support.register_fd");
       return _hostFdSupport->register_fd(_host, fd, flags);
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
    bool HostProxy<h, l>::fdSupportModifyFD(clap_fd fd, clap_fd_flags flags) const noexcept {
       assert(canUseFdSupport());
+      ensureMainThread("fd_support.modify_fd");
       return _hostFdSupport->modify_fd(_host, fd, flags);
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
    bool HostProxy<h, l>::fdSupportUnregisterFD(clap_fd fd) const noexcept {
       assert(canUseFdSupport());
+      ensureMainThread("fd_support.unregister_fd");
       return _hostFdSupport->unregister_fd(_host, fd);
    }
 }} // namespace clap::helpers
