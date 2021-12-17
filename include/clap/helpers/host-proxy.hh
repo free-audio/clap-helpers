@@ -121,6 +121,12 @@ namespace clap { namespace helpers {
       bool canUseQuickControls() const noexcept;
       void quickControlsChanged(clap_quick_controls_changed_flags flags) const noexcept;
 
+      ///////////////////////////
+      // clap_host_thread_pool //
+      ///////////////////////////
+      bool canUseThreadPool() const noexcept;
+      bool threadPoolRequestExec(uint32_t numTasks) const noexcept;
+
    protected:
       void ensureMainThread(const char *method) const noexcept;
       void ensureAudioThread(const char *method) const noexcept;

@@ -462,6 +462,7 @@ namespace clap { namespace helpers {
       assert(canUseThreadPool());
       ensureAudioThread("thread_pool.request_exec");
       return _hostThreadPool->request_exec(_host, numTasks);
+   }
 
    //////////////////////////////
    // clap_host_quick_controls //
