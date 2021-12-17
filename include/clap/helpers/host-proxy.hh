@@ -21,6 +21,7 @@ namespace clap { namespace helpers {
       ///////////////////
       // clap_host_log //
       ///////////////////
+      bool canUseHostLog() const noexcept;
       void log(clap_log_severity severity, const char *msg) const noexcept;
       void hostMisbehaving(const char *msg) const noexcept;
       void hostMisbehaving(const std::string &msg) const noexcept { hostMisbehaving(msg.c_str()); }
@@ -32,48 +33,57 @@ namespace clap { namespace helpers {
       ////////////////////////////
       // clap_host_thread_check //
       ////////////////////////////
+      bool canUseThreadCheck() const noexcept;
       bool isMainThread() const noexcept;
       bool isAudioThread() const noexcept;
 
       //////////////////////////////////
       // clap_host_audio_ports_config //
       //////////////////////////////////
+      bool canUseAudioPortsConfig() const noexcept;
       void audioPortsConfigRescan() const noexcept;
 
       ///////////////////////////
       // clap_host_audio_ports //
       ///////////////////////////
+      bool canUseAudioPorts() const noexcept;
       uint32_t audioPortsGetPreferredSampleSize() const noexcept;
       void audioPortsRescan(uint32_t flags) const noexcept;
 
       //////////////////////////
       // clap_host_note_ports //
       //////////////////////////
+      bool canUseNotePorts() const noexcept;
       void notePortsRescan(uint32_t flags) const noexcept;
 
       /////////////////////
       // clap_host_state //
       /////////////////////
+      bool canUseState() const noexcept;
       void stateMarkDirty() const noexcept;
 
       ///////////////////////
       // clap_host_latency //
       ///////////////////////
+      bool canUseLatency() const noexcept;
       void latencyChanged() const noexcept;
 
       ////////////////////////////
       // clap_host_event_filter //
       ////////////////////////////
+      bool canUseEventFilter() const noexcept;
       void eventFilterChanged() const noexcept;
 
       /////////////////////////
       // clap_host_note_name //
       /////////////////////////
+      bool canUseNoteName() const noexcept;
       void noteNameChanged() const noexcept;
 
       //////////////////////
       // clap_host_params //
       //////////////////////
+      bool canUseParams() const noexcept;
       void paramsRescan(clap_param_rescan_flags flags) const noexcept;
       void paramsClear(clap_id param_id, clap_param_clear_flags flags) const noexcept;
       void paramsRequestFlush() const noexcept;
@@ -81,50 +91,35 @@ namespace clap { namespace helpers {
       //////////////////////////
       // clap_host_track_info //
       //////////////////////////
+      bool canUseTrackInfo() const noexcept;
       bool trackInfoGet(clap_track_info *info) const noexcept;
 
       ///////////////////
       // clap_host_gui //
       ///////////////////
+      bool canUseGui() const noexcept;
       bool guiResize(uint32_t width, uint32_t height) const noexcept;
 
       /////////////////////////////
       // clap_host_timer_support //
       /////////////////////////////
+      bool canUseTimerSupport() const noexcept;
       bool timerSupportRegisterTimer(uint32_t period_ms, clap_id *timer_id) const noexcept;
       bool timerSupportUnregisterTimer(clap_id timer_id) const noexcept;
 
       //////////////////////////
       // clap_host_fd_support //
       //////////////////////////
+      bool canUseFdSupport() const noexcept;
       bool fdSupportRegisterFD(clap_fd fd, clap_fd_flags flags) const noexcept;
       bool fdSupportModifyFD(clap_fd fd, clap_fd_flags flags) const noexcept;
       bool fdSupportUnregisterFD(clap_fd fd) const noexcept;
 
-      ///////////////////////////
-      // clap_host_thread_pool //
-      ///////////////////////////
-      bool threadPoolRequestExec(uint32_t numTasks) const noexcept;
-
-      /////////////////////////////////
-      // Interface consistency check //
-      /////////////////////////////////
-      bool canUseHostLog() const noexcept;
-      bool canUseThreadCheck() const noexcept;
-      bool canUseTrackInfo() const noexcept;
-      bool canUseState() const noexcept;
-      bool canUseTimerSupport() const noexcept;
-      bool canUseFdSupport() const noexcept;
-      bool canUseParams() const noexcept;
-      bool canUseLatency() const noexcept;
+      //////////////////////////////
+      // clap_host_quick_controls //
+      //////////////////////////////
       bool canUseQuickControls() const noexcept;
-      bool canUseGui() const noexcept;
-      bool canUseAudioPorts() const noexcept;
-      bool canUseAudioPortsConfig() const noexcept;
-      bool canUseNotePorts() const noexcept;
-      bool canUseEventFilter() const noexcept;
-      bool canUseNoteName() const noexcept;
-      bool canUseThreadPool() const noexcept;
+      void quickControlsChanged(clap_quick_controls_changed_flags flags) const noexcept;
 
    protected:
       void ensureMainThread(const char *method) const noexcept;
