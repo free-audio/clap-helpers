@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include <clap/all.h>
+#include <clap/clap.h>
 
 #include "checking-level.hh"
 #include "misbehaviour-handler.hh"

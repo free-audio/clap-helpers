@@ -5,7 +5,7 @@
 #include <string_view>
 #include <vector>
 
-#include <clap/all.h>
+#include <clap/clap.h>
 
 #include "checking-level.hh"
 #include "misbehaviour-handler.hh"
