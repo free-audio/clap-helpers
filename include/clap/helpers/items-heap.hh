@@ -2,6 +2,7 @@
 
 #include <cassert>
 #include <cstdlib>
+#include <cstring>
 #include <memory>
 #include <stdexcept>
 #include <vector>
@@ -53,6 +54,7 @@ namespace clap { namespace helpers {
          auto offset = static_cast<uint8_t *>(ptr) - _heap;
          _itemsOffset.push_back(offset);
          _brk = offset + size;
+         std::memset(ptr, 0, size);
          return ptr;
       }
 
