@@ -131,9 +131,6 @@ namespace clap { namespace helpers {
       _plugin.stop_processing = nullptr;
    }
 
-   template <MisbehaviourHandler h, CheckingLevel l>
-   Plugin<h, l>::~Plugin() = default;
-
    /////////////////////
    // CLAP Interfaces //
    /////////////////////
