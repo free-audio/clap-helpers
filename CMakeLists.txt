@@ -11,13 +11,15 @@ set_target_properties(clap-helpers PROPERTIES
 target_include_directories(clap-helpers INTERFACE include)
 target_link_libraries(clap-helpers INTERFACE clap-core)
 
-add_executable(clap-helpers-tests EXCLUDE_FROM_ALL
-    tests/plugin.cc
-    tests/main.cc
-    tests/keywords.cc)
-set_target_properties(clap-helpers-tests PROPERTIES CXX_STANDARD 11)
-target_link_libraries(clap-helpers-tests clap-helpers clap-core Catch2::Catch2)
-target_compile_definitions(clap-helpers-tests PUBLIC -DCATCH_CONFIG_PREFIX_ALL)
-add_test(NAME "clap-helpers-tests" COMMAND clap-helpers-tests)
+if (Catch2_FOUND)
+    add_executable(clap-helpers-tests EXCLUDE_FROM_ALL
+        tests/plugin.cc
+        tests/main.cc
+        tests/keywords.cc)
+    set_target_properties(clap-helpers-tests PROPERTIES CXX_STANDARD 11)
+    target_link_libraries(clap-helpers-tests clap-helpers clap-core Catch2::Catch2)
+    target_compile_definitions(clap-helpers-tests PUBLIC -DCATCH_CONFIG_PREFIX_ALL)
+    add_test(NAME "clap-helpers-tests" COMMAND clap-helpers-tests)
+endif()
 
 install(DIRECTORY include DESTINATION ".")
