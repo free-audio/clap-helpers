@@ -8,14 +8,14 @@
 
 namespace clap { namespace helpers {
 
-   class EventList {
+   class EventsHeap {
    public:
-      EventList(uint32_t maxEventSize = 1024) : _maxEventSize(maxEventSize) {}
+      EventsHeap(uint32_t maxEventSize = 1024) : _maxEventSize(maxEventSize) {}
 
-      EventList(const EventList &) = delete;
-      EventList(EventList &&) = delete;
-      EventList &operator=(const EventList &) = delete;
-      EventList &operator=(EventList &&) = delete;
+      EventsHeap(const EventsHeap &) = delete;
+      EventsHeap(EventsHeap &&) = delete;
+      EventsHeap &operator=(const EventsHeap &) = delete;
+      EventsHeap &operator=(EventsHeap &&) = delete;
 
       void reserveEvents(size_t capacity) { _heap.reserveItems(capacity); }
 
@@ -66,25 +66,25 @@ namespace clap { namespace helpers {
 
    private:
       static uint32_t clapSize(const struct clap_input_events *list) {
-         auto *self = static_cast<const EventList *>(list->ctx);
+         auto *self = static_cast<const EventsHeap *>(list->ctx);
          return self->size();
       }
 
       static const clap_event_header_t *clapGet(const struct clap_input_events *list,
                                                 uint32_t index) {
-         auto *self = static_cast<const EventList *>(list->ctx);
+         auto *self = static_cast<const EventsHeap *>(list->ctx);
          return self->get(index);
       }
 
       static void clapPushBack(const struct clap_output_events *list,
                                const clap_event_header *event) {
-         auto *self = static_cast<EventList *>(list->ctx);
+         auto *self = static_cast<EventsHeap *>(list->ctx);
          self->push(event);
       }
 
       static void clapBoundedPushBack(const struct clap_output_events *list,
                                       const clap_event_header_t *event) {
-         auto *self = static_cast<EventList *>(list->ctx);
+         auto *self = static_cast<EventsHeap *>(list->ctx);
          self->tryPush(event);
       }
 
