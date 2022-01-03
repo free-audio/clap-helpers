@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.17)
 cmake_policy(SET CMP0100 NEW)  # handle .hh files
 project(CLAP_HELPERS C CXX)
+enable_testing()
+find_package(Catch2)
 
 add_library(clap-helpers INTERFACE)
 set_target_properties(clap-helpers PROPERTIES
@@ -9,8 +11,13 @@ set_target_properties(clap-helpers PROPERTIES
 target_include_directories(clap-helpers INTERFACE include)
 target_link_libraries(clap-helpers INTERFACE clap-core)
 
-add_executable(clap-helpers-cxx11-compilation-test EXCLUDE_FROM_ALL tests/c++11-compile.cc)
-set_target_properties(clap-helpers-cxx11-compilation-test PROPERTIES CXX_STANDARD 11)
-target_link_libraries(clap-helpers-cxx11-compilation-test clap-helpers clap-core)
+add_executable(clap-helpers-tests EXCLUDE_FROM_ALL
+    tests/plugin.cc
+    tests/main.cc
+    tests/keywords.cc)
+set_target_properties(clap-helpers-tests PROPERTIES CXX_STANDARD 11)
+target_link_libraries(clap-helpers-tests clap-helpers clap-core Catch2::Catch2)
+target_compile_definitions(clap-helpers-tests PUBLIC -DCATCH_CONFIG_PREFIX_ALL)
+add_test(NAME "clap-helpers-tests" COMMAND clap-helpers-tests)
 
 install(DIRECTORY include DESTINATION ".")
