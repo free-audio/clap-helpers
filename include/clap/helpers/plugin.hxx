@@ -80,8 +80,8 @@ namespace clap { namespace helpers {
    const clap_plugin_timer_support Plugin<h, l>::_pluginTimerSupport = {clapOnTimer};
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   const clap_plugin_fd_support Plugin<h, l>::_pluginFdSupport = {
-      clapOnFd,
+   const clap_plugin_posix_fd_support Plugin<h, l>::_pluginPosixFdSupport = {
+      clapOnPosixFd,
    };
 
    template <MisbehaviourHandler h, CheckingLevel l>
@@ -352,8 +352,8 @@ namespace clap { namespace helpers {
          return &_pluginThreadPool;
       if (!strcmp(id, CLAP_EXT_TIMER_SUPPORT) && self.implementsTimerSupport())
          return &_pluginTimerSupport;
-      if (!strcmp(id, CLAP_EXT_FD_SUPPORT) && self.implementsFdSupport())
-         return &_pluginFdSupport;
+      if (!strcmp(id, CLAP_EXT_POSIX_FD_SUPPORT) && self.implementsPosixFdSupport())
+         return &_pluginPosixFdSupport;
       if (!strcmp(id, CLAP_EXT_GUI) && self.implementsGui())
          return &_pluginGui;
       if (!strcmp(id, CLAP_EXT_GUI_X11) && self.implementsGuiX11())
@@ -602,19 +602,19 @@ namespace clap { namespace helpers {
 
    template <MisbehaviourHandler h, CheckingLevel l>
    void Plugin<h, l>::clapParamsFlush(const clap_plugin *plugin,
-                                      const clap_event_list *input_parameter_changes,
-                                      const clap_event_list *output_parameter_changes) noexcept {
+                                      const clap_input_events *in,
+                                      const clap_output_events *out) noexcept {
       auto &self = from(plugin);
       self.ensureParamThread("clap_plugin_params.flush");
 
       if (l >= CheckingLevel::Maximal) {
-         if (!input_parameter_changes)
+         if (!in)
             self.hostMisbehaving(
                "clap_plugin_params.flush called with an null input parameter change list");
          else {
-            uint32_t N = input_parameter_changes->size(input_parameter_changes);
+            uint32_t N = in->size(in);
             for (uint32_t i = 0; i < N; ++i) {
-               auto ev = input_parameter_changes->get(input_parameter_changes, i);
+               auto ev = in->get(in, i);
                if (!ev) {
                   std::ostringstream msg;
                   msg << "clap_plugin_params.flush called null event inside the input list at "
@@ -624,16 +624,18 @@ namespace clap { namespace helpers {
                   continue;
                }
 
-               if (ev->type != CLAP_EVENT_PARAM_VALUE) {
+               if (ev->space_id != CLAP_CORE_EVENT_SPACE_ID || ev->type != CLAP_EVENT_PARAM_VALUE) {
                   self.hostMisbehaving("clap_plugin_params.flush must only contain "
                                        "CLAP_EVENT_PARAM_VALUE event type");
                   continue;
                }
 
-               if (self._host.canUseThreadCheck() && self._host.isMainThread() && !self.isValidParamId(ev->param_value.param_id)) {
+               auto pev = reinterpret_cast<const clap_event_param_value *>(ev);
+
+               if (self._host.canUseThreadCheck() && self._host.isMainThread() && !self.isValidParamId(pev->param_id)) {
                   std::ostringstream msg;
                   msg << "clap_plugin_params.flush called unknown paramId: "
-                      << ev->param_value.param_id;
+                      << pev->param_id;
                   self.hostMisbehaving(msg.str());
                   continue;
                }
@@ -642,15 +644,12 @@ namespace clap { namespace helpers {
             }
          }
 
-         if (!output_parameter_changes)
+         if (!out)
             self.hostMisbehaving(
                "clap_plugin_params.flush called with an null output parameter change list");
-         else if (output_parameter_changes->size(output_parameter_changes) > 0)
-            self.hostMisbehaving(
-               "clap_plugin_params.flush called with an non-empty output parameter change list");
       }
 
-      self.paramsFlush(input_parameter_changes, output_parameter_changes);
+      self.paramsFlush(in, out);
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
@@ -837,11 +836,11 @@ namespace clap { namespace helpers {
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   void Plugin<h, l>::clapOnFd(const clap_plugin *plugin, clap_fd fd, uint32_t flags) noexcept {
+   void Plugin<h, l>::clapOnPosixFd(const clap_plugin *plugin, int fd, int flags) noexcept {
       auto &self = from(plugin);
       self.ensureMainThread("clap_plugin_event_loop.on_fd");
 
-      self.onFd(fd, flags);
+      self.onPosixFd(fd, flags);
    }
 
    //-----------------//

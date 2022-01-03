@@ -8,8 +8,8 @@
 #include <clap/clap.h>
 
 #include "checking-level.hh"
-#include "misbehaviour-handler.hh"
 #include "host-proxy.hh"
+#include "misbehaviour-handler.hh"
 
 namespace clap { namespace helpers {
 
@@ -121,8 +121,8 @@ namespace clap { namespace helpers {
       virtual bool paramsTextToValue(clap_id paramId, const char *display, double *value) noexcept {
          return false;
       }
-      virtual void paramsFlush(const clap_event_list *input_parameter_changes,
-                               const clap_event_list *output_parameter_changes) noexcept {}
+      virtual void paramsFlush(const clap_input_events *in,
+                               const clap_output_events *out) noexcept {}
       virtual bool isValidParamId(clap_id paramId) const noexcept;
 
       //----------------------------//
@@ -150,11 +150,11 @@ namespace clap { namespace helpers {
       virtual bool implementsTimerSupport() const noexcept { return false; }
       virtual void onTimer(clap_id timerId) noexcept {}
 
-      //------------------------//
-      // clap_plugin_fd_support //
-      //------------------------//
-      virtual bool implementsFdSupport() const noexcept { return false; }
-      virtual void onFd(clap_fd fd, uint32_t flags) noexcept {}
+      //------------------------------//
+      // clap_plugin_posix_fd_support //
+      //------------------------------//
+      virtual bool implementsPosixFdSupport() const noexcept { return false; }
+      virtual void onPosixFd(int fd, int flags) noexcept {}
 
       //-----------------//
       // clap_plugin_gui //
@@ -311,8 +311,8 @@ namespace clap { namespace helpers {
                                         const char *display,
                                         double *value) noexcept;
       static void clapParamsFlush(const clap_plugin *plugin,
-                                  const clap_event_list *input_parameter_changes,
-                                  const clap_event_list *output_parameter_changes) noexcept;
+                                  const clap_input_events *in,
+                                  const clap_output_events *out) noexcept;
 
       // clap_plugin_quick_controls
       static uint32_t clapQuickControlsPageCount(const clap_plugin *plugin) noexcept;
@@ -332,7 +332,7 @@ namespace clap { namespace helpers {
       static void clapOnTimer(const clap_plugin *plugin, clap_id timer_id) noexcept;
 
       // clap_plugin_fd_support
-      static void clapOnFd(const clap_plugin *plugin, clap_fd fd, uint32_t flags) noexcept;
+      static void clapOnPosixFd(const clap_plugin *plugin, int fd, int flags) noexcept;
 
       // clap_plugin_gui
       static bool clapGuiCreate(const clap_plugin *plugin) noexcept;
@@ -375,7 +375,7 @@ namespace clap { namespace helpers {
       static const clap_plugin_latency _pluginLatency;
       static const clap_plugin_note_name _pluginNoteName;
       static const clap_plugin_timer_support _pluginTimerSupport;
-      static const clap_plugin_fd_support _pluginFdSupport;
+      static const clap_plugin_posix_fd_support _pluginPosixFdSupport;
       static const clap_plugin_gui _pluginGui;
       static const clap_plugin_gui_x11 _pluginGuiX11;
       static const clap_plugin_gui_win32 _pluginGuiWin32;

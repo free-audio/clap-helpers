@@ -104,16 +104,16 @@ namespace clap { namespace helpers {
       // clap_host_timer_support //
       /////////////////////////////
       bool canUseTimerSupport() const noexcept;
-      bool timerSupportRegisterTimer(uint32_t period_ms, clap_id *timer_id) const noexcept;
-      bool timerSupportUnregisterTimer(clap_id timer_id) const noexcept;
+      bool timerSupportRegister(uint32_t period_ms, clap_id *timer_id) const noexcept;
+      bool timerSupportUnregister(clap_id timer_id) const noexcept;
 
       //////////////////////////
       // clap_host_fd_support //
       //////////////////////////
-      bool canUseFdSupport() const noexcept;
-      bool fdSupportRegisterFD(clap_fd fd, clap_fd_flags flags) const noexcept;
-      bool fdSupportModifyFD(clap_fd fd, clap_fd_flags flags) const noexcept;
-      bool fdSupportUnregisterFD(clap_fd fd) const noexcept;
+      bool canUsePosixFdSupport() const noexcept;
+      bool posixFdSupportRegister(int fd, int flags) const noexcept;
+      bool posixFdSupportModify(int fd, int flags) const noexcept;
+      bool posixFdSupportUnregister(int fd) const noexcept;
 
       //////////////////////////////
       // clap_host_quick_controls //
@@ -144,7 +144,7 @@ namespace clap { namespace helpers {
       const clap_host_latency *_hostLatency = nullptr;
       const clap_host_gui *_hostGui = nullptr;
       const clap_host_timer_support *_hostTimerSupport = nullptr;
-      const clap_host_fd_support *_hostFdSupport = nullptr;
+      const clap_host_posix_fd_support *_hostPosixFdSupport = nullptr;
       const clap_host_params *_hostParams = nullptr;
       const clap_host_track_info *_hostTrackInfo = nullptr;
       const clap_host_state *_hostState = nullptr;

@@ -19,7 +19,7 @@ namespace clap { namespace helpers {
       getExtension(_hostAudioPortsConfig, CLAP_EXT_AUDIO_PORTS_CONFIG);
       getExtension(_hostNotePorts, CLAP_EXT_NOTE_PORTS);
       getExtension(_hostTimerSupport, CLAP_EXT_TIMER_SUPPORT);
-      getExtension(_hostFdSupport, CLAP_EXT_FD_SUPPORT);
+      getExtension(_hostPosixFdSupport, CLAP_EXT_POSIX_FD_SUPPORT);
       getExtension(_hostEventFilter, CLAP_EXT_EVENT_FILTER);
       getExtension(_hostFileReference, CLAP_EXT_FILE_REFERENCE);
       getExtension(_hostLatency, CLAP_EXT_LATENCY);
@@ -391,7 +391,7 @@ namespace clap { namespace helpers {
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   bool HostProxy<h, l>::timerSupportRegisterTimer(uint32_t period_ms,
+   bool HostProxy<h, l>::timerSupportRegister(uint32_t period_ms,
                                                    clap_id *timer_id) const noexcept {
       assert(canUseTimerSupport());
       ensureMainThread("timer_support.register_timer");
@@ -399,7 +399,7 @@ namespace clap { namespace helpers {
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   bool HostProxy<h, l>::timerSupportUnregisterTimer(clap_id timer_id) const noexcept {
+   bool HostProxy<h, l>::timerSupportUnregister(clap_id timer_id) const noexcept {
       assert(canUseTimerSupport());
       ensureMainThread("timer_support.unregister_timer");
       return _hostTimerSupport->unregister_timer(_host, timer_id);
@@ -409,37 +409,37 @@ namespace clap { namespace helpers {
    // clap_host_fd_support //
    //////////////////////////
    template <MisbehaviourHandler h, CheckingLevel l>
-   bool HostProxy<h, l>::canUseFdSupport() const noexcept {
-      if (!_hostFdSupport)
+   bool HostProxy<h, l>::canUsePosixFdSupport() const noexcept {
+      if (!_hostPosixFdSupport)
          return false;
 
-      auto &x = *_hostFdSupport;
+      auto &x = *_hostPosixFdSupport;
       if (x.modify_fd && x.register_fd && x.unregister_fd)
          return true;
 
-      hostMisbehaving("clap_fd_support is partially implemented");
+      hostMisbehaving("clap_posix_fd_support is partially implemented");
       return false;
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   bool HostProxy<h, l>::fdSupportRegisterFD(clap_fd fd, clap_fd_flags flags) const noexcept {
-      assert(canUseFdSupport());
-      ensureMainThread("fd_support.register_fd");
-      return _hostFdSupport->register_fd(_host, fd, flags);
+   bool HostProxy<h, l>::posixFdSupportRegister(int fd, int flags) const noexcept {
+      assert(canUsePosixFdSupport());
+      ensureMainThread("posix_fd_support.register");
+      return _hostPosixFdSupport->register_fd(_host, fd, flags);
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   bool HostProxy<h, l>::fdSupportModifyFD(clap_fd fd, clap_fd_flags flags) const noexcept {
-      assert(canUseFdSupport());
-      ensureMainThread("fd_support.modify_fd");
-      return _hostFdSupport->modify_fd(_host, fd, flags);
+   bool HostProxy<h, l>::posixFdSupportModify(int fd, int flags) const noexcept {
+      assert(canUsePosixFdSupport());
+      ensureMainThread("posix_fd_support.modify");
+      return _hostPosixFdSupport->modify_fd(_host, fd, flags);
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   bool HostProxy<h, l>::fdSupportUnregisterFD(clap_fd fd) const noexcept {
-      assert(canUseFdSupport());
-      ensureMainThread("fd_support.unregister_fd");
-      return _hostFdSupport->unregister_fd(_host, fd);
+   bool HostProxy<h, l>::posixFdSupportUnregister(int fd) const noexcept {
+      assert(canUsePosixFdSupport());
+      ensureMainThread("posix_fd_support.unregister");
+      return _hostPosixFdSupport->unregister_fd(_host, fd);
    }
 
    ///////////////////////////
