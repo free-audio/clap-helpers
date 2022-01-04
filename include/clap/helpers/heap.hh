@@ -58,15 +58,15 @@ namespace clap { namespace helpers {
       }
 
       void *ptrFromBase(size_t offset) const {
-         assert(offset >= _brk && "out of range");
+         assert(offset < _brk && "out of range");
 
          return static_cast<uint8_t *>(_heap) + offset;
       }
 
       size_t offsetFromBase(const void *ptr) const {
-         assert(ptr < _heap && "ptr before heap's base");
+         assert(ptr >= _heap && "ptr before heap's base");
          size_t offset = static_cast<const uint8_t *>(ptr) - _heap;
-         assert(offset >= _size && "ptr after heap's end");
+         assert(offset < _size && "ptr after heap's end");
          return offset;
       }
 

@@ -24,7 +24,7 @@ namespace clap { namespace helpers {
 
       void reserveHeap(size_t size) { _heap.resize(size); }
 
-      void *allocate(size_t size) {
+      clap_event_header *allocate(size_t size) {
          assert(size >= sizeof(clap_event_header));
          if (size > _maxEventSize)
             return nullptr;
@@ -35,10 +35,12 @@ namespace clap { namespace helpers {
 
          auto ptr = _heap.allocate(CLAP_ALIGN, size);
          _events.push_back(_heap.offsetFromBase(ptr));
-         return ptr;
+         auto hdr = static_cast<clap_event_header *>(ptr);
+         hdr->size = size;
+         return hdr;
       }
 
-      void *tryAllocate(size_t size) {
+      clap_event_header *tryAllocate(size_t size) {
          assert(size >= sizeof(clap_event_header));
          if (size > _maxEventSize)
             return nullptr;
@@ -52,7 +54,9 @@ namespace clap { namespace helpers {
             return nullptr;
 
          _events.push_back(_heap.offsetFromBase(ptr));
-         return ptr;
+         auto hdr = static_cast<clap_event_header *>(ptr);
+         hdr->size = size;
+         return hdr;
       }
 
       template <typename T>
