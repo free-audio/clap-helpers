@@ -12,22 +12,22 @@ namespace clap { namespace helpers {
    /** Simple heap allocator which ensures alignment. */
    class Heap {
    public:
-      explicit Heap(uint32_t initialSize = 4096) { resize(initialSize); }
+      explicit Heap(uint32_t initialSize = 4096) { reserve(initialSize); }
 
       Heap(const Heap &) = delete;
       Heap(Heap &&) = delete;
       Heap &operator=(const Heap &) = delete;
       Heap &operator=(Heap &&) = delete;
 
-      void resize(const size_t heapSize) {
+      void reserve(const size_t heapSize) {
          if (heapSize <= _size)
             return;
 
-         auto *const ptr = static_cast<uint8_t *>(std::realloc(_heap, heapSize));
+         auto *const ptr = static_cast<uint8_t *>(std::realloc(_base, heapSize));
          if (!ptr)
             throw std::bad_alloc();
 
-         _heap = ptr;
+         _base = ptr;
          _size = heapSize;
       }
 
@@ -35,13 +35,13 @@ namespace clap { namespace helpers {
 
       void *tryAllocate(uint32_t align, uint32_t size) {
          assert(_brk <= _size);
-         void *ptr = _heap + _brk;
+         void *ptr = _base + _brk;
          size_t space = _size - _brk;
 
          if (!std::align(align, size, ptr, space))
             return nullptr;
 
-         auto offset = static_cast<uint8_t *>(ptr) - _heap;
+         auto offset = static_cast<uint8_t *>(ptr) - _base;
          _brk = offset + size;
          std::memset(ptr, 0, size);
          return ptr;
@@ -50,7 +50,7 @@ namespace clap { namespace helpers {
       void *allocate(uint32_t align, uint32_t size) {
          assert(_brk <= _size);
          if (size + _brk > _size)
-            resize(_size * 2);
+            reserve(_size * 2);
 
          auto ptr = tryAllocate(align, size);
          assert(ptr);
@@ -58,14 +58,14 @@ namespace clap { namespace helpers {
       }
 
       void *ptrFromBase(size_t offset) const {
-         assert(offset < _brk && "out of range");
+         assert(offset <= _brk && "out of range");
 
-         return static_cast<uint8_t *>(_heap) + offset;
+         return static_cast<uint8_t *>(_base) + offset;
       }
 
       size_t offsetFromBase(const void *ptr) const {
-         assert(ptr >= _heap && "ptr before heap's base");
-         size_t offset = static_cast<const uint8_t *>(ptr) - _heap;
+         assert(ptr >= _base && "ptr before heap's base");
+         size_t offset = static_cast<const uint8_t *>(ptr) - _base;
          assert(offset < _size && "ptr after heap's end");
          return offset;
       }
@@ -77,7 +77,7 @@ namespace clap { namespace helpers {
    private:
       size_t _size = 0;
       size_t _brk = 0;
-      uint8_t *_heap = nullptr;
+      uint8_t *_base = nullptr;
    };
 
 }} // namespace clap::helpers

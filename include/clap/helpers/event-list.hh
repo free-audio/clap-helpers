@@ -13,7 +13,9 @@ namespace clap { namespace helpers {
       explicit EventList(uint32_t initialHeapSize = 4096,
                          uint32_t initialEventsCapacity = 128,
                          uint32_t maxEventSize = 1024)
-         : _maxEventSize(maxEventSize), _heap(initialHeapSize), _events(initialEventsCapacity) {}
+         : _maxEventSize(maxEventSize), _heap(initialHeapSize) {
+         _events.reserve(initialEventsCapacity);
+      }
 
       EventList(const EventList &) = delete;
       EventList(EventList &&) = delete;
@@ -22,7 +24,7 @@ namespace clap { namespace helpers {
 
       void reserveEvents(size_t capacity) { _events.reserve(capacity); }
 
-      void reserveHeap(size_t size) { _heap.resize(size); }
+      void reserveHeap(size_t size) { _heap.reserve(size); }
 
       clap_event_header *allocate(size_t size) {
          assert(size >= sizeof(clap_event_header));
@@ -65,7 +67,7 @@ namespace clap { namespace helpers {
       }
 
       void push(const clap_event_header *h) {
-         auto ptr = _heap.allocate(CLAP_ALIGN, h->size);
+         auto ptr = allocate(h->size);
          if (!ptr)
             return;
 
