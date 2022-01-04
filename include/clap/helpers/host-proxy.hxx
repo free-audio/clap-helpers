@@ -360,7 +360,7 @@ namespace clap { namespace helpers {
       if (!_hostGui)
          return false;
 
-      if (_hostGui->resize)
+      if (_hostGui->request_resize && _hostGui->request_hide && _hostGui->request_show)
          return true;
 
       hostMisbehaving("clap_host_gui is partially implemented");
@@ -368,10 +368,10 @@ namespace clap { namespace helpers {
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   bool HostProxy<h, l>::guiResize(uint32_t width, uint32_t height) const noexcept {
+   bool HostProxy<h, l>::guiRequestResize(uint32_t width, uint32_t height) const noexcept {
       assert(canUseGui());
       ensureMainThread("gui.resize");
-      return _hostGui->resize(_host, width, height);
+      return _hostGui->request_resize(_host, width, height);
    }
 
    ///////////////////
@@ -392,7 +392,7 @@ namespace clap { namespace helpers {
 
    template <MisbehaviourHandler h, CheckingLevel l>
    bool HostProxy<h, l>::timerSupportRegister(uint32_t period_ms,
-                                                   clap_id *timer_id) const noexcept {
+                                              clap_id *timer_id) const noexcept {
       assert(canUseTimerSupport());
       ensureMainThread("timer_support.register_timer");
       return _hostTimerSupport->register_timer(_host, period_ms, timer_id);
@@ -480,8 +480,8 @@ namespace clap { namespace helpers {
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   void HostProxy<h, l>::quickControlsChanged(clap_quick_controls_changed_flags flags) const noexcept
-   {
+   void
+   HostProxy<h, l>::quickControlsChanged(clap_quick_controls_changed_flags flags) const noexcept {
       assert(canUseQuickControls());
       ensureMainThread("quick_controls.changed");
    }

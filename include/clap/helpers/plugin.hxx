@@ -935,7 +935,7 @@ namespace clap { namespace helpers {
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   void Plugin<h, l>::clapGuiSetScale(const clap_plugin *plugin, double scale) noexcept {
+   bool Plugin<h, l>::clapGuiSetScale(const clap_plugin *plugin, double scale) noexcept {
       auto &self = from(plugin);
       self.ensureMainThread("clap_plugin_gui.set_scale");
 
@@ -943,11 +943,11 @@ namespace clap { namespace helpers {
          if (!self._isGuiCreated) {
             self.hostMisbehaving("clap_plugin_gui.set_scale() was called without a prior call to "
                                  "clap_plugin_gui.create()");
-            return;
+            return false;
          }
       }
 
-      self.guiSetScale(scale);
+      return self.guiSetScale(scale);
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
