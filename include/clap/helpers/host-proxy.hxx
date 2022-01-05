@@ -370,8 +370,22 @@ namespace clap { namespace helpers {
    template <MisbehaviourHandler h, CheckingLevel l>
    bool HostProxy<h, l>::guiRequestResize(uint32_t width, uint32_t height) const noexcept {
       assert(canUseGui());
-      ensureMainThread("gui.resize");
+      ensureMainThread("gui.request_resize");
       return _hostGui->request_resize(_host, width, height);
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   bool HostProxy<h, l>::guiRequestShow() const noexcept {
+      assert(canUseGui());
+      ensureMainThread("gui.request_show");
+      return _hostGui->request_show(_host);
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   bool HostProxy<h, l>::guiRequestHide() const noexcept {
+      assert(canUseGui());
+      ensureMainThread("gui.request_hide");
+      return _hostGui->request_hide(_host);
    }
 
    ///////////////////

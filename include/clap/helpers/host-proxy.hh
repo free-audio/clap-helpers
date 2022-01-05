@@ -99,6 +99,8 @@ namespace clap { namespace helpers {
       ///////////////////
       bool canUseGui() const noexcept;
       bool guiRequestResize(uint32_t width, uint32_t height) const noexcept;
+      bool guiRequestShow() const noexcept;
+      bool guiRequestHide() const noexcept;
 
       /////////////////////////////
       // clap_host_timer_support //
