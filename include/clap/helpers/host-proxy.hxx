@@ -163,7 +163,7 @@ namespace clap { namespace helpers {
       if (!_hostAudioPorts)
          return false;
 
-      if (_hostAudioPorts->get_preferred_sample_size && _hostAudioPorts->rescan)
+      if (_hostAudioPorts->rescan)
          return true;
 
       hostMisbehaving("clap_host_audio_ports is partially implemented");
