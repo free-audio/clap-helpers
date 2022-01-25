@@ -12,6 +12,7 @@ namespace clap { namespace helpers {
 
    template <MisbehaviourHandler h, CheckingLevel l>
    const clap_plugin_render Plugin<h, l>::_pluginRender = {
+      clapRenderHasHardRealtimeRequirement,
       clapRenderSetMode,
    };
 
@@ -383,7 +384,14 @@ namespace clap { namespace helpers {
    // clap_plugin_render //
    //--------------------//
    template <MisbehaviourHandler h, CheckingLevel l>
-   void Plugin<h, l>::clapRenderSetMode(const clap_plugin *plugin,
+   bool Plugin<h, l>::clapRenderHasHardRealtimeRequirement(const clap_plugin *plugin) noexcept {
+      auto &self = from(plugin);
+      self.ensureMainThread("clap_plugin_render.has_hard_realtime_requirement");
+      return self.renderHasHardRealtimeRequirement();
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   bool Plugin<h, l>::clapRenderSetMode(const clap_plugin *plugin,
                                         clap_plugin_render_mode mode) noexcept {
       auto &self = from(plugin);
       self.ensureMainThread("clap_plugin_render.set_mode");
@@ -391,14 +399,13 @@ namespace clap { namespace helpers {
       switch (mode) {
       case CLAP_RENDER_REALTIME:
       case CLAP_RENDER_OFFLINE:
-         self.renderSetMode(mode);
-         break;
+         return self.renderSetMode(mode);
 
       default: {
          std::ostringstream msg;
          msg << "host called clap_plugin_render.set_mode with an unknown mode : " << mode;
          self.hostMisbehaving(msg.str());
-         break;
+         return false;
       }
       }
    }
@@ -560,7 +567,7 @@ namespace clap { namespace helpers {
    //--------------------//
    template <MisbehaviourHandler h, CheckingLevel l>
    bool Plugin<h, l>::clapParamsInfo(const clap_plugin *plugin,
-                                     int32_t param_index,
+                                     uint32_t param_index,
                                      clap_param_info *param_info) noexcept {
       auto &self = from(plugin);
       self.ensureMainThread("clap_plugin_params.info");
@@ -632,10 +639,10 @@ namespace clap { namespace helpers {
 
                auto pev = reinterpret_cast<const clap_event_param_value *>(ev);
 
-               if (self._host.canUseThreadCheck() && self._host.isMainThread() && !self.isValidParamId(pev->param_id)) {
+               if (self._host.canUseThreadCheck() && self._host.isMainThread() &&
+                   !self.isValidParamId(pev->param_id)) {
                   std::ostringstream msg;
-                  msg << "clap_plugin_params.flush called unknown paramId: "
-                      << pev->param_id;
+                  msg << "clap_plugin_params.flush called unknown paramId: " << pev->param_id;
                   self.hostMisbehaving(msg.str());
                   continue;
                }
@@ -1264,9 +1271,9 @@ namespace clap { namespace helpers {
    template <MisbehaviourHandler h, CheckingLevel l>
    uint32_t Plugin<h, l>::compareAudioPortsInfo(const clap_audio_port_info &a,
                                                 const clap_audio_port_info &b) noexcept {
-      if (a.sample_size != b.sample_size || a.in_place != b.in_place || a.is_cv != b.is_cv ||
-          a.is_main != b.is_main || a.channel_count != b.channel_count ||
-          a.channel_map != b.channel_map || a.id != b.id)
+      if (a.in_place_pair != b.in_place_pair || a.flags != b.flags ||
+          a.channel_count != b.channel_count || !strcmp(a.port_type, b.port_type) ||
+          a.id != b.id)
          return CLAP_AUDIO_PORTS_RESCAN_ALL;
 
       if (strncmp(a.name, b.name, sizeof(a.name)))

@@ -62,7 +62,8 @@ namespace clap { namespace helpers {
       // clap_plugin_render //
       //--------------------//
       virtual bool implementsRender() const noexcept { return false; }
-      virtual void renderSetMode(clap_plugin_render_mode mode) noexcept {}
+      virtual bool renderHasHardRealtimeRequirement() noexcept { return false; }
+      virtual bool renderSetMode(clap_plugin_render_mode mode) noexcept { return false; }
 
       //-------------------------//
       // clap_plugin_thread_pool //
@@ -110,7 +111,7 @@ namespace clap { namespace helpers {
       //--------------------//
       virtual bool implementsParams() const noexcept { return false; }
       virtual uint32_t paramsCount() const noexcept { return 0; }
-      virtual bool paramsInfo(int32_t paramIndex, clap_param_info *info) const noexcept {
+      virtual bool paramsInfo(uint32_t paramIndex, clap_param_info *info) const noexcept {
          return false;
       }
       virtual bool paramsValue(clap_id paramId, double *value) noexcept { return false; }
@@ -266,7 +267,8 @@ namespace clap { namespace helpers {
       static uint32_t clapLatencyGet(const clap_plugin *plugin) noexcept;
 
       // clap_plugin_render
-      static void clapRenderSetMode(const clap_plugin *plugin,
+      static bool clapRenderHasHardRealtimeRequirement(const clap_plugin_t *plugin) noexcept;
+      static bool clapRenderSetMode(const clap_plugin *plugin,
                                     clap_plugin_render_mode mode) noexcept;
 
       // clap_plugin_thread_pool
@@ -297,7 +299,7 @@ namespace clap { namespace helpers {
       // clap_plugin_params
       static uint32_t clapParamsCount(const clap_plugin *plugin) noexcept;
       static bool clapParamsInfo(const clap_plugin *plugin,
-                                 int32_t param_index,
+                                 uint32_t param_index,
                                  clap_param_info *param_info) noexcept;
       static bool
       clapParamsValue(const clap_plugin *plugin, clap_id param_id, double *value) noexcept;
