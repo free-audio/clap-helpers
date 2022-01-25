@@ -47,7 +47,6 @@ namespace clap { namespace helpers {
       // clap_host_audio_ports //
       ///////////////////////////
       bool canUseAudioPorts() const noexcept;
-      uint32_t audioPortsGetPreferredSampleSize() const noexcept;
       void audioPortsRescan(uint32_t flags) const noexcept;
 
       //////////////////////////

@@ -171,13 +171,6 @@ namespace clap { namespace helpers {
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   uint32_t HostProxy<h, l>::audioPortsGetPreferredSampleSize() const noexcept {
-      assert(canUseAudioPorts());
-      ensureMainThread("audio_ports.get_preferred_sample_size");
-      return _hostAudioPorts->get_preferred_sample_size(_host);
-   }
-
-   template <MisbehaviourHandler h, CheckingLevel l>
    void HostProxy<h, l>::audioPortsRescan(uint32_t flags) const noexcept {
       assert(canUseAudioPorts());
       ensureMainThread("audio_ports.rescan");
