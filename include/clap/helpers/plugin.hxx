@@ -143,7 +143,7 @@ namespace clap { namespace helpers {
    //-------------//
    template <MisbehaviourHandler h, CheckingLevel l>
    bool Plugin<h, l>::clapInit(const clap_plugin *plugin) noexcept {
-      auto &self = from(plugin);
+      auto &self = from(plugin, false);
 
       self._plugin.get_extension = Plugin<h, l>::clapExtension;
       self._plugin.process = Plugin<h, l>::clapProcess;
@@ -160,7 +160,7 @@ namespace clap { namespace helpers {
 
    template <MisbehaviourHandler h, CheckingLevel l>
    void Plugin<h, l>::clapDestroy(const clap_plugin *plugin) noexcept {
-      auto &self = from(plugin);
+      auto &self = from(plugin, false);
       self.ensureMainThread("clap_plugin.destroy");
       delete &from(plugin);
    }
@@ -1249,7 +1249,7 @@ namespace clap { namespace helpers {
    // Utilities //
    ///////////////
    template <MisbehaviourHandler h, CheckingLevel l>
-   Plugin<h, l> &Plugin<h, l>::from(const clap_plugin *plugin) noexcept {
+   Plugin<h, l> &Plugin<h, l>::from(const clap_plugin *plugin, bool requireInitialized) noexcept {
       if (l >= CheckingLevel::Minimal) {
          if (!plugin) {
             std::cerr << "called with a null clap_plugin pointer!" << std::endl;
@@ -1261,6 +1261,13 @@ namespace clap { namespace helpers {
                          "change this pointer!"
                       << std::endl;
             std::terminate();
+         }
+
+         auto &self = *static_cast<Plugin *>(plugin->plugin_data);
+         if (requireInitialized && !self._wasInitialized) {
+            self.hostMisbehaving("Host is required to call clap_plugin.init() first");
+            if (h == MisbehaviourHandler::Terminate)
+               std::terminate();
          }
       }
 

@@ -219,7 +219,7 @@ namespace clap { namespace helpers {
       ///////////////
       // Utilities //
       ///////////////
-      static Plugin &from(const clap_plugin *plugin) noexcept;
+      static Plugin &from(const clap_plugin *plugin, bool requireInitialized = true) noexcept;
 
       template <typename T>
       void initInterface(const T *&ptr, const char *id) noexcept;
@@ -385,6 +385,7 @@ namespace clap { namespace helpers {
       static const clap_plugin_gui_free_standing _pluginGuiFreeStanding;
 
       // state
+      bool _wasInitialized = false;
       bool _isActive = false;
       bool _isProcessing = false;
       double _sampleRate = 0;
