@@ -13,6 +13,7 @@ namespace clap { namespace helpers {
    class Heap {
    public:
       explicit Heap(uint32_t initialSize = 4096) { reserve(initialSize); }
+      ~Heap() { std::free(_base); }
 
       Heap(const Heap &) = delete;
       Heap(Heap &&) = delete;
