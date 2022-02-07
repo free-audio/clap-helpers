@@ -153,6 +153,8 @@ namespace clap { namespace helpers {
       self._plugin.stop_processing = Plugin<h, l>::clapStopProcessing;
       self._plugin.on_main_thread = Plugin<h, l>::clapOnMainThread;
 
+      self._wasInitialized = true;
+
       self._host.init();
       self.ensureMainThread("clap_plugin.init");
       return self.init();
