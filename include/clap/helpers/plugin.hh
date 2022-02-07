@@ -206,6 +206,10 @@ namespace clap { namespace helpers {
       void hostMisbehaving(const char *msg) const noexcept;
       void hostMisbehaving(const std::string &msg) const noexcept { hostMisbehaving(msg.c_str()); }
 
+      // Receives a copy of all the logging messages sent to the host.
+      // This is useful to have the messages in both the host's logs and the plugin's logs.
+      virtual void logTee(clap_log_severity severity, const char *msg) const noexcept {}
+
       /////////////////////
       // Thread Checking //
       /////////////////////

@@ -1159,6 +1159,7 @@ namespace clap { namespace helpers {
    /////////////
    template <MisbehaviourHandler h, CheckingLevel l>
    void Plugin<h, l>::log(clap_log_severity severity, const char *msg) const noexcept {
+      logTee(severity, msg);
       _host.log(severity, msg);
    }
 
