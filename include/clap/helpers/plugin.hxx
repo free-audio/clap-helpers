@@ -633,12 +633,15 @@ namespace clap { namespace helpers {
                }
 
                const bool isCoreSpace = ev->space_id == CLAP_CORE_EVENT_SPACE_ID;
-               const bool isParamEvent = ev->type == CLAP_EVENT_PARAM_VALUE || ev->type == CLAP_EVENT_PARAM_MOD;
+               const bool isParamEvent =
+                  ev->type == CLAP_EVENT_PARAM_VALUE || ev->type == CLAP_EVENT_PARAM_MOD;
                if (!isCoreSpace || !isParamEvent) {
                   std::ostringstream msg;
                   msg << "host called clap_plugin_params.flush() with space_id = " << ev->space_id
                       << ", and type = " << ev->type
-                      << " but this one must only contain CLAP_EVENT_PARAM_VALUE event type.";
+                      << " but this one must only contain CLAP_EVENT_PARAM_VALUE or "
+                         "CLAP_EVENT_PARAM_MOD"
+                         " event type from CLAP_CORE_EVENT_SPACE_ID.";
                   self.hostMisbehaving(msg.str());
                   continue;
                }
