@@ -632,9 +632,13 @@ namespace clap { namespace helpers {
                   continue;
                }
 
-               if (ev->space_id != CLAP_CORE_EVENT_SPACE_ID || ev->type != CLAP_EVENT_PARAM_VALUE) {
-                  self.hostMisbehaving("clap_plugin_params.flush must only contain "
-                                       "CLAP_EVENT_PARAM_VALUE event type");
+               if (ev->space_id != CLAP_CORE_EVENT_SPACE_ID ||
+                   !(ev->type == CLAP_EVENT_PARAM_VALUE || ev->type != CLAP_EVENT_PARAM_MOD)) {
+                  std::ostringstream msg;
+                  msg << "host called clap_plugin_params.flush() with space_id = " << ev->space_id
+                      << ", and type = " << ev->type
+                      << " but this one must only contain CLAP_EVENT_PARAM_VALUE event type.";
+                  self.hostMisbehaving(msg.str());
                   continue;
                }
 
@@ -1281,8 +1285,7 @@ namespace clap { namespace helpers {
    uint32_t Plugin<h, l>::compareAudioPortsInfo(const clap_audio_port_info &a,
                                                 const clap_audio_port_info &b) noexcept {
       if (a.in_place_pair != b.in_place_pair || a.flags != b.flags ||
-          a.channel_count != b.channel_count || !strcmp(a.port_type, b.port_type) ||
-          a.id != b.id)
+          a.channel_count != b.channel_count || !strcmp(a.port_type, b.port_type) || a.id != b.id)
          return CLAP_AUDIO_PORTS_RESCAN_ALL;
 
       if (strncmp(a.name, b.name, sizeof(a.name)))
