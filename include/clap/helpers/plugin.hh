@@ -166,10 +166,10 @@ namespace clap { namespace helpers {
       virtual bool guiSetScale(double scale) noexcept { return false; }
       virtual void guiShow() noexcept {}
       virtual void guiHide() noexcept {}
-      virtual bool guiSize(uint32_t *width, uint32_t *height) noexcept { return false; }
+      virtual bool guiGetSize(uint32_t *width, uint32_t *height) noexcept { return false; }
       virtual bool guiCanResize() const noexcept { return false; }
       virtual void guiRoundSize(uint32_t *width, uint32_t *height) noexcept {
-         guiSize(width, height);
+         guiGetSize(width, height);
       }
       virtual bool guiSetSize(uint32_t width, uint32_t height) noexcept { return false; }
 
@@ -345,7 +345,7 @@ namespace clap { namespace helpers {
       static void clapGuiDestroy(const clap_plugin *plugin) noexcept;
       static bool clapGuiSetScale(const clap_plugin *plugin, double scale) noexcept;
       static bool
-      clapGuiSize(const clap_plugin *plugin, uint32_t *width, uint32_t *height) noexcept;
+      clapGuiGetSize(const clap_plugin *plugin, uint32_t *width, uint32_t *height) noexcept;
       static bool
       clapGuiSetSize(const clap_plugin *plugin, uint32_t width, uint32_t height) noexcept;
       static void clapGuiShow(const clap_plugin *plugin) noexcept;

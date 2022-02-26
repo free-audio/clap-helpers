@@ -89,7 +89,7 @@ namespace clap { namespace helpers {
       clapGuiCreate,
       clapGuiDestroy,
       clapGuiSetScale,
-      clapGuiSize,
+      clapGuiGetSize,
       clapGuiCanResize,
       clapGuiRoundSize,
       clapGuiSetSize,
@@ -863,7 +863,7 @@ namespace clap { namespace helpers {
    // clap_plugin_gui //
    //-----------------//
    template <MisbehaviourHandler h, CheckingLevel l>
-   bool Plugin<h, l>::clapGuiSize(const clap_plugin *plugin,
+   bool Plugin<h, l>::clapGuiGetSize(const clap_plugin *plugin,
                                   uint32_t *width,
                                   uint32_t *height) noexcept {
       auto &self = from(plugin);
@@ -877,7 +877,7 @@ namespace clap { namespace helpers {
          }
       }
 
-      return self.guiSize(width, height);
+      return self.guiGetSize(width, height);
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
