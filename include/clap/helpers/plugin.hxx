@@ -86,35 +86,19 @@ namespace clap { namespace helpers {
 
    template <MisbehaviourHandler h, CheckingLevel l>
    const clap_plugin_gui Plugin<h, l>::_pluginGui = {
+      clapGuiIsApiSupported,
       clapGuiCreate,
       clapGuiDestroy,
       clapGuiSetScale,
       clapGuiGetSize,
       clapGuiCanResize,
-      clapGuiRoundSize,
+      clapGuiAdjustSize,
       clapGuiSetSize,
+      clapGuiAttach,
+      clapGuiSetTransient,
+      clapGuiSuggestTitle,
       clapGuiShow,
       clapGuiHide,
-   };
-
-   template <MisbehaviourHandler h, CheckingLevel l>
-   const clap_plugin_gui_x11 Plugin<h, l>::_pluginGuiX11 = {
-      clapGuiX11Attach,
-   };
-
-   template <MisbehaviourHandler h, CheckingLevel l>
-   const clap_plugin_gui_win32 Plugin<h, l>::_pluginGuiWin32 = {
-      clapGuiWin32Attach,
-   };
-
-   template <MisbehaviourHandler h, CheckingLevel l>
-   const clap_plugin_gui_cocoa Plugin<h, l>::_pluginGuiCocoa = {
-      clapGuiCocoaAttach,
-   };
-
-   template <MisbehaviourHandler h, CheckingLevel l>
-   const clap_plugin_gui_free_standing Plugin<h, l>::_pluginGuiFreeStanding = {
-      clapGuiFreeStandingOpen,
    };
 
    template <MisbehaviourHandler h, CheckingLevel l>
@@ -358,14 +342,6 @@ namespace clap { namespace helpers {
          return &_pluginPosixFdSupport;
       if (!strcmp(id, CLAP_EXT_GUI) && self.implementsGui())
          return &_pluginGui;
-      if (!strcmp(id, CLAP_EXT_GUI_X11) && self.implementsGuiX11())
-         return &_pluginGuiX11;
-      if (!strcmp(id, CLAP_EXT_GUI_WIN32) && self.implementsGuiWin32())
-         return &_pluginGuiWin32;
-      if (!strcmp(id, CLAP_EXT_GUI_COCOA) && self.implementsGuiCocoa())
-         return &_pluginGuiCocoa;
-      if (!strcmp(id, CLAP_EXT_GUI_FREE_STANDING) && self.implementsGuiFreeStanding())
-         return &_pluginGuiFreeStanding;
 
       return from(plugin).extension(id);
    }
@@ -864,8 +840,8 @@ namespace clap { namespace helpers {
    //-----------------//
    template <MisbehaviourHandler h, CheckingLevel l>
    bool Plugin<h, l>::clapGuiGetSize(const clap_plugin *plugin,
-                                  uint32_t *width,
-                                  uint32_t *height) noexcept {
+                                     uint32_t *width,
+                                     uint32_t *height) noexcept {
       auto &self = from(plugin);
       self.ensureMainThread("clap_plugin_gui.size");
 
@@ -897,9 +873,9 @@ namespace clap { namespace helpers {
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   void Plugin<h, l>::clapGuiRoundSize(const clap_plugin *plugin,
-                                       uint32_t *width,
-                                       uint32_t *height) noexcept {
+   bool Plugin<h, l>::clapGuiAdjustSize(const clap_plugin *plugin,
+                                        uint32_t *width,
+                                        uint32_t *height) noexcept {
       auto &self = from(plugin);
       self.ensureMainThread("clap_plugin_gui.round_size");
 
@@ -907,11 +883,11 @@ namespace clap { namespace helpers {
          if (!self._isGuiCreated) {
             self.hostMisbehaving("clap_plugin_gui.round_size() was called without a prior call to "
                                  "clap_plugin_gui.create()");
-            return;
+            return false;
          }
       }
 
-      self.guiRoundSize(width, height);
+      return self.guiAdjustSize(width, height);
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
@@ -936,9 +912,9 @@ namespace clap { namespace helpers {
 
          uint32_t testWidth = width;
          uint32_t testHeight = height;
-         self.guiRoundSize(&testWidth, &testHeight);
 
-         if (width != testWidth || height != testHeight) {
+         if (self.guiAdjustSize(&testWidth, &testHeight) &&
+             (width != testWidth || height != testHeight)) {
             std::ostringstream os;
             os << "clap_plugin_gui.set_size() was called with a size which was not adjusted by "
                   "clap_plugin_gui.round_size(): "
@@ -967,7 +943,7 @@ namespace clap { namespace helpers {
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   void Plugin<h, l>::clapGuiShow(const clap_plugin *plugin) noexcept {
+   bool Plugin<h, l>::clapGuiShow(const clap_plugin *plugin) noexcept {
       auto &self = from(plugin);
       self.ensureMainThread("clap_plugin_gui.show");
 
@@ -975,20 +951,20 @@ namespace clap { namespace helpers {
          if (!self._isGuiCreated) {
             self.hostMisbehaving("clap_plugin_gui.show() was called without a prior call to "
                                  "clap_plugin_gui.create()");
-            return;
+            return false;
          }
 
          if (!self._isGuiAttached) {
             self.hostMisbehaving("clap_plugin_gui.show() but the gui was not attached first");
-            return;
+            return false;
          }
       }
 
-      self.guiShow();
+      return self.guiShow();
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   void Plugin<h, l>::clapGuiHide(const clap_plugin *plugin) noexcept {
+   bool Plugin<h, l>::clapGuiHide(const clap_plugin *plugin) noexcept {
       auto &self = from(plugin);
       self.ensureMainThread("clap_plugin_gui.hide");
 
@@ -996,20 +972,20 @@ namespace clap { namespace helpers {
          if (!self._isGuiCreated) {
             self.hostMisbehaving("clap_plugin_gui.hide() was called without a prior call to "
                                  "clap_plugin_gui.create()");
-            return;
+            return false;
          }
 
          if (!self._isGuiAttached) {
             self.hostMisbehaving("clap_plugin_gui.hide() but the gui was not attached first");
-            return;
+            return false;
          }
       }
 
-      self.guiHide();
+      return self.guiHide();
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   bool Plugin<h, l>::clapGuiCreate(const clap_plugin *plugin) noexcept {
+   bool Plugin<h, l>::clapGuiCreate(const clap_plugin *plugin, uint32_t api) noexcept {
       auto &self = from(plugin);
       self.ensureMainThread("clap_plugin_gui.create");
 
@@ -1021,7 +997,7 @@ namespace clap { namespace helpers {
          }
       }
 
-      if (!self.guiCreate())
+      if (!self.guiCreate(api))
          return false;
 
       self._isGuiCreated = true;
@@ -1047,117 +1023,26 @@ namespace clap { namespace helpers {
       self._isGuiAttached = false;
    }
 
-   //---------------------//
-   // clap_plugin_gui_x11 //
-   //---------------------//
    template <MisbehaviourHandler h, CheckingLevel l>
-   bool Plugin<h, l>::clapGuiX11Attach(const clap_plugin *plugin,
-                                       const char *display_name,
-                                       unsigned long window) noexcept {
+   bool Plugin<h, l>::clapGuiAttach(const clap_plugin *plugin,
+                                    const clap_gui_window *parentWindow) noexcept {
       auto &self = from(plugin);
-      self.ensureMainThread("clap_plugin_gui_x11.attach");
+      self.ensureMainThread("clap_plugin_gui.attach");
 
       if (l >= CheckingLevel::Minimal) {
          if (!self._isGuiCreated) {
-            self.hostMisbehaving("clap_plugin_gui_x11.attach() was called without a prior call to "
+            self.hostMisbehaving("clap_plugin_gui.attach() was called without a prior call to "
                                  "clap_plugin_gui.create()");
             return false;
          }
 
          if (self._isGuiAttached) {
-            self.hostMisbehaving("clap_plugin_gui_x11.attach() but the gui was already attached");
+            self.hostMisbehaving("clap_plugin_gui.attach() but the gui was already attached");
             return true;
          }
       }
 
-      if (!self.guiX11Attach(display_name, window))
-         return false;
-
-      self._isGuiAttached = true;
-      return true;
-   }
-
-   //-----------------------//
-   // clap_plugin_gui_win32 //
-   //-----------------------//
-   template <MisbehaviourHandler h, CheckingLevel l>
-   bool Plugin<h, l>::clapGuiWin32Attach(const clap_plugin *plugin, clap_hwnd window) noexcept {
-      auto &self = from(plugin);
-      self.ensureMainThread("clap_plugin_gui_win32.attach");
-
-      if (l >= CheckingLevel::Minimal) {
-         if (!self._isGuiCreated) {
-            self.hostMisbehaving(
-               "clap_plugin_gui_win32.attach() was called without a prior call to "
-               "clap_plugin_gui.create()");
-            return false;
-         }
-
-         if (self._isGuiAttached) {
-            self.hostMisbehaving("clap_plugin_gui_win32.attach() but the gui was already attached");
-            return true;
-         }
-      }
-
-      if (!self.guiWin32Attach(window))
-         return false;
-
-      self._isGuiAttached = true;
-      return true;
-   }
-
-   //-----------------------//
-   // clap_plugin_gui_cocoa //
-   //-----------------------//
-   template <MisbehaviourHandler h, CheckingLevel l>
-   bool Plugin<h, l>::clapGuiCocoaAttach(const clap_plugin *plugin, void *nsView) noexcept {
-      auto &self = from(plugin);
-      self.ensureMainThread("clap_plugin_gui_cocoa.attach");
-
-      if (l >= CheckingLevel::Minimal) {
-         if (!self._isGuiCreated) {
-            self.hostMisbehaving(
-               "clap_plugin_gui_cocoa.attach() was called without a prior call to "
-               "clap_plugin_gui.create()");
-            return false;
-         }
-
-         if (self._isGuiAttached) {
-            self.hostMisbehaving("clap_plugin_gui_cocoa.attach() but the gui was already attached");
-            return true;
-         }
-      }
-
-      if (!self.guiCocoaAttach(nsView))
-         return false;
-
-      self._isGuiAttached = true;
-      return true;
-   }
-
-   //-------------------------------//
-   // clap_plugin_gui_free_standing //
-   //-------------------------------//
-   template <MisbehaviourHandler h, CheckingLevel l>
-   bool Plugin<h, l>::clapGuiFreeStandingOpen(const clap_plugin *plugin) noexcept {
-      auto &self = from(plugin);
-      self.ensureMainThread("clap_plugin_gui_free_standing.open");
-
-      if (l >= CheckingLevel::Minimal) {
-         if (!self._isGuiCreated) {
-            self.hostMisbehaving("clap_plugin_gui_free_standing.open() was called without a prior "
-                                 "call to clap_plugin_gui.create()");
-            return false;
-         }
-
-         if (self._isGuiAttached) {
-            self.hostMisbehaving(
-               "clap_plugin_gui_free_standing.open() but the gui was already attached");
-            return true;
-         }
-      }
-
-      if (!self.guiFreeStandingOpen())
+      if (!self.guiAttach(parentWindow))
          return false;
 
       self._isGuiAttached = true;
@@ -1288,13 +1173,23 @@ namespace clap { namespace helpers {
    template <MisbehaviourHandler h, CheckingLevel l>
    uint32_t Plugin<h, l>::compareAudioPortsInfo(const clap_audio_port_info &a,
                                                 const clap_audio_port_info &b) noexcept {
-      if (a.in_place_pair != b.in_place_pair || a.flags != b.flags ||
-          a.channel_count != b.channel_count || !strcmp(a.port_type, b.port_type) || a.id != b.id)
-         return CLAP_AUDIO_PORTS_RESCAN_ALL;
+      uint32_t flags = 0;
 
       if (strncmp(a.name, b.name, sizeof(a.name)))
-         return CLAP_AUDIO_PORTS_RESCAN_NAMES;
+         flags |= CLAP_AUDIO_PORTS_RESCAN_NAMES;
 
-      return 0;
+      if (a.flags != b.flags)
+         flags |= CLAP_AUDIO_PORTS_RESCAN_FLAGS;
+
+      if (a.channel_count != b.channel_count)
+         flags |= CLAP_AUDIO_PORTS_RESCAN_CHANNEL_COUNT;
+
+      if (strcmp(a.port_type, b.port_type))
+         flags |= CLAP_AUDIO_PORTS_RESCAN_PORT_TYPE;
+
+      if (a.in_place_pair != b.in_place_pair)
+         flags |= CLAP_AUDIO_PORTS_RESCAN_IN_PLACE_PAIR;
+
+      return flags;
    }
 }} // namespace clap::helpers

@@ -49,6 +49,7 @@ namespace clap { namespace helpers {
       virtual clap_process_status process(const clap_process *process) noexcept {
          return CLAP_PROCESS_SLEEP;
       }
+      virtual void reset() noexcept {}
       virtual void onMainThread() noexcept {}
       virtual const void *extension(const char *id) noexcept { return nullptr; }
 
@@ -161,43 +162,21 @@ namespace clap { namespace helpers {
       // clap_plugin_gui //
       //-----------------//
       virtual bool implementsGui() const noexcept { return false; }
-      virtual bool guiCreate() noexcept { return false; }
+      virtual bool guiIsApiSupported(uint32_t api) noexcept { return false; }
+      virtual bool guiCreate(uint32_t api) noexcept { return false; }
       virtual void guiDestroy() noexcept {}
       virtual bool guiSetScale(double scale) noexcept { return false; }
-      virtual void guiShow() noexcept {}
-      virtual void guiHide() noexcept {}
+      virtual bool guiShow() noexcept { return false; }
+      virtual bool guiHide() noexcept { return false; }
       virtual bool guiGetSize(uint32_t *width, uint32_t *height) noexcept { return false; }
       virtual bool guiCanResize() const noexcept { return false; }
-      virtual void guiRoundSize(uint32_t *width, uint32_t *height) noexcept {
-         guiGetSize(width, height);
+      virtual bool guiAdjustSize(uint32_t *width, uint32_t *height) noexcept {
+         return guiGetSize(width, height);
       }
       virtual bool guiSetSize(uint32_t width, uint32_t height) noexcept { return false; }
-
-      //---------------------//
-      // clap_plugin_gui_x11 //
-      //---------------------//
-      virtual bool implementsGuiX11() const noexcept { return false; }
-      virtual bool guiX11Attach(const char *displayName, unsigned long window) noexcept {
-         return false;
-      }
-
-      //-----------------------//
-      // clap_plugin_gui_win32 //
-      //-----------------------//
-      virtual bool implementsGuiWin32() const noexcept { return false; }
-      virtual bool guiWin32Attach(clap_hwnd window) noexcept { return false; }
-
-      //-----------------------//
-      // clap_plugin_gui_cocoa //
-      //-----------------------//
-      virtual bool implementsGuiCocoa() const noexcept { return false; }
-      virtual bool guiCocoaAttach(void *nsView) noexcept { return false; }
-
-      //-------------------------------//
-      // clap_plugin_gui_free_standing //
-      //-------------------------------//
-      virtual bool implementsGuiFreeStanding() const noexcept { return false; }
-      virtual bool guiFreeStandingOpen() noexcept { return false; }
+      virtual bool guiAttach(const clap_gui_window *parentWindow) noexcept { return false; }
+      virtual bool guiSetTransient(const clap_gui_window *parentWindow) noexcept { return false; }
+      virtual void guiSuggestTitle(const char *title) noexcept {}
 
       /////////////
       // Logging //
@@ -341,32 +320,27 @@ namespace clap { namespace helpers {
       static void clapOnPosixFd(const clap_plugin *plugin, int fd, int flags) noexcept;
 
       // clap_plugin_gui
-      static bool clapGuiCreate(const clap_plugin *plugin) noexcept;
+      static bool clapGuiIsApiSupported(const clap_plugin *plugin, uint32_t api) noexcept;
+      static bool clapGuiCreate(const clap_plugin *plugin, uint32_t api) noexcept;
       static void clapGuiDestroy(const clap_plugin *plugin) noexcept;
       static bool clapGuiSetScale(const clap_plugin *plugin, double scale) noexcept;
       static bool
       clapGuiGetSize(const clap_plugin *plugin, uint32_t *width, uint32_t *height) noexcept;
       static bool
       clapGuiSetSize(const clap_plugin *plugin, uint32_t width, uint32_t height) noexcept;
-      static void clapGuiShow(const clap_plugin *plugin) noexcept;
       static bool clapGuiCanResize(const clap_plugin *plugin) noexcept;
-      static void
-      clapGuiRoundSize(const clap_plugin *plugin, uint32_t *width, uint32_t *height) noexcept;
-      static void clapGuiHide(const clap_plugin *plugin) noexcept;
+      static bool
+      clapGuiAdjustSize(const clap_plugin *plugin, uint32_t *width, uint32_t *height) noexcept;
+      static bool clapGuiShow(const clap_plugin *plugin) noexcept;
+      static bool clapGuiHide(const clap_plugin *plugin) noexcept;
 
-      // clap_plugin_gui_x11
-      static bool clapGuiX11Attach(const clap_plugin *plugin,
-                                   const char *display_name,
-                                   unsigned long window) noexcept;
+      static bool clapGuiAttach(const clap_plugin *plugin,
+                                const clap_gui_window_t *window) noexcept;
 
-      // clap_plugin_gui_win32
-      static bool clapGuiWin32Attach(const clap_plugin *plugin, clap_hwnd window) noexcept;
+      static bool clapGuiSetTransient(const clap_plugin *plugin,
+                                      const clap_gui_window_t *window) noexcept;
 
-      // clap_plugin_gui_cocoa
-      static bool clapGuiCocoaAttach(const clap_plugin *plugin, void *nsView) noexcept;
-
-      // clap_plugin_gui_free_standing
-      static bool clapGuiFreeStandingOpen(const clap_plugin *plugin) noexcept;
+      static void clapGuiSuggestTitle(const clap_plugin *plugin, const char *title) noexcept;
 
       // interfaces
       static const clap_plugin_render _pluginRender;
@@ -383,10 +357,6 @@ namespace clap { namespace helpers {
       static const clap_plugin_timer_support _pluginTimerSupport;
       static const clap_plugin_posix_fd_support _pluginPosixFdSupport;
       static const clap_plugin_gui _pluginGui;
-      static const clap_plugin_gui_x11 _pluginGuiX11;
-      static const clap_plugin_gui_win32 _pluginGuiWin32;
-      static const clap_plugin_gui_cocoa _pluginGuiCocoa;
-      static const clap_plugin_gui_free_standing _pluginGuiFreeStanding;
 
       // state
       bool _wasInitialized = false;
