@@ -29,15 +29,32 @@ namespace clap { namespace helpers {
          return true;
       }
 
-      bool tryPop(T &value) {
+      bool tryPeek(T &value) {
          int r = _readOffset;
-
          if (r == _writeOffset)
             return false; // empty
 
          int rn = (r + 1) % CAPACITY;
          value = _data[r];
+         return true;
+      }
+
+      void consume() {
+         int r = _readOffset;
+         if (r == _writeOffset) {
+            assert(false && "consume should not have been called");
+            return; // empty
+         }
+
+         int rn = (r + 1) % CAPACITY;
          _readOffset = rn;
+      }
+
+      bool tryPop(T &value) {
+         if (!tryPeek(value))
+            return false;
+
+         consume();
          return true;
       }
 
