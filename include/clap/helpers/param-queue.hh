@@ -19,7 +19,7 @@ namespace clap { namespace helpers {
       }
 
       bool tryPush(const T &value) {
-         int w = _writeOffset.load(); // write element
+         int w = _writeOffset; // write element
          int wn = (w + 1) % CAPACITY; // next write element
 
          if (wn == _readOffset)
@@ -35,7 +35,6 @@ namespace clap { namespace helpers {
          if (r == _writeOffset)
             return false; // empty
 
-         int rn = (r + 1) % CAPACITY;
          value = _data[r];
          return true;
       }
