@@ -175,7 +175,7 @@ namespace clap { namespace helpers {
       }
       virtual bool guiSetSize(uint32_t width, uint32_t height) noexcept { return false; }
       virtual bool guiAttach(const clap_gui_window *parentWindow) noexcept { return false; }
-      virtual bool guiSetTransient(const clap_gui_window *parentWindow) noexcept { return false; }
+      virtual bool guiSetTransient(const clap_gui_window *dawWindow) noexcept { return false; }
       virtual void guiSuggestTitle(const char *title) noexcept {}
 
       /////////////
@@ -335,10 +335,10 @@ namespace clap { namespace helpers {
       static bool clapGuiHide(const clap_plugin *plugin) noexcept;
 
       static bool clapGuiAttach(const clap_plugin *plugin,
-                                const clap_gui_window_t *window) noexcept;
+                                const clap_gui_window_t *parentWindow) noexcept;
 
       static bool clapGuiSetTransient(const clap_plugin *plugin,
-                                      const clap_gui_window_t *window) noexcept;
+                                      const clap_gui_window_t *dawWindow) noexcept;
 
       static void clapGuiSuggestTitle(const clap_plugin *plugin, const char *title) noexcept;
 
@@ -366,5 +366,6 @@ namespace clap { namespace helpers {
 
       bool _isGuiCreated = false;
       bool _isGuiAttached = false;
+      bool _isGuiFloating = false;
    };
 }} // namespace clap::helpers
