@@ -3,6 +3,7 @@
 #include <array>
 #include <atomic>
 #include <cstddef>
+#include <cassert>
 
 namespace clap { namespace helpers {
    template <typename T, size_t CAPACITY>
