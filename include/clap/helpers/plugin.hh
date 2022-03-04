@@ -4,6 +4,9 @@
 #include <string>
 #include <string_view>
 #include <vector>
+#include <functional>
+#include <queue>
+#include <mutex>
 
 #include <clap/clap.h>
 
@@ -201,6 +204,8 @@ namespace clap { namespace helpers {
       // Utilities //
       ///////////////
       static Plugin &from(const clap_plugin *plugin, bool requireInitialized = true) noexcept;
+      void runOnMainThread(std::function<void()> callback);
+      void runCallbacksOnMainThread();
 
       template <typename T>
       void initInterface(const T *&ptr, const char *id) noexcept;
@@ -360,5 +365,8 @@ namespace clap { namespace helpers {
       bool _isGuiCreated = false;
       bool _isGuiFloating = false;
       std::string _guiWasCreatedWithApi;
+
+      std::mutex _mainThredCallbacksLock;
+      std::queue<std::function<void()>> _mainThredCallbacks;
    };
 }} // namespace clap::helpers

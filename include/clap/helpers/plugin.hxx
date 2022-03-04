@@ -156,7 +156,27 @@ namespace clap { namespace helpers {
    void Plugin<h, l>::clapOnMainThread(const clap_plugin *plugin) noexcept {
       auto &self = from(plugin);
       self.ensureMainThread("clap_plugin.on_main_thread");
+
+      self.runCallbacksOnMainThread();
       self.onMainThread();
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   void Plugin<h, l>::runCallbacksOnMainThread() {
+      while (true) {
+         std::function<void()> cb;
+
+         {
+            std::lock_guard<std::mutex> guard(_mainThredCallbacksLock);
+            if (_mainThredCallbacks.empty())
+               return;
+            cb = std::move(_mainThredCallbacks.front());
+            _mainThredCallbacks.pop();
+         }
+
+         if (cb)
+            cb();
+      }
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
@@ -991,7 +1011,9 @@ namespace clap { namespace helpers {
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   bool Plugin<h, l>::clapGuiIsApiSupported(const clap_plugin *plugin, const char *api, bool isFloating) noexcept {
+   bool Plugin<h, l>::clapGuiIsApiSupported(const clap_plugin *plugin,
+                                            const char *api,
+                                            bool isFloating) noexcept {
       auto &self = from(plugin);
       self.ensureMainThread("clap_plugin_gui.is_api_supported");
 
@@ -999,7 +1021,9 @@ namespace clap { namespace helpers {
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   bool Plugin<h, l>::clapGuiCreate(const clap_plugin *plugin, const clap_window *window, bool isFloating) noexcept {
+   bool Plugin<h, l>::clapGuiCreate(const clap_plugin *plugin,
+                                    const clap_window *window,
+                                    bool isFloating) noexcept {
       auto &self = from(plugin);
       self.ensureMainThread("clap_plugin_gui.create");
 
@@ -1184,6 +1208,17 @@ namespace clap { namespace helpers {
       }
 
       return *static_cast<Plugin *>(plugin->plugin_data);
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   void Plugin<h, l>::runOnMainThread(std::function<void()> callback) {
+      if (_host.canUseThreadCheck() && _host.isMainThread()) {
+         callback();
+         return;
+      }
+
+      std::lock_guard<std::mutex> guard(_mainThredCallbacksLock);
+      _mainThredCallbacks.emplace(std::move(callback));
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
