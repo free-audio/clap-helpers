@@ -113,6 +113,8 @@ namespace clap { namespace helpers {
       _plugin.deactivate = nullptr;
       _plugin.start_processing = nullptr;
       _plugin.stop_processing = nullptr;
+      _plugin.reset = nullptr;
+      _plugin.on_main_thread = nullptr;
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
@@ -135,6 +137,7 @@ namespace clap { namespace helpers {
       self._plugin.deactivate = Plugin<h, l>::clapDeactivate;
       self._plugin.start_processing = Plugin<h, l>::clapStartProcessing;
       self._plugin.stop_processing = Plugin<h, l>::clapStopProcessing;
+      self._plugin.reset = Plugin<h, l>::clapReset;
       self._plugin.on_main_thread = Plugin<h, l>::clapOnMainThread;
 
       self._wasInitialized = true;
@@ -287,6 +290,21 @@ namespace clap { namespace helpers {
 
       self.stopProcessing();
       self._isProcessing = false;
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   void Plugin<h, l>::clapReset(const clap_plugin *plugin) noexcept {
+      auto &self = from(plugin);
+      self.ensureAudioThread("clap_plugin.reset");
+
+      if (l >= CheckingLevel::Minimal) {
+         if (!self._isActive) {
+            self.hostMisbehaving("Host called clap_plugin.reset() on a deactivated plugin");
+            return;
+         }
+      }
+
+      self.reset();
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
@@ -1011,6 +1029,7 @@ namespace clap { namespace helpers {
       self._isGuiCreated = true;
       self._isGuiAttached = false;
       self._isGuiFloating = api == CLAP_GUI_API_FLOATING;
+      self._guiWasCreatedWithApi = api;
       return true;
    }
 
@@ -1052,7 +1071,14 @@ namespace clap { namespace helpers {
          }
 
          if (self._isGuiFloating) {
-            self.hostMisbehaving("clap_plugin_gui.attach() but the gui was created as a floating window");
+            self.hostMisbehaving(
+               "clap_plugin_gui.attach() but the gui was created as a floating window");
+            return false;
+         }
+
+         if (self._guiWasCreatedWithApi != parentWindow->api) {
+            self.hostMisbehaving("clap_plugin_gui.attach() was called with a window using a "
+                                 "different api than the one passed to clap_plugin_gui.create()");
             return false;
          }
       }
@@ -1072,8 +1098,9 @@ namespace clap { namespace helpers {
 
       if (l >= CheckingLevel::Minimal) {
          if (!self._isGuiCreated) {
-            self.hostMisbehaving("clap_plugin_gui.set_transient() was called without a prior call to "
-                                 "clap_plugin_gui.create()");
+            self.hostMisbehaving(
+               "clap_plugin_gui.set_transient() was called without a prior call to "
+               "clap_plugin_gui.create()");
             return false;
          }
 
@@ -1083,7 +1110,8 @@ namespace clap { namespace helpers {
          }
 
          if (!self._isGuiFloating) {
-            self.hostMisbehaving("clap_plugin_gui.set_transient() but the gui was not created as a floating window");
+            self.hostMisbehaving(
+               "clap_plugin_gui.set_transient() but the gui was not created as a floating window");
             return false;
          }
       }
@@ -1098,8 +1126,9 @@ namespace clap { namespace helpers {
 
       if (l >= CheckingLevel::Minimal) {
          if (!self._isGuiCreated) {
-            self.hostMisbehaving("clap_plugin_gui.suggest_title() was called without a prior call to "
-                                 "clap_plugin_gui.create()");
+            self.hostMisbehaving(
+               "clap_plugin_gui.suggest_title() was called without a prior call to "
+               "clap_plugin_gui.create()");
             return;
          }
 
@@ -1109,7 +1138,8 @@ namespace clap { namespace helpers {
          }
 
          if (!self._isGuiFloating) {
-            self.hostMisbehaving("clap_plugin_gui.suggest_title() but the gui was not created as a floating window");
+            self.hostMisbehaving(
+               "clap_plugin_gui.suggest_title() but the gui was not created as a floating window");
             return;
          }
 

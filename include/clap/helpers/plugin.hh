@@ -241,6 +241,7 @@ namespace clap { namespace helpers {
       static void clapDeactivate(const clap_plugin *plugin) noexcept;
       static bool clapStartProcessing(const clap_plugin *plugin) noexcept;
       static void clapStopProcessing(const clap_plugin *plugin) noexcept;
+      static void clapReset(const clap_plugin *plugin) noexcept;
       static clap_process_status clapProcess(const clap_plugin *plugin,
                                              const clap_process *process) noexcept;
       static void clapOnMainThread(const clap_plugin *plugin) noexcept;
@@ -367,5 +368,6 @@ namespace clap { namespace helpers {
       bool _isGuiCreated = false;
       bool _isGuiAttached = false;
       bool _isGuiFloating = false;
+      uint32_t _guiWasCreatedWithApi = 0;
    };
 }} // namespace clap::helpers
