@@ -124,7 +124,7 @@ namespace clap { namespace helpers {
                                const clap_event_header *event) {
          auto *self = static_cast<EventList *>(list->ctx);
          self->push(event);
-         return false;
+         return true;
       }
 
       static bool clapBoundedPushBack(const struct clap_output_events *list,
