@@ -35,7 +35,7 @@ namespace clap { namespace helpers {
          if (_events.capacity() == _events.size())
             _events.reserve(_events.capacity() * 2);
 
-         auto ptr = _heap.allocate(CLAP_ALIGN, size);
+         auto ptr = _heap.allocate(8, size);
          _events.push_back(_heap.offsetFromBase(ptr));
          auto hdr = static_cast<clap_event_header *>(ptr);
          hdr->size = size;
@@ -51,7 +51,7 @@ namespace clap { namespace helpers {
          if (_events.capacity() == _events.size())
             return nullptr;
 
-         auto ptr = _heap.tryAllocate(CLAP_ALIGN, size);
+         auto ptr = _heap.tryAllocate(8, size);
          if (!ptr)
             return nullptr;
 
@@ -118,16 +118,17 @@ namespace clap { namespace helpers {
          return self->get(index);
       }
 
-      static void clapPushBack(const struct clap_output_events *list,
+      static bool clapPushBack(const struct clap_output_events *list,
                                const clap_event_header *event) {
          auto *self = static_cast<EventList *>(list->ctx);
          self->push(event);
+         return false;
       }
 
-      static void clapBoundedPushBack(const struct clap_output_events *list,
+      static bool clapBoundedPushBack(const struct clap_output_events *list,
                                       const clap_event_header_t *event) {
          auto *self = static_cast<EventList *>(list->ctx);
-         self->tryPush(event);
+         return self->tryPush(event);
       }
 
       const clap_input_events _inputEvents = {this, &clapSize, &clapGet};

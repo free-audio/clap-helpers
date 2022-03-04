@@ -2,8 +2,8 @@
 
 #include <array>
 #include <atomic>
-#include <cstddef>
 #include <cassert>
+#include <cstddef>
 
 namespace clap { namespace helpers {
    template <typename T, size_t CAPACITY>
@@ -19,7 +19,7 @@ namespace clap { namespace helpers {
       }
 
       bool tryPush(const T &value) {
-         int w = _writeOffset; // write element
+         int w = _writeOffset;        // write element
          int wn = (w + 1) % CAPACITY; // next write element
 
          if (wn == _readOffset)

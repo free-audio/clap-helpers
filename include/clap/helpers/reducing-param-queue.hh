@@ -12,6 +12,7 @@ namespace clap { namespace helpers {
       using key_type = K;
       using value_type = V;
       using queue_type = std::unordered_map<key_type, value_type>;
+      using consumer_type = const std::function<void(const key_type &key, const value_type &value)>;
 
       ReducingParamQueue();
 
@@ -20,7 +21,7 @@ namespace clap { namespace helpers {
       void set(const key_type &key, const value_type &value);
       void producerDone();
 
-      void consume(const std::function<void(const key_type &key, const value_type &value)> consumer);
+      void consume(const consumer_type &consumer);
 
       void reset();
 
