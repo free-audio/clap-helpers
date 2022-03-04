@@ -94,8 +94,6 @@ namespace clap { namespace helpers {
       clapGuiCanResize,
       clapGuiAdjustSize,
       clapGuiSetSize,
-      clapGuiAttach,
-      clapGuiSetTransient,
       clapGuiSuggestTitle,
       clapGuiShow,
       clapGuiHide,
@@ -971,11 +969,6 @@ namespace clap { namespace helpers {
                                  "clap_plugin_gui.create()");
             return false;
          }
-
-         if (!self._isGuiAttached) {
-            self.hostMisbehaving("clap_plugin_gui.show() but the gui was not attached first");
-            return false;
-         }
       }
 
       return self.guiShow();
@@ -992,26 +985,21 @@ namespace clap { namespace helpers {
                                  "clap_plugin_gui.create()");
             return false;
          }
-
-         if (!self._isGuiAttached) {
-            self.hostMisbehaving("clap_plugin_gui.hide() but the gui was not attached first");
-            return false;
-         }
       }
 
       return self.guiHide();
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   bool Plugin<h, l>::clapGuiIsApiSupported(const clap_plugin *plugin, uint32_t api) noexcept {
+   bool Plugin<h, l>::clapGuiIsApiSupported(const clap_plugin *plugin, const char *api, bool isFloating) noexcept {
       auto &self = from(plugin);
       self.ensureMainThread("clap_plugin_gui.is_api_supported");
 
-      return self.guiIsApiSupported(api);
+      return self.guiIsApiSupported(api, isFloating);
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   bool Plugin<h, l>::clapGuiCreate(const clap_plugin *plugin, uint32_t api) noexcept {
+   bool Plugin<h, l>::clapGuiCreate(const clap_plugin *plugin, const clap_window *window, bool isFloating) noexcept {
       auto &self = from(plugin);
       self.ensureMainThread("clap_plugin_gui.create");
 
@@ -1023,13 +1011,12 @@ namespace clap { namespace helpers {
          }
       }
 
-      if (!self.guiCreate(api))
+      if (!self.guiCreate(window, isFloating))
          return false;
 
       self._isGuiCreated = true;
-      self._isGuiAttached = false;
-      self._isGuiFloating = api == CLAP_GUI_API_FLOATING;
-      self._guiWasCreatedWithApi = api;
+      self._isGuiFloating = isFloating;
+      self._guiWasCreatedWithApi = window->api;
       return true;
    }
 
@@ -1048,75 +1035,6 @@ namespace clap { namespace helpers {
 
       self.guiDestroy();
       self._isGuiCreated = false;
-      self._isGuiAttached = false;
-      self._isGuiFloating = false;
-   }
-
-   template <MisbehaviourHandler h, CheckingLevel l>
-   bool Plugin<h, l>::clapGuiAttach(const clap_plugin *plugin,
-                                    const clap_gui_window *parentWindow) noexcept {
-      auto &self = from(plugin);
-      self.ensureMainThread("clap_plugin_gui.attach");
-
-      if (l >= CheckingLevel::Minimal) {
-         if (!self._isGuiCreated) {
-            self.hostMisbehaving("clap_plugin_gui.attach() was called without a prior call to "
-                                 "clap_plugin_gui.create()");
-            return false;
-         }
-
-         if (self._isGuiAttached) {
-            self.hostMisbehaving("clap_plugin_gui.attach() but the gui was already attached");
-            return false;
-         }
-
-         if (self._isGuiFloating) {
-            self.hostMisbehaving(
-               "clap_plugin_gui.attach() but the gui was created as a floating window");
-            return false;
-         }
-
-         if (self._guiWasCreatedWithApi != parentWindow->api) {
-            self.hostMisbehaving("clap_plugin_gui.attach() was called with a window using a "
-                                 "different api than the one passed to clap_plugin_gui.create()");
-            return false;
-         }
-      }
-
-      if (!self.guiAttach(parentWindow))
-         return false;
-
-      self._isGuiAttached = true;
-      return true;
-   }
-
-   template <MisbehaviourHandler h, CheckingLevel l>
-   bool Plugin<h, l>::clapGuiSetTransient(const clap_plugin *plugin,
-                                          const clap_gui_window *dawWindow) noexcept {
-      auto &self = from(plugin);
-      self.ensureMainThread("clap_plugin_gui.set_transient");
-
-      if (l >= CheckingLevel::Minimal) {
-         if (!self._isGuiCreated) {
-            self.hostMisbehaving(
-               "clap_plugin_gui.set_transient() was called without a prior call to "
-               "clap_plugin_gui.create()");
-            return false;
-         }
-
-         if (self._isGuiAttached) {
-            self.hostMisbehaving("clap_plugin_gui.set_transient() is only for floating window");
-            return true;
-         }
-
-         if (!self._isGuiFloating) {
-            self.hostMisbehaving(
-               "clap_plugin_gui.set_transient() but the gui was not created as a floating window");
-            return false;
-         }
-      }
-
-      return self.guiSetTransient(dawWindow);
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
@@ -1129,11 +1047,6 @@ namespace clap { namespace helpers {
             self.hostMisbehaving(
                "clap_plugin_gui.suggest_title() was called without a prior call to "
                "clap_plugin_gui.create()");
-            return;
-         }
-
-         if (self._isGuiAttached) {
-            self.hostMisbehaving("clap_plugin_gui.suggest_title() is only for floating window");
             return;
          }
 

@@ -162,8 +162,8 @@ namespace clap { namespace helpers {
       // clap_plugin_gui //
       //-----------------//
       virtual bool implementsGui() const noexcept { return false; }
-      virtual bool guiIsApiSupported(uint32_t api) noexcept { return false; }
-      virtual bool guiCreate(uint32_t api) noexcept { return false; }
+      virtual bool guiIsApiSupported(const char *api, bool isFloating) noexcept { return false; }
+      virtual bool guiCreate(const clap_window *window, bool isFloating) noexcept { return false; }
       virtual void guiDestroy() noexcept {}
       virtual bool guiSetScale(double scale) noexcept { return false; }
       virtual bool guiShow() noexcept { return false; }
@@ -174,8 +174,6 @@ namespace clap { namespace helpers {
          return guiGetSize(width, height);
       }
       virtual bool guiSetSize(uint32_t width, uint32_t height) noexcept { return false; }
-      virtual bool guiAttach(const clap_gui_window *parentWindow) noexcept { return false; }
-      virtual bool guiSetTransient(const clap_gui_window *dawWindow) noexcept { return false; }
       virtual void guiSuggestTitle(const char *title) noexcept {}
 
       /////////////
@@ -321,8 +319,8 @@ namespace clap { namespace helpers {
       static void clapOnPosixFd(const clap_plugin *plugin, int fd, int flags) noexcept;
 
       // clap_plugin_gui
-      static bool clapGuiIsApiSupported(const clap_plugin *plugin, uint32_t api) noexcept;
-      static bool clapGuiCreate(const clap_plugin *plugin, uint32_t api) noexcept;
+      static bool clapGuiIsApiSupported(const clap_plugin *plugin, const char *api, bool isFloating) noexcept;
+      static bool clapGuiCreate(const clap_plugin *plugin, const clap_window *window, bool isFloating) noexcept;
       static void clapGuiDestroy(const clap_plugin *plugin) noexcept;
       static bool clapGuiSetScale(const clap_plugin *plugin, double scale) noexcept;
       static bool
@@ -334,12 +332,6 @@ namespace clap { namespace helpers {
       clapGuiAdjustSize(const clap_plugin *plugin, uint32_t *width, uint32_t *height) noexcept;
       static bool clapGuiShow(const clap_plugin *plugin) noexcept;
       static bool clapGuiHide(const clap_plugin *plugin) noexcept;
-
-      static bool clapGuiAttach(const clap_plugin *plugin,
-                                const clap_gui_window_t *parentWindow) noexcept;
-
-      static bool clapGuiSetTransient(const clap_plugin *plugin,
-                                      const clap_gui_window_t *dawWindow) noexcept;
 
       static void clapGuiSuggestTitle(const clap_plugin *plugin, const char *title) noexcept;
 
@@ -366,8 +358,7 @@ namespace clap { namespace helpers {
       double _sampleRate = 0;
 
       bool _isGuiCreated = false;
-      bool _isGuiAttached = false;
       bool _isGuiFloating = false;
-      uint32_t _guiWasCreatedWithApi = 0;
+      std::string _guiWasCreatedWithApi = 0;
    };
 }} // namespace clap::helpers
