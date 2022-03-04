@@ -359,6 +359,6 @@ namespace clap { namespace helpers {
 
       bool _isGuiCreated = false;
       bool _isGuiFloating = false;
-      std::string _guiWasCreatedWithApi = 0;
+      std::string _guiWasCreatedWithApi;
    };
 }} // namespace clap::helpers
