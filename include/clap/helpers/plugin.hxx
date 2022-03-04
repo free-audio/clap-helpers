@@ -116,7 +116,9 @@ namespace clap { namespace helpers {
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   Plugin<h, l>::~Plugin() = default;
+   Plugin<h, l>::~Plugin() {
+      assert(_mainThredCallbacks.empty());
+   }
 
    /////////////////////
    // CLAP Interfaces //
@@ -149,6 +151,8 @@ namespace clap { namespace helpers {
    void Plugin<h, l>::clapDestroy(const clap_plugin *plugin) noexcept {
       auto &self = from(plugin, false);
       self.ensureMainThread("clap_plugin.destroy");
+      self._isBeingDestroyed = true;
+      self.runCallbacksOnMainThread();
       delete &from(plugin);
    }
 
@@ -163,6 +167,14 @@ namespace clap { namespace helpers {
 
    template <MisbehaviourHandler h, CheckingLevel l>
    void Plugin<h, l>::runCallbacksOnMainThread() {
+      if (l >= CheckingLevel::Minimal) {
+         if (_host.canUseThreadCheck() && !_host.isMainThread()) {
+            _host.pluginMisbehaving(
+               "plugin called runCallbacksOnMainThread(), but not on the main thread!");
+            return;
+         }
+      }
+
       while (true) {
          std::function<void()> cb;
 

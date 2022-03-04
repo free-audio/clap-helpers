@@ -1,12 +1,12 @@
 #pragma once
 
 #include <cassert>
+#include <functional>
+#include <mutex>
+#include <queue>
 #include <string>
 #include <string_view>
 #include <vector>
-#include <functional>
-#include <queue>
-#include <mutex>
 
 #include <clap/clap.h>
 
@@ -204,7 +204,13 @@ namespace clap { namespace helpers {
       // Utilities //
       ///////////////
       static Plugin &from(const clap_plugin *plugin, bool requireInitialized = true) noexcept;
+
+      // runs the callback immediately if on the main thread, otherwise queue it.
+      // be aware that the callback may be ran during the plugin destruction phase,
+      // so check isBeingDestroyed() and ajust your code.
       void runOnMainThread(std::function<void()> callback);
+
+      // This actually runs callbacks on the main thread, you should not need to call it
       void runCallbacksOnMainThread();
 
       template <typename T>
@@ -224,6 +230,8 @@ namespace clap { namespace helpers {
          assert(_sampleRate > 0);
          return _sampleRate;
       }
+
+      bool isBeingDestroyed() const noexcept { return _isBeingDestroyed; }
 
    protected:
       HostProxy<h, l> _host;
@@ -324,8 +332,10 @@ namespace clap { namespace helpers {
       static void clapOnPosixFd(const clap_plugin *plugin, int fd, int flags) noexcept;
 
       // clap_plugin_gui
-      static bool clapGuiIsApiSupported(const clap_plugin *plugin, const char *api, bool isFloating) noexcept;
-      static bool clapGuiCreate(const clap_plugin *plugin, const clap_window *window, bool isFloating) noexcept;
+      static bool
+      clapGuiIsApiSupported(const clap_plugin *plugin, const char *api, bool isFloating) noexcept;
+      static bool
+      clapGuiCreate(const clap_plugin *plugin, const clap_window *window, bool isFloating) noexcept;
       static void clapGuiDestroy(const clap_plugin *plugin) noexcept;
       static bool clapGuiSetScale(const clap_plugin *plugin, double scale) noexcept;
       static bool
@@ -360,6 +370,7 @@ namespace clap { namespace helpers {
       bool _wasInitialized = false;
       bool _isActive = false;
       bool _isProcessing = false;
+      bool _isBeingDestroyed = false;
       double _sampleRate = 0;
 
       bool _isGuiCreated = false;
