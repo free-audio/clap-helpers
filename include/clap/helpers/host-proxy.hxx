@@ -354,7 +354,7 @@ namespace clap { namespace helpers {
          return false;
 
       if (_hostGui->request_resize && _hostGui->request_hide && _hostGui->request_show &&
-          _hostGui->window_closed)
+          _hostGui->closed)
          return true;
 
       hostMisbehaving("clap_host_gui is partially implemented");
@@ -383,10 +383,10 @@ namespace clap { namespace helpers {
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   void HostProxy<h, l>::guiWindowClosed() const noexcept {
+   void HostProxy<h, l>::guiClosed(bool wasDestroyed) const noexcept {
       assert(canUseGui());
-      ensureMainThread("gui.window_closed");
-      _hostGui->window_closed(_host);
+      ensureMainThread("gui.closed");
+      _hostGui->closed(_host, wasDestroyed);
    }
 
    ///////////////////
