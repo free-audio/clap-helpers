@@ -45,8 +45,7 @@ namespace clap { namespace helpers {
    }
 
    template <typename K, typename V>
-   void ReducingParamQueue<K, V>::consume(
-      const std::function<void(const key_type &key, const value_type &value)> consumer) {
+   void ReducingParamQueue<K, V>::consume(const consumer_type &consumer) {
       assert(consumer);
 
       if (!_consumer)
