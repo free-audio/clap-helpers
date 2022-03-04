@@ -1,6 +1,8 @@
 #pragma once
 
 #include <cstring>
+#include <cstdint>
+#include <vector>
 
 #include <clap/events.h>
 
@@ -35,7 +37,7 @@ namespace clap { namespace helpers {
          if (_events.capacity() == _events.size())
             _events.reserve(_events.capacity() * 2);
 
-         auto ptr = _heap.allocate(8, size);
+         auto ptr = _heap.allocate(alignof(clap_event_header), size);
          _events.push_back(_heap.offsetFromBase(ptr));
          auto hdr = static_cast<clap_event_header *>(ptr);
          hdr->size = size;
@@ -51,7 +53,7 @@ namespace clap { namespace helpers {
          if (_events.capacity() == _events.size())
             return nullptr;
 
-         auto ptr = _heap.tryAllocate(8, size);
+         auto ptr = _heap.tryAllocate(alignof(clap_event_header), size);
          if (!ptr)
             return nullptr;
 
