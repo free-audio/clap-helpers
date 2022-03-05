@@ -94,6 +94,8 @@ namespace clap { namespace helpers {
       clapGuiCanResize,
       clapGuiAdjustSize,
       clapGuiSetSize,
+      clapGuiSetParent,
+      clapGuiSetTransient,
       clapGuiSuggestTitle,
       clapGuiShow,
       clapGuiHide,
@@ -1034,7 +1036,7 @@ namespace clap { namespace helpers {
 
    template <MisbehaviourHandler h, CheckingLevel l>
    bool Plugin<h, l>::clapGuiCreate(const clap_plugin *plugin,
-                                    const clap_window *window,
+                                    const char *api,
                                     bool isFloating) noexcept {
       auto &self = from(plugin);
       self.ensureMainThread("clap_plugin_gui.create");
@@ -1043,16 +1045,24 @@ namespace clap { namespace helpers {
          if (self._isGuiCreated) {
             self.hostMisbehaving(
                "clap_plugin_gui.create() was called while the plugin gui was already created");
-            return true;
+            return false;
+         }
+
+         if (!isFloating && !api) {
+            self.hostMisbehaving(
+               "clap_plugin_gui.create() was called with a null api and a non floating window");
+            return false;
          }
       }
 
-      if (!self.guiCreate(window, isFloating))
+      self._guiApi = api;
+      self._isGuiFloating = isFloating;
+      self._isGuiEmbedded = false;
+
+      if (!self.guiCreate(api, isFloating))
          return false;
 
       self._isGuiCreated = true;
-      self._isGuiFloating = isFloating;
-      self._guiWasCreatedWithApi = window->api;
       return true;
    }
 
@@ -1071,6 +1081,57 @@ namespace clap { namespace helpers {
 
       self.guiDestroy();
       self._isGuiCreated = false;
+      self._isGuiEmbedded = false;
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   bool Plugin<h, l>::clapGuiSetParent(const clap_plugin *plugin,
+                                       const clap_window *window) noexcept {
+      auto &self = from(plugin);
+      self.ensureMainThread("clap_plugin_gui.set_parent");
+
+      if (l >= CheckingLevel::Minimal) {
+         if (!self._isGuiCreated) {
+            self.hostMisbehaving(
+               "clap_plugin_gui.set_parent() was called while the plugin gui was not created");
+            return false;
+         }
+
+         if (self._isGuiFloating) {
+            self.hostMisbehaving("clap_plugin_gui.set_parent() was called while the plugin gui is "
+                                 "a floating window, use set_transient() instead");
+            return false;
+         }
+      }
+
+      if (!self.guiSetParent(window))
+         return false;
+
+      self._isGuiEmbedded = true;
+      return true;
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   bool Plugin<h, l>::clapGuiSetTransient(const clap_plugin *plugin,
+                                          const clap_window *window) noexcept {
+      auto &self = from(plugin);
+      self.ensureMainThread("clap_plugin_gui.set_transient");
+
+      if (l >= CheckingLevel::Minimal) {
+         if (!self._isGuiCreated) {
+            self.hostMisbehaving(
+               "clap_plugin_gui.set_transient() was called while the plugin gui was not created");
+            return false;
+         }
+
+         if (!self._isGuiFloating) {
+            self.hostMisbehaving("clap_plugin_gui.set_transient() was called while the plugin gui "
+                                 "isn't a floating window, use set_parent() instead");
+            return false;
+         }
+      }
+
+      return self.guiSetTransient(window);
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
