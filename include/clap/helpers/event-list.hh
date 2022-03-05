@@ -24,11 +24,13 @@ namespace clap { namespace helpers {
       EventList &operator=(const EventList &) = delete;
       EventList &operator=(EventList &&) = delete;
 
+      static const constexpr size_t SAFE_ALIGN = 8;
+
       void reserveEvents(size_t capacity) { _events.reserve(capacity); }
 
       void reserveHeap(size_t size) { _heap.reserve(size); }
 
-      clap_event_header *allocate(size_t size) {
+      clap_event_header *allocate(size_t align, size_t size) {
          assert(size >= sizeof(clap_event_header));
          if (size > _maxEventSize)
             return nullptr;
@@ -37,14 +39,14 @@ namespace clap { namespace helpers {
          if (_events.capacity() == _events.size())
             _events.reserve(_events.capacity() * 2);
 
-         auto ptr = _heap.allocate(alignof(clap_event_header), size);
+         auto ptr = _heap.allocate(align, size);
          _events.push_back(_heap.offsetFromBase(ptr));
          auto hdr = static_cast<clap_event_header *>(ptr);
          hdr->size = size;
          return hdr;
       }
 
-      clap_event_header *tryAllocate(size_t size) {
+      clap_event_header *tryAllocate(size_t align, size_t size) {
          assert(size >= sizeof(clap_event_header));
          if (size > _maxEventSize)
             return nullptr;
@@ -53,7 +55,7 @@ namespace clap { namespace helpers {
          if (_events.capacity() == _events.size())
             return nullptr;
 
-         auto ptr = _heap.tryAllocate(alignof(clap_event_header), size);
+         auto ptr = _heap.tryAllocate(align, size);
          if (!ptr)
             return nullptr;
 
@@ -65,11 +67,11 @@ namespace clap { namespace helpers {
 
       template <typename T>
       T *allocate() {
-         return allocate(sizeof(T));
+         return allocate(alignof(T), sizeof(T));
       }
 
       void push(const clap_event_header *h) {
-         auto ptr = allocate(h->size);
+         auto ptr = allocate(SAFE_ALIGN, h->size);
          if (!ptr)
             return;
 
@@ -77,7 +79,7 @@ namespace clap { namespace helpers {
       }
 
       bool tryPush(const clap_event_header *h) {
-         auto ptr = tryAllocate(h->size);
+         auto ptr = tryAllocate(SAFE_ALIGN, h->size);
          if (!ptr)
             return false;
 
