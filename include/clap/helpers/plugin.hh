@@ -178,8 +178,8 @@ namespace clap { namespace helpers {
       }
       virtual bool guiSetSize(uint32_t width, uint32_t height) noexcept { return false; }
       virtual void guiSuggestTitle(const char *title) noexcept {}
-      virtual bool guiSetParent(const clap_window *window) noexcept {}
-      virtual bool guiSetTransient(const clap_window *window) noexcept {}
+      virtual bool guiSetParent(const clap_window *window) noexcept { return false; }
+      virtual bool guiSetTransient(const clap_window *window) noexcept { return false; }
 
       /////////////
       // Logging //
