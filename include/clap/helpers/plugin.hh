@@ -79,8 +79,8 @@ namespace clap { namespace helpers {
       // clap_plugin_state //
       //-------------------//
       virtual bool implementsState() const noexcept { return false; }
-      virtual bool stateSave(clap_ostream *stream) noexcept { return false; }
-      virtual bool stateLoad(clap_istream *stream) noexcept { return false; }
+      virtual bool stateSave(const clap_ostream *stream) noexcept { return false; }
+      virtual bool stateLoad(const clap_istream *stream) noexcept { return false; }
 
       //-------------------------//
       // clap_plugin_preset_load //
@@ -272,8 +272,8 @@ namespace clap { namespace helpers {
       static void clapThreadPoolExec(const clap_plugin *plugin, uint32_t task_index) noexcept;
 
       // clap_plugin_state
-      static bool clapStateSave(const clap_plugin *plugin, clap_ostream *stream) noexcept;
-      static bool clapStateLoad(const clap_plugin *plugin, clap_istream *stream) noexcept;
+      static bool clapStateSave(const clap_plugin *plugin, const clap_ostream *stream) noexcept;
+      static bool clapStateLoad(const clap_plugin *plugin, const clap_istream *stream) noexcept;
 
       // clap_plugin_preset
       static bool clapPresetLoadFromFile(const clap_plugin *plugin, const char *path) noexcept;

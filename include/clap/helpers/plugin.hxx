@@ -451,7 +451,7 @@ namespace clap { namespace helpers {
    // clap_plugin_state //
    //-------------------//
    template <MisbehaviourHandler h, CheckingLevel l>
-   bool Plugin<h, l>::clapStateSave(const clap_plugin *plugin, clap_ostream *stream) noexcept {
+   bool Plugin<h, l>::clapStateSave(const clap_plugin *plugin, const clap_ostream *stream) noexcept {
       auto &self = from(plugin);
       self.ensureMainThread("clap_plugin_state.save");
 
@@ -459,7 +459,7 @@ namespace clap { namespace helpers {
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   bool Plugin<h, l>::clapStateLoad(const clap_plugin *plugin, clap_istream *stream) noexcept {
+   bool Plugin<h, l>::clapStateLoad(const clap_plugin *plugin, const clap_istream *stream) noexcept {
       auto &self = from(plugin);
       self.ensureMainThread("clap_plugin_state.load");
 
