@@ -32,6 +32,14 @@ namespace clap { namespace helpers {
    }
 
    template <typename K, typename V>
+   void ReducingParamQueue<K, V>::setOrUpdate(const key_type &key, const value_type &value) {
+      auto prod = _producer.load();
+      auto res = prod->insert({key, value});
+      if (!res.second && res.first != prod->end())
+         res.first->second.update(value);
+   }
+
+   template <typename K, typename V>
    void ReducingParamQueue<K, V>::producerDone() {
       if (_consumer)
          return;

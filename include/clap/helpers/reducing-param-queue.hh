@@ -5,7 +5,20 @@
 #include <functional>
 #include <unordered_map>
 
+#include <clap/private/macros.h>
+
 namespace clap { namespace helpers {
+
+#ifdef CLAP_HAS_CXX20
+   template <typename T>
+   concept UpdatableValue = requires(T &a, const T &b) {
+      // update a with b, b being newer than a
+      { a.update(b); };
+   };
+#endif
+
+   // TODO: when switching to C++20
+   // template <typename K, UpdatableValue V>
    template <typename K, typename V>
    class ReducingParamQueue {
    public:
@@ -19,6 +32,7 @@ namespace clap { namespace helpers {
       void setCapacity(size_t capacity);
 
       void set(const key_type &key, const value_type &value);
+      void setOrUpdate(const key_type &key, const value_type &value);
       void producerDone();
 
       void consume(const consumer_type &consumer);
