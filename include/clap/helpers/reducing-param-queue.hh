@@ -13,7 +13,7 @@ namespace clap { namespace helpers {
    template <typename T>
    concept UpdatableValue = requires(T &a, const T &b) {
       // update a with b, b being newer than a
-      { a.update(b); };
+      { a.update(b) };
    };
 #endif
 
