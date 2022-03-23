@@ -114,7 +114,7 @@ namespace clap { namespace helpers {
          return;
 
       std::ostringstream msg;
-      msg << "Host called the method clap_host_" << method
+      msg << "Plugin called the method clap_host_" << method
           << "() on wrong thread! It must be called on main thread!";
       pluginMisbehaving(msg.str());
    }
@@ -128,7 +128,7 @@ namespace clap { namespace helpers {
          return;
 
       std::ostringstream msg;
-      msg << "Host called the method clap_host_" << method
+      msg << "Plugin called the method clap_host_" << method
           << "() on wrong thread! It must be called on audio thread!";
       pluginMisbehaving(msg.str());
    }
