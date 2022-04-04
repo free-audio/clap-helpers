@@ -166,6 +166,9 @@ namespace clap { namespace helpers {
       //-----------------//
       virtual bool implementsGui() const noexcept { return false; }
       virtual bool guiIsApiSupported(const char *api, bool isFloating) noexcept { return false; }
+      virtual bool guiGetPreferredApi(const char **api, bool *is_floating) noexcept {
+         return false;
+      }
       virtual bool guiCreate(const char *api, bool isFloating) noexcept { return false; }
       virtual void guiDestroy() noexcept {}
       virtual bool guiSetScale(double scale) noexcept { return false; }
@@ -173,6 +176,7 @@ namespace clap { namespace helpers {
       virtual bool guiHide() noexcept { return false; }
       virtual bool guiGetSize(uint32_t *width, uint32_t *height) noexcept { return false; }
       virtual bool guiCanResize() const noexcept { return false; }
+      virtual bool guiGetResizeHints(clap_gui_resize_hints_t *hints) noexcept { return false; }
       virtual bool guiAdjustSize(uint32_t *width, uint32_t *height) noexcept {
          return guiGetSize(width, height);
       }
@@ -336,6 +340,9 @@ namespace clap { namespace helpers {
       // clap_plugin_gui
       static bool
       clapGuiIsApiSupported(const clap_plugin *plugin, const char *api, bool isFloating) noexcept;
+      static bool clapGuiGetPreferredApi(const clap_plugin_t *plugin,
+                                         const char **api,
+                                         bool *is_floating) noexcept;
       static bool
       clapGuiCreate(const clap_plugin *plugin, const char *api, bool isFloating) noexcept;
       static void clapGuiDestroy(const clap_plugin *plugin) noexcept;
@@ -345,6 +352,8 @@ namespace clap { namespace helpers {
       static bool
       clapGuiSetSize(const clap_plugin *plugin, uint32_t width, uint32_t height) noexcept;
       static bool clapGuiCanResize(const clap_plugin *plugin) noexcept;
+      static bool clapGuiGetResizeHints(const clap_plugin_t *plugin,
+                                        clap_gui_resize_hints_t *hints) noexcept;
       static bool
       clapGuiAdjustSize(const clap_plugin *plugin, uint32_t *width, uint32_t *height) noexcept;
       static bool clapGuiShow(const clap_plugin *plugin) noexcept;

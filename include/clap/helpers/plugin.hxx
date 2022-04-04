@@ -87,11 +87,13 @@ namespace clap { namespace helpers {
    template <MisbehaviourHandler h, CheckingLevel l>
    const clap_plugin_gui Plugin<h, l>::_pluginGui = {
       clapGuiIsApiSupported,
+      clapGuiGetPreferredApi,
       clapGuiCreate,
       clapGuiDestroy,
       clapGuiSetScale,
       clapGuiGetSize,
       clapGuiCanResize,
+      clapGuiGetResizeHints,
       clapGuiAdjustSize,
       clapGuiSetSize,
       clapGuiSetParent,
@@ -451,7 +453,8 @@ namespace clap { namespace helpers {
    // clap_plugin_state //
    //-------------------//
    template <MisbehaviourHandler h, CheckingLevel l>
-   bool Plugin<h, l>::clapStateSave(const clap_plugin *plugin, const clap_ostream *stream) noexcept {
+   bool Plugin<h, l>::clapStateSave(const clap_plugin *plugin,
+                                    const clap_ostream *stream) noexcept {
       auto &self = from(plugin);
       self.ensureMainThread("clap_plugin_state.save");
 
@@ -459,7 +462,8 @@ namespace clap { namespace helpers {
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   bool Plugin<h, l>::clapStateLoad(const clap_plugin *plugin, const clap_istream *stream) noexcept {
+   bool Plugin<h, l>::clapStateLoad(const clap_plugin *plugin,
+                                    const clap_istream *stream) noexcept {
       auto &self = from(plugin);
       self.ensureMainThread("clap_plugin_state.load");
 
@@ -923,15 +927,33 @@ namespace clap { namespace helpers {
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
+   bool Plugin<h, l>::clapGuiGetResizeHints(const clap_plugin_t *plugin,
+                                            clap_gui_resize_hints_t *hints) noexcept {
+      auto &self = from(plugin);
+      self.ensureMainThread("clap_plugin_gui.get_resize_hints");
+
+      if (l >= CheckingLevel::Minimal) {
+         if (!self._isGuiCreated) {
+            self.hostMisbehaving(
+               "clap_plugin_gui.get_resize_hints() was called without a prior call to "
+               "clap_plugin_gui.create()");
+            return false;
+         }
+      }
+
+      return self.guiGetResizeHints(hints);
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
    bool Plugin<h, l>::clapGuiAdjustSize(const clap_plugin *plugin,
                                         uint32_t *width,
                                         uint32_t *height) noexcept {
       auto &self = from(plugin);
-      self.ensureMainThread("clap_plugin_gui.round_size");
+      self.ensureMainThread("clap_plugin_gui.adjust_size");
 
       if (l >= CheckingLevel::Minimal) {
          if (!self._isGuiCreated) {
-            self.hostMisbehaving("clap_plugin_gui.round_size() was called without a prior call to "
+            self.hostMisbehaving("clap_plugin_gui.adjust_size() was called without a prior call to "
                                  "clap_plugin_gui.create()");
             return false;
          }
@@ -1032,6 +1054,16 @@ namespace clap { namespace helpers {
       self.ensureMainThread("clap_plugin_gui.is_api_supported");
 
       return self.guiIsApiSupported(api, isFloating);
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   bool Plugin<h, l>::clapGuiGetPreferredApi(const clap_plugin_t *plugin,
+                                             const char **api,
+                                             bool *isFloating) noexcept {
+      auto &self = from(plugin);
+      self.ensureMainThread("clap_plugin_gui.get_preferred_api");
+
+      return self.guiGetPreferredApi(api, isFloating);
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
