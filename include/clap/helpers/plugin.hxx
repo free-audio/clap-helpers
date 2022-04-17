@@ -989,7 +989,7 @@ namespace clap { namespace helpers {
              (width != testWidth || height != testHeight)) {
             std::ostringstream os;
             os << "clap_plugin_gui.set_size() was called with a size which was not adjusted by "
-                  "clap_plugin_gui.round_size(): "
+                  "clap_plugin_gui.adjust_size(): "
                << width << "x" << height << " vs " << testWidth << "x" << testHeight;
             self.hostMisbehaving(os.str());
          }
