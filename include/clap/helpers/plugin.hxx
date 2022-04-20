@@ -399,6 +399,8 @@ namespace clap { namespace helpers {
          return &_pluginPosixFdSupport;
       if (!strcmp(id, CLAP_EXT_GUI) && self.implementsGui())
          return &_pluginGui;
+      if (!strcmp(id, CLAP_EXT_VOICE_INFO) && self.implementsVoiceInfo())
+         return &_pluginVoiceInfo;
 
       return from(plugin).extension(id);
    }
