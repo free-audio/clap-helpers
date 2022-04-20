@@ -185,6 +185,12 @@ namespace clap { namespace helpers {
       virtual bool guiSetParent(const clap_window *window) noexcept { return false; }
       virtual bool guiSetTransient(const clap_window *window) noexcept { return false; }
 
+      //------------------------//
+      // clap_plugin_voice_info //
+      //------------------------//
+      virtual bool implementsVoiceInfo() const noexcept { return false; }
+      virtual bool voiceInfoGet(clap_voice_info *info) noexcept { return false; }
+
       /////////////
       // Logging //
       /////////////
@@ -364,6 +370,8 @@ namespace clap { namespace helpers {
 
       static void clapGuiSuggestTitle(const clap_plugin *plugin, const char *title) noexcept;
 
+      static bool clapVoiceInfoGet(const clap_plugin *plugin, clap_voice_info *info) noexcept;
+
       // interfaces
       static const clap_plugin_render _pluginRender;
       static const clap_plugin_thread_pool _pluginThreadPool;
@@ -379,6 +387,7 @@ namespace clap { namespace helpers {
       static const clap_plugin_timer_support _pluginTimerSupport;
       static const clap_plugin_posix_fd_support _pluginPosixFdSupport;
       static const clap_plugin_gui _pluginGui;
+      static const clap_plugin_voice_info _pluginVoiceInfo;
 
       // state
       bool _wasInitialized = false;

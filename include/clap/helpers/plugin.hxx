@@ -104,6 +104,11 @@ namespace clap { namespace helpers {
    };
 
    template <MisbehaviourHandler h, CheckingLevel l>
+   const clap_plugin_voice_info Plugin<h, l>::_pluginVoiceInfo = {
+      clapVoiceInfoGet,
+   };
+
+   template <MisbehaviourHandler h, CheckingLevel l>
    Plugin<h, l>::Plugin(const clap_plugin_descriptor *desc, const clap_host *host) : _host(host) {
       _plugin.plugin_data = this;
       _plugin.desc = desc;
@@ -887,6 +892,18 @@ namespace clap { namespace helpers {
       self.ensureMainThread("clap_plugin_event_loop.on_fd");
 
       self.onPosixFd(fd, flags);
+   }
+
+   //------------------------//
+   // clap_plugin_voice_info //
+   //------------------------//
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   bool Plugin<h, l>::clapVoiceInfoGet(const clap_plugin *plugin, clap_voice_info *info) noexcept {
+      auto &self = from(plugin);
+      self.ensureMainThread("clap_plugin_voice_info.get");
+
+      return self.voiceInfoGet(info);
    }
 
    //-----------------//
