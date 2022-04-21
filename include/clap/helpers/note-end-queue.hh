@@ -21,7 +21,7 @@ namespace clap { namespace helpers {
          _voicesToKill.insert(Entry{port, channel, key});
       }
 
-      void flush(clap_output_events *out) {
+      void flush(const clap_output_events *out) {
          clap_event_note ev;
          ev.velocity = 0;
          ev.header.flags = 0;
@@ -41,7 +41,7 @@ namespace clap { namespace helpers {
       }
 
    private:
-      bool checkValidEntry()
+      bool checkValidEntry(int16_t port, int16_t channel, int16_t key)
       {
          assert(port >= 0);
          assert(channel >= 0 && channel < 16);
@@ -50,13 +50,17 @@ namespace clap { namespace helpers {
       }
 
       struct Entry {
+         bool operator==(const Entry& o) const noexcept {
+            return port == o.port && channel == o.channel && key == o.key;
+         }
+
          int16_t port;
          int16_t channel;
          int16_t key;
       };
 
       struct EntryHash {
-         std::size_t operator()(const Entry &e) noexcept {
+         std::size_t operator()(const Entry& e) const noexcept {
             return e.key ^ (e.channel << 8LL) ^ (e.port << 16LL);
          }
       };
