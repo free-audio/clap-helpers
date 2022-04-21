@@ -905,6 +905,14 @@ namespace clap { namespace helpers {
       auto &self = from(plugin);
       self.ensureMainThread("clap_plugin_voice_info.get");
 
+      if (l >= CheckingLevel::Minimal) {
+         if (!self._isActive) {
+            self.hostMisbehaving(
+               "clap_plugin_voice_info.get() requires the plugin to be activated");
+            return false;
+         }
+      }
+
       return self.voiceInfoGet(info);
    }
 
