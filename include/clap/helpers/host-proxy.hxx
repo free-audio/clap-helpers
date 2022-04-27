@@ -29,6 +29,7 @@ namespace clap { namespace helpers {
       getExtension(_hostState, CLAP_EXT_STATE);
       getExtension(_hostNoteName, CLAP_EXT_NOTE_NAME);
       getExtension(_hostQuickControls, CLAP_EXT_QUICK_CONTROLS);
+      getExtension(_hostVoiceInfo, CLAP_EXT_VOICE_INFO);
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
@@ -473,6 +474,30 @@ namespace clap { namespace helpers {
       assert(canUseThreadPool());
       ensureAudioThread("thread_pool.request_exec");
       return _hostThreadPool->request_exec(_host, numTasks);
+   }
+
+   //////////////////////////
+   // clap_host_voice_info //
+   //////////////////////////
+   template <MisbehaviourHandler h, CheckingLevel l>
+   bool HostProxy<h, l>::canUseVoiceInfo() const noexcept
+   {
+      if (!_hostVoiceInfo)
+         return false;
+
+      if (_hostVoiceInfo->changed)
+         return true;
+
+      hostMisbehaving("clap_host_voice_info is partially implemented");
+      return false;
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   void HostProxy<h, l>::voiceInfoChanged() const noexcept
+   {
+      assert(canUseVoiceInfo());
+      ensureMainThread("clap_host_voice_info.changed");
+      return _hostVoiceInfo->changed(_host);
    }
 
    //////////////////////////////

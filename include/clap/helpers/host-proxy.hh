@@ -129,6 +129,12 @@ namespace clap { namespace helpers {
       bool canUseThreadPool() const noexcept;
       bool threadPoolRequestExec(uint32_t numTasks) const noexcept;
 
+      //////////////////////////
+      // clap_host_voice_info //
+      //////////////////////////
+      bool canUseVoiceInfo() const noexcept;
+      void voiceInfoChanged() const noexcept;
+
    protected:
       void ensureMainThread(const char *method) const noexcept;
       void ensureAudioThread(const char *method) const noexcept;
@@ -152,5 +158,6 @@ namespace clap { namespace helpers {
       const clap_host_state *_hostState = nullptr;
       const clap_host_note_name *_hostNoteName = nullptr;
       const clap_host_quick_controls *_hostQuickControls = nullptr;
+      const clap_host_voice_info *_hostVoiceInfo = nullptr;
    };
 }} // namespace clap::helpers
