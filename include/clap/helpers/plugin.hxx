@@ -1367,6 +1367,7 @@ namespace clap { namespace helpers {
 
       std::lock_guard<std::mutex> guard(_mainThredCallbacksLock);
       _mainThredCallbacks.emplace(std::move(callback));
+      _host.requestCallback();
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
