@@ -518,7 +518,7 @@ namespace clap { namespace helpers {
    void HostProxy<h, l>::voiceInfoChanged() const noexcept
    {
       assert(canUseVoiceInfo());
-      ensureMainThread("clap_host_voice_info.changed");
+      ensureMainThread("voice_info.changed");
       return _hostVoiceInfo->changed(_host);
    }
 
