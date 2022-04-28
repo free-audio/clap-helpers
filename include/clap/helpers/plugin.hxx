@@ -109,6 +109,11 @@ namespace clap { namespace helpers {
    };
 
    template <MisbehaviourHandler h, CheckingLevel l>
+   const clap_plugin_tail Plugin<h, l>::_pluginTail = {
+      clapTailGet,
+   };
+
+   template <MisbehaviourHandler h, CheckingLevel l>
    Plugin<h, l>::Plugin(const clap_plugin_descriptor *desc, const clap_host *host) : _host(host) {
       _plugin.plugin_data = this;
       _plugin.desc = desc;
@@ -401,8 +406,10 @@ namespace clap { namespace helpers {
          return &_pluginGui;
       if (!strcmp(id, CLAP_EXT_VOICE_INFO) && self.implementsVoiceInfo())
          return &_pluginVoiceInfo;
+      if (!strcmp(id, CLAP_EXT_TAIL) && self.implementsTail())
+         return &_pluginTail;
 
-      return from(plugin).extension(id);
+      return self.extension(id);
    }
 
    //-------------------//
@@ -413,6 +420,15 @@ namespace clap { namespace helpers {
       auto &self = from(plugin);
       self.ensureMainThread("clap_plugin_latency.get");
 
+      return self.latencyGet();
+   }
+
+   //------------------//
+   // clap_plugin_tail //
+   //------------------//
+   template <MisbehaviourHandler h, CheckingLevel l>
+   uint32_t Plugin<h, l>::clapTailGet(const clap_plugin_t *plugin) noexcept {
+      auto &self = from(plugin);
       return self.latencyGet();
    }
 

@@ -62,6 +62,12 @@ namespace clap { namespace helpers {
       virtual bool implementsLatency() const noexcept { return false; }
       virtual uint32_t latencyGet() const noexcept { return 0; }
 
+      //------------------//
+      // clap_plugin_tail //
+      //------------------//
+      virtual bool implementsTail() const noexcept { return false; }
+      virtual uint32_t tailGet(const clap_plugin_t *plugin) const noexcept { return 0; }
+
       //--------------------//
       // clap_plugin_render //
       //--------------------//
@@ -273,6 +279,9 @@ namespace clap { namespace helpers {
       // latency
       static uint32_t clapLatencyGet(const clap_plugin *plugin) noexcept;
 
+      // clap_plugin_tail
+      static uint32_t clapTailGet(const clap_plugin_t *plugin) noexcept;
+
       // clap_plugin_render
       static bool clapRenderHasHardRealtimeRequirement(const clap_plugin_t *plugin) noexcept;
       static bool clapRenderSetMode(const clap_plugin *plugin,
@@ -388,6 +397,7 @@ namespace clap { namespace helpers {
       static const clap_plugin_posix_fd_support _pluginPosixFdSupport;
       static const clap_plugin_gui _pluginGui;
       static const clap_plugin_voice_info _pluginVoiceInfo;
+      static const clap_plugin_tail _pluginTail;
 
       // state
       bool _wasInitialized = false;

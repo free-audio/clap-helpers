@@ -67,6 +67,12 @@ namespace clap { namespace helpers {
       bool canUseLatency() const noexcept;
       void latencyChanged() const noexcept;
 
+      ////////////////////
+      // clap_host_tail //
+      ////////////////////
+      bool canUseTail() const noexcept;
+      void tailChanged() const noexcept;
+
       ////////////////////////////
       // clap_host_event_filter //
       ////////////////////////////
@@ -159,5 +165,6 @@ namespace clap { namespace helpers {
       const clap_host_note_name *_hostNoteName = nullptr;
       const clap_host_quick_controls *_hostQuickControls = nullptr;
       const clap_host_voice_info *_hostVoiceInfo = nullptr;
+      const clap_host_tail *_hostTail = nullptr;
    };
 }} // namespace clap::helpers

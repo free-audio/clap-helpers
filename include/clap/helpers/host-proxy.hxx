@@ -244,6 +244,28 @@ namespace clap { namespace helpers {
       _hostLatency->changed(_host);
    }
 
+   ////////////////////
+   // clap_host_tail //
+   ////////////////////
+   template <MisbehaviourHandler h, CheckingLevel l>
+   bool HostProxy<h, l>::canUseTail() const noexcept {
+      if (!_hostTail)
+         return false;
+
+      if (_hostLatency->changed)
+         return true;
+
+      hostMisbehaving("clap_host_tail is partially implemented");
+      return false;
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   void HostProxy<h, l>::tailChanged() const noexcept {
+      assert(canUseTail());
+      ensureAudioThread("tail.changed");
+      _hostTail->changed(_host);
+   }
+
    ////////////////////////////
    // clap_host_event_filter //
    ////////////////////////////
