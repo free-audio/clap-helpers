@@ -15,8 +15,14 @@ namespace clap { namespace helpers {
 
       void init();
 
+      ///////////////
+      // clap_host //
+      ///////////////
       template <typename T>
       void getExtension(const T *&ptr, const char *id) noexcept;
+      void requestCallback() noexcept;
+      void requestRestart() noexcept;
+      void requestProcess() noexcept;
 
       ///////////////////
       // clap_host_log //

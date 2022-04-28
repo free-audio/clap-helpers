@@ -42,6 +42,24 @@ namespace clap { namespace helpers {
          ptr = static_cast<const T *>(_host->get_extension(_host, id));
    }
 
+   ///////////////
+   // clap_host //
+   ///////////////
+   template <MisbehaviourHandler h, CheckingLevel l>
+   void HostProxy<h, l>::requestCallback() noexcept {
+      _host->request_callback(_host);
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   void HostProxy<h, l>::requestRestart() noexcept {
+      _host->request_restart(_host);
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   void HostProxy<h, l>::requestProcess() noexcept {
+      _host->request_process(_host);
+   }
+
    /////////////
    // Logging //
    /////////////
@@ -502,8 +520,7 @@ namespace clap { namespace helpers {
    // clap_host_voice_info //
    //////////////////////////
    template <MisbehaviourHandler h, CheckingLevel l>
-   bool HostProxy<h, l>::canUseVoiceInfo() const noexcept
-   {
+   bool HostProxy<h, l>::canUseVoiceInfo() const noexcept {
       if (!_hostVoiceInfo)
          return false;
 
@@ -515,8 +532,7 @@ namespace clap { namespace helpers {
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   void HostProxy<h, l>::voiceInfoChanged() const noexcept
-   {
+   void HostProxy<h, l>::voiceInfoChanged() const noexcept {
       assert(canUseVoiceInfo());
       ensureMainThread("voice_info.changed");
       return _hostVoiceInfo->changed(_host);
