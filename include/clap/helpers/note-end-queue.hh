@@ -34,6 +34,7 @@ namespace clap { namespace helpers {
             ev.port_index = e._port;
             ev.channel = e._channel;
             ev.key = e._key;
+            ev.note_id = e._noteId;
             out->try_push(out, &ev.header);
          }
 
@@ -42,6 +43,7 @@ namespace clap { namespace helpers {
 
    private:
       bool checkValidEntry(int32_t noteId, int16_t port, int16_t channel, int16_t key) {
+         assert(noteId >= -1);
          assert(port >= 0);
          assert(channel >= 0 && channel < 16);
          assert(key >= 0 && key < 127);
