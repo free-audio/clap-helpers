@@ -1,6 +1,6 @@
+#include <cassert>
 #include <cstddef>
 #include <cstdint>
-#include <cassert>
 #include <unordered_set>
 
 #include <clap/clap.h>
@@ -11,14 +11,14 @@ namespace clap { namespace helpers {
       explicit NoteEndQueue(std::size_t initialBucketSize = 19)
          : _voicesToKill(initialBucketSize) {}
 
-      void onNoteOn(int16_t port, int16_t channel, int16_t key) {
-         assert(checkValidEntry(port, channel, key));
-         _voicesToKill.erase(Entry{port, channel, key});
+      void onNoteOn(int32_t noteId, int16_t port, int16_t channel, int16_t key) {
+         assert(checkValidEntry(noteId, port, channel, key));
+         _voicesToKill.erase(Entry(noteId, port, channel, key));
       }
 
-      void onNoteEnd(int16_t port, int16_t channel, int16_t key) {
-         assert(checkValidEntry(port, channel, key));
-         _voicesToKill.insert(Entry{port, channel, key});
+      void onNoteEnd(int32_t noteId, int16_t port, int16_t channel, int16_t key) {
+         assert(checkValidEntry(noteId, port, channel, key));
+         _voicesToKill.insert(Entry(noteId, port, channel, key));
       }
 
       void flush(const clap_output_events *out) {
@@ -31,9 +31,9 @@ namespace clap { namespace helpers {
          ev.header.type = CLAP_EVENT_NOTE_END;
 
          for (auto &e : _voicesToKill) {
-            ev.port_index = e.port;
-            ev.channel = e.channel;
-            ev.key = e.key;
+            ev.port_index = e._port;
+            ev.channel = e._channel;
+            ev.key = e._key;
             out->try_push(out, &ev.header);
          }
 
@@ -41,8 +41,7 @@ namespace clap { namespace helpers {
       }
 
    private:
-      bool checkValidEntry(int16_t port, int16_t channel, int16_t key)
-      {
+      bool checkValidEntry(int32_t noteId, int16_t port, int16_t channel, int16_t key) {
          assert(port >= 0);
          assert(channel >= 0 && channel < 16);
          assert(key >= 0 && key < 127);
@@ -50,18 +49,22 @@ namespace clap { namespace helpers {
       }
 
       struct Entry {
-         bool operator==(const Entry& o) const noexcept {
-            return port == o.port && channel == o.channel && key == o.key;
+         constexpr Entry(int32_t noteId, int16_t port, int16_t channel, int16_t key)
+            : _noteId(noteId), _port(port), _channel(channel), _key(key) {}
+
+         constexpr bool operator==(const Entry &o) const noexcept {
+            return _port == o._port && _channel == o._channel && _key == o._key;
          }
 
-         int16_t port;
-         int16_t channel;
-         int16_t key;
+         const int32_t _noteId;
+         const int16_t _port;
+         const int16_t _channel;
+         const int16_t _key;
       };
 
       struct EntryHash {
-         std::size_t operator()(const Entry& e) const noexcept {
-            return e.key ^ (e.channel << 8LL) ^ (e.port << 16LL);
+         std::size_t operator()(const Entry &e) const noexcept {
+            return e._key ^ (e._channel << 8) ^ (e._port << 16) ^ (int64_t(e._noteId) << 32LL);
          }
       };
 
