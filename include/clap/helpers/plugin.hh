@@ -148,6 +148,16 @@ namespace clap { namespace helpers {
       virtual void quickControlsSelectPage(clap_id pageId) noexcept {}
       virtual clap_id quickControlsSelectedPage() noexcept { return CLAP_INVALID_ID; }
 
+      //------------------------//
+      // clap_plugin_note_ports //
+      //------------------------//
+      virtual bool implementsNotePorts() const noexcept { return false; }
+      virtual uint32_t notePortsCount(bool isInput) const noexcept { return 0; }
+      virtual bool
+      notePortsInfo(uint32_t index, bool isInput, clap_note_port_info *info) const noexcept {
+         return false;
+      }
+
       //-----------------------//
       // clap_plugin_note_name //
       //-----------------------//
@@ -340,6 +350,13 @@ namespace clap { namespace helpers {
       static void clapQuickControlsSelectPage(const clap_plugin *plugin, clap_id page_id) noexcept;
       static clap_id clapQuickControlsSelectedPage(const clap_plugin *plugin) noexcept;
 
+      // clap_plugin_note_port
+      static uint32_t clapNotePortsCount(const clap_plugin *plugin, bool is_input) noexcept;
+      static bool clapNotePortsInfo(const clap_plugin *plugin,
+                                    uint32_t index,
+                                    bool is_input,
+                                    clap_note_port_info *info) noexcept;
+
       // clap_plugin_note_name
       static uint32_t clapNoteNameCount(const clap_plugin *plugin) noexcept;
       static bool clapNoteNameGet(const clap_plugin *plugin,
@@ -392,6 +409,7 @@ namespace clap { namespace helpers {
       static const clap_plugin_params _pluginParams;
       static const clap_plugin_quick_controls _pluginQuickControls;
       static const clap_plugin_latency _pluginLatency;
+      static const clap_plugin_note_ports _pluginNotePorts;
       static const clap_plugin_note_name _pluginNoteName;
       static const clap_plugin_timer_support _pluginTimerSupport;
       static const clap_plugin_posix_fd_support _pluginPosixFdSupport;

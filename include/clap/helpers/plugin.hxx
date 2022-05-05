@@ -71,6 +71,10 @@ namespace clap { namespace helpers {
    };
 
    template <MisbehaviourHandler h, CheckingLevel l>
+   const clap_plugin_note_ports Plugin<h, l>::_pluginNotePorts = {clapNotePortsCount,
+                                                                  clapNotePortsInfo};
+
+   template <MisbehaviourHandler h, CheckingLevel l>
    const clap_plugin_note_name Plugin<h, l>::_pluginNoteName = {
       clapNoteNameCount,
       clapNoteNameGet,
@@ -394,6 +398,8 @@ namespace clap { namespace helpers {
          return &_pluginParams;
       if (!strcmp(id, CLAP_EXT_QUICK_CONTROLS) && self.implementQuickControls())
          return &_pluginQuickControls;
+      if (!strcmp(id, CLAP_EXT_NOTE_PORTS) && self.implementsNotePorts())
+         return &_pluginNotePorts;
       if (!strcmp(id, CLAP_EXT_NOTE_NAME) && self.implementsNoteName())
          return &_pluginNoteName;
       if (!strcmp(id, CLAP_EXT_THREAD_POOL) && self.implementsThreadPool())
@@ -852,6 +858,38 @@ namespace clap { namespace helpers {
       self.ensureMainThread("clap_plugin_quick_controls.selected_page");
 
       return self.quickControlsSelectedPage();
+   }
+
+   //------------------------//
+   // clap_plugin_note_ports //
+   //------------------------//
+   template <MisbehaviourHandler h, CheckingLevel l>
+   uint32_t Plugin<h, l>::clapNotePortsCount(const clap_plugin *plugin, bool is_input) noexcept {
+      auto &self = from(plugin);
+      self.ensureMainThread("clap_plugin_note_port.count");
+      return self.notePortsCount(is_input);
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   bool Plugin<h, l>::clapNotePortsInfo(const clap_plugin *plugin,
+                                        uint32_t index,
+                                        bool is_input,
+                                        clap_note_port_info *info) noexcept {
+      auto &self = from(plugin);
+      self.ensureMainThread("clap_plugin_note_ports.info");
+
+      if (l >= CheckingLevel::Minimal) {
+         auto count = clapNotePortsCount(plugin, is_input);
+         if (index >= count) {
+            std::ostringstream msg;
+            msg << "Host called clap_plugin_note_ports.info() with an index out of bounds: "
+                << index << " >= " << count;
+            self.hostMisbehaving(msg.str());
+            return false;
+         }
+      }
+
+      return self.notePortsInfo(index, is_input, info);
    }
 
    //-----------------------//
