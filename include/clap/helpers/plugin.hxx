@@ -133,11 +133,6 @@ namespace clap { namespace helpers {
       _plugin.on_main_thread = nullptr;
    }
 
-   template <MisbehaviourHandler h, CheckingLevel l>
-   Plugin<h, l>::~Plugin() {
-      assert(_mainThredCallbacks.empty());
-   }
-
    /////////////////////
    // CLAP Interfaces //
    /////////////////////

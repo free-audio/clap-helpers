@@ -26,7 +26,7 @@ namespace clap { namespace helpers {
 
    protected:
       Plugin(const clap_plugin_descriptor *desc, const clap_host *host);
-      virtual ~Plugin();
+      virtual ~Plugin() = default;
 
       // not copyable, not moveable
       Plugin(const Plugin &) = delete;
