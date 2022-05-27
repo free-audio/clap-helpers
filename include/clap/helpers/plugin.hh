@@ -141,8 +141,8 @@ namespace clap { namespace helpers {
       //----------------------------//
       virtual bool implementQuickControls() const noexcept { return false; }
       virtual uint32_t quickControlsPageCount() noexcept { return 0; }
-      virtual bool quickControlsPageInfo(uint32_t pageIndex,
-                                         clap_quick_controls_page *page) noexcept {
+      virtual bool quickControlsPageGet(uint32_t pageIndex,
+                                        clap_quick_controls_page *page) noexcept {
          return false;
       }
       virtual void quickControlsSelectPage(clap_id pageId) noexcept {}
@@ -344,11 +344,9 @@ namespace clap { namespace helpers {
 
       // clap_plugin_quick_controls
       static uint32_t clapQuickControlsPageCount(const clap_plugin *plugin) noexcept;
-      static bool clapQuickControlsPageInfo(const clap_plugin *plugin,
-                                            uint32_t page_index,
-                                            clap_quick_controls_page *page) noexcept;
-      static void clapQuickControlsSelectPage(const clap_plugin *plugin, clap_id page_id) noexcept;
-      static clap_id clapQuickControlsSelectedPage(const clap_plugin *plugin) noexcept;
+      static bool clapQuickControlsPageGet(const clap_plugin *plugin,
+                                           uint32_t page_index,
+                                           clap_quick_controls_page *page) noexcept;
 
       // clap_plugin_note_port
       static uint32_t clapNotePortsCount(const clap_plugin *plugin, bool is_input) noexcept;
@@ -367,7 +365,8 @@ namespace clap { namespace helpers {
       static void clapOnTimer(const clap_plugin *plugin, clap_id timer_id) noexcept;
 
       // clap_plugin_fd_support
-      static void clapOnPosixFd(const clap_plugin *plugin, int fd, int flags) noexcept;
+      static void
+      clapOnPosixFd(const clap_plugin *plugin, int fd, clap_posix_fd_flags_t flags) noexcept;
 
       // clap_plugin_gui
       static bool
