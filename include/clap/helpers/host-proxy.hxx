@@ -20,7 +20,6 @@ namespace clap { namespace helpers {
       getExtension(_hostNotePorts, CLAP_EXT_NOTE_PORTS);
       getExtension(_hostTimerSupport, CLAP_EXT_TIMER_SUPPORT);
       getExtension(_hostPosixFdSupport, CLAP_EXT_POSIX_FD_SUPPORT);
-      getExtension(_hostEventFilter, CLAP_EXT_EVENT_FILTER);
       getExtension(_hostFileReference, CLAP_EXT_FILE_REFERENCE);
       getExtension(_hostLatency, CLAP_EXT_LATENCY);
       getExtension(_hostGui, CLAP_EXT_GUI);
@@ -284,28 +283,6 @@ namespace clap { namespace helpers {
       _hostTail->changed(_host);
    }
 
-   ////////////////////////////
-   // clap_host_event_filter //
-   ////////////////////////////
-   template <MisbehaviourHandler h, CheckingLevel l>
-   bool HostProxy<h, l>::canUseEventFilter() const noexcept {
-      if (!_hostEventFilter)
-         return false;
-
-      if (_hostEventFilter->changed)
-         return true;
-
-      hostMisbehaving("clap_host_event_filter is partially implemented");
-      return false;
-   }
-
-   template <MisbehaviourHandler h, CheckingLevel l>
-   void HostProxy<h, l>::eventFilterChanged() const noexcept {
-      assert(canUseEventFilter());
-      ensureMainThread("event_filter.changed");
-      _hostEventFilter->changed(_host);
-   }
-
    /////////////////////////
    // clap_host_note_name //
    /////////////////////////
@@ -546,7 +523,7 @@ namespace clap { namespace helpers {
       if (!_hostQuickControls)
          return false;
 
-      if (_hostQuickControls->changed)
+      if (_hostQuickControls->changed && _hostQuickControls->suggest_page)
          return true;
 
       hostMisbehaving("clap_host_quick_controls is partially implemented");
@@ -554,9 +531,16 @@ namespace clap { namespace helpers {
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   void
-   HostProxy<h, l>::quickControlsChanged(clap_quick_controls_changed_flags flags) const noexcept {
+   void HostProxy<h, l>::quickControlsChanged() const noexcept {
       assert(canUseQuickControls());
       ensureMainThread("quick_controls.changed");
+      _hostQuickControls->changed(_host);
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   void HostProxy<h, l>::quickControlsSuggestPage(clap_id page_id) const noexcept {
+      assert(canUseQuickControls());
+      ensureMainThread("quick_controls.suggest_page");
+      _hostQuickControls->suggest_page(_host, page_id);
    }
 }} // namespace clap::helpers
