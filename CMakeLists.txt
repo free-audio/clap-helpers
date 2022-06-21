@@ -15,6 +15,7 @@ target_link_libraries(clap-helpers INTERFACE clap-core)
 if (Catch2_FOUND AND CLAP_BUILD_TESTS)
     add_executable(clap-helpers-tests
         tests/plugin.cc
+        tests/param-queue-tests.cc
         tests/main.cc)
     set_target_properties(clap-helpers-tests PROPERTIES CXX_STANDARD 11)
     target_link_libraries(clap-helpers-tests clap-helpers clap-core Catch2::Catch2)
