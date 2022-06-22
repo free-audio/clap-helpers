@@ -161,7 +161,6 @@ namespace clap { namespace helpers {
       auto &self = from(plugin, false);
       self.ensureMainThread("clap_plugin.destroy");
       self._isBeingDestroyed = true;
-      self.runCallbacksOnMainThread();
 
       if (self._isGuiCreated)
       {
@@ -169,6 +168,8 @@ namespace clap { namespace helpers {
             self._host.pluginMisbehaving("host forgot to destroy the gui");
          clapGuiDestroy(plugin);
       }
+
+      self.runCallbacksOnMainThread();
 
       delete &self;
    }
