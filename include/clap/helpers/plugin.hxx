@@ -1025,7 +1025,34 @@ namespace clap { namespace helpers {
          }
       }
 
-      return self.guiAdjustSize(width, height);
+      const uint32_t inputWidth = *width;
+      const uint32_t inputHeight = *height;
+
+      if (!self.guiAdjustSize(width, height))
+         return false;
+
+      if (l >= CheckingLevel::Maximal) {
+         uint32_t testWidth = *width;
+         uint32_t testHeight = *height;
+
+         if (!self.guiAdjustSize(&testWidth, &testHeight))
+         {
+            self._host.pluginMisbehaving("clap_plugin_gui.adjust_size() failed when called with adjusted values");
+            return true;
+         }
+
+         if (testWidth != *width || testHeight != *height)
+         {
+            std::ostringstream os;
+            os << "clap_plugin_gui.adjust_size() isn't stable:" << std::endl
+               << "  (" << inputWidth << ", " << inputHeight << ") -> (" << *width << ", " << *height << ")" << std::endl
+               << "  (" << *width << ", " << *height << ") -> (" << testWidth << ", " << testHeight << ")" << std::endl
+               << "  !! Check you're rounding math!";
+            self._host.pluginMisbehaving(os.str());
+         }
+      }
+
+      return true;
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
