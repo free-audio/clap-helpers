@@ -162,7 +162,15 @@ namespace clap { namespace helpers {
       self.ensureMainThread("clap_plugin.destroy");
       self._isBeingDestroyed = true;
       self.runCallbacksOnMainThread();
-      delete &from(plugin);
+
+      if (self._isGuiCreated)
+      {
+         if (l >= CheckingLevel::Minimal)
+            self._host.pluginMisbehaving("host forgot to destroy the gui");
+         clapGuiDestroy(plugin);
+      }
+
+      delete &self;
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
@@ -1171,6 +1179,7 @@ namespace clap { namespace helpers {
       self.guiDestroy();
       self._isGuiCreated = false;
       self._isGuiEmbedded = false;
+      self._isGuiFloating = false;
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
