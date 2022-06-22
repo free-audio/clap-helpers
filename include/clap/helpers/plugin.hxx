@@ -973,7 +973,20 @@ namespace clap { namespace helpers {
          }
       }
 
-      return self.guiGetSize(width, height);
+      if (!self.guiGetSize(width, height))
+         return false;
+
+      if (l >= CheckingLevel::Maximal && self.guiCanResize()) {
+         uint32_t testWidth = *width;
+         uint32_t testHeight = *height;
+
+         if (!self.guiAdjustSize(&testWidth, &testHeight))
+            self._host.pluginMisbehaving(
+               "the plugin claims to be resizable but the value returned"
+               " by guiGetSize() needs can't be adjusted using guiAdjustSize()");
+      }
+
+      return true;
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
