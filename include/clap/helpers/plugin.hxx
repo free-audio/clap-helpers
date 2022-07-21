@@ -27,6 +27,12 @@ namespace clap { namespace helpers {
    };
 
    template <MisbehaviourHandler h, CheckingLevel l>
+   const clap_plugin_state_context Plugin<h, l>::_pluginStateContext = {
+      clapStateContextSave,
+      clapStateContextLoad,
+   };
+
+   template <MisbehaviourHandler h, CheckingLevel l>
    const clap_plugin_preset_load Plugin<h, l>::_pluginPresetLoad = {
       clapPresetLoadFromFile,
    };
@@ -375,6 +381,8 @@ namespace clap { namespace helpers {
 
       if (!strcmp(id, CLAP_EXT_STATE) && self.implementsState())
          return &_pluginState;
+      if (!strcmp(id, CLAP_EXT_STATE_CONTEXT) && self.implementsStateContext() && self.implementsState())
+         return &_pluginState;
       if (!strcmp(id, CLAP_EXT_PRESET_LOAD) && self.implementsPresetLoad())
          return &_pluginPresetLoad;
       if (!strcmp(id, CLAP_EXT_RENDER) && self.implementsRender())
@@ -488,6 +496,29 @@ namespace clap { namespace helpers {
       self.ensureMainThread("clap_plugin_state.load");
 
       return self.stateLoad(stream);
+   }
+
+   //---------------------------//
+   // clap_plugin_state_context //
+   //---------------------------//
+   template <MisbehaviourHandler h, CheckingLevel l>
+   bool Plugin<h, l>::clapStateContextSave(const clap_plugin *plugin,
+                                           const clap_ostream *stream,
+                                           uint32_t context) noexcept {
+      auto &self = from(plugin);
+      self.ensureMainThread("clap_plugin_state_context.save");
+
+      return self.stateContextSave(stream, context);
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   bool Plugin<h, l>::clapStateContextLoad(const clap_plugin *plugin,
+                                           const clap_istream *stream,
+                                           uint32_t context) noexcept {
+      auto &self = from(plugin);
+      self.ensureMainThread("clap_plugin_state_context.load");
+
+      return self.stateContextLoad(stream, context);
    }
 
    //-------------------------//

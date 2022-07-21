@@ -88,6 +88,17 @@ namespace clap { namespace helpers {
       virtual bool stateSave(const clap_ostream *stream) noexcept { return false; }
       virtual bool stateLoad(const clap_istream *stream) noexcept { return false; }
 
+      //---------------------------//
+      // clap_plugin_state_context //
+      //---------------------------//
+      virtual bool implementsStateContext() const noexcept { return false; }
+      virtual bool stateContextSave(const clap_ostream *stream, uint32_t context) noexcept {
+         return stateSave(stream);
+      }
+      virtual bool stateContextLoad(const clap_istream *stream, uint32_t context) noexcept {
+         return stateLoad(stream);
+      }
+
       //-------------------------//
       // clap_plugin_preset_load //
       //-------------------------//
@@ -304,6 +315,14 @@ namespace clap { namespace helpers {
       static bool clapStateSave(const clap_plugin *plugin, const clap_ostream *stream) noexcept;
       static bool clapStateLoad(const clap_plugin *plugin, const clap_istream *stream) noexcept;
 
+      // clap_plugin_state_context
+      static bool clapStateContextSave(const clap_plugin *plugin,
+                                       const clap_ostream *stream,
+                                       uint32_t context) noexcept;
+      static bool clapStateContextLoad(const clap_plugin *plugin,
+                                       const clap_istream *stream,
+                                       uint32_t context) noexcept;
+
       // clap_plugin_preset
       static bool clapPresetLoadFromFile(const clap_plugin *plugin, const char *path) noexcept;
 
@@ -401,6 +420,7 @@ namespace clap { namespace helpers {
       static const clap_plugin_render _pluginRender;
       static const clap_plugin_thread_pool _pluginThreadPool;
       static const clap_plugin_state _pluginState;
+      static const clap_plugin_state_context _pluginStateContext;
       static const clap_plugin_preset_load _pluginPresetLoad;
       static const clap_plugin_track_info _pluginTrackInfo;
       static const clap_plugin_audio_ports _pluginAudioPorts;
