@@ -28,7 +28,7 @@ namespace clap { namespace helpers {
          ev.header.size = sizeof(ev);
          ev.header.space_id = CLAP_CORE_EVENT_SPACE_ID;
          // time is irrelevant here, just make it at end so we preserve the list order
-         ev.header.time = p->frames_count;
+         ev.header.time = p->frames_count > 0 ? p->frames_count - 1 : 0;
          ev.header.type = CLAP_EVENT_NOTE_END;
 
          auto out = p->out_events;
