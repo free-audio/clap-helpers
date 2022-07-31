@@ -443,7 +443,7 @@ namespace clap { namespace helpers {
    template <MisbehaviourHandler h, CheckingLevel l>
    uint32_t Plugin<h, l>::clapTailGet(const clap_plugin_t *plugin) noexcept {
       auto &self = from(plugin);
-      return self.tailGet(plugin);
+      return self.tailGet();
    }
 
    //--------------------//
