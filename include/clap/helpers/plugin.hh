@@ -66,7 +66,7 @@ namespace clap { namespace helpers {
       // clap_plugin_tail //
       //------------------//
       virtual bool implementsTail() const noexcept { return false; }
-      virtual uint32_t tailGet(const clap_plugin_t *plugin) const noexcept { return 0; }
+      virtual uint32_t tailGet() const noexcept { return 0; }
 
       //--------------------//
       // clap_plugin_render //
