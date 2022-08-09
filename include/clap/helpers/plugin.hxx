@@ -1368,7 +1368,7 @@ namespace clap { namespace helpers {
       if (l == CheckingLevel::None)
          return;
 
-      if (_host.canUseThreadCheck() || _host.isAudioThread())
+      if (!_host.canUseThreadCheck() || _host.isAudioThread())
          return;
 
       std::terminate();
