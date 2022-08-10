@@ -253,8 +253,8 @@ namespace clap { namespace helpers {
       void runCallbacksOnMainThread();
 
       template <typename T>
-      void initInterface(const T *&ptr, const char *id) noexcept;
-      void initInterfaces() noexcept;
+      void initInterface(const T *&ptr, const char *id) noexcept {};
+      void initInterfaces() noexcept {};
 
       static uint32_t compareAudioPortsInfo(const clap_audio_port_info &a,
                                             const clap_audio_port_info &b) noexcept;
