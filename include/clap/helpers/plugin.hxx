@@ -402,6 +402,8 @@ namespace clap { namespace helpers {
          return &_pluginLatency;
       if (!strcmp(id, CLAP_EXT_AUDIO_PORTS) && self.implementsAudioPorts())
          return &_pluginAudioPorts;
+      if (!strcmp(id, CLAP_EXT_AUDIO_PORTS_CONFIG) && self.implementsAudioPortsConfig())
+         return &_pluginAudioPortsConfig;
       if (!strcmp(id, CLAP_EXT_PARAMS) && self.implementsParams())
          return &_pluginParams;
       if (!strcmp(id, CLAP_EXT_QUICK_CONTROLS) && self.implementQuickControls())
