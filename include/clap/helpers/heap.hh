@@ -20,16 +20,22 @@ namespace clap { namespace helpers {
       Heap &operator=(const Heap &) = delete;
       Heap &operator=(Heap &&) = delete;
 
-      void reserve(const size_t heapSize) {
+      bool tryReserve(const size_t heapSize) {
          if (heapSize <= _size)
-            return;
+            return true;
 
          auto *const ptr = static_cast<uint8_t *>(std::realloc(_base, heapSize));
          if (!ptr)
-            throw std::bad_alloc();
+            return false;
 
          _base = ptr;
          _size = heapSize;
+         return true;
+      }
+
+      void reserve(const size_t heapSize) {
+         if (!tryReserve(heapSize))
+            throw std::bad_alloc();
       }
 
       void clear() { _brk = 0; }
