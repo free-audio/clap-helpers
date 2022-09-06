@@ -120,11 +120,11 @@ namespace clap { namespace helpers {
       audioPortsInfo(uint32_t index, bool isInput, clap_audio_port_info *info) const noexcept {
          return false;
       }
-       
+
       //--------------------------------//
       // clap_plugin_audio_ports_config //
       //--------------------------------//
-       
+
       virtual bool  implementsAudioPortsConfig() const noexcept { return false; }
       virtual uint32_t audioPortsConfigCount() const noexcept { return 0; }
       virtual bool audioPortsGetConfig(uint32_t index,
@@ -257,10 +257,6 @@ namespace clap { namespace helpers {
 
       // This actually runs callbacks on the main thread, you should not need to call it
       void runCallbacksOnMainThread();
-
-      template <typename T>
-      void initInterface(const T *&ptr, const char *id) noexcept;
-      void initInterfaces() noexcept;
 
       static uint32_t compareAudioPortsInfo(const clap_audio_port_info &a,
                                             const clap_audio_port_info &b) noexcept;
