@@ -278,6 +278,8 @@ namespace clap { namespace helpers {
       HostProxy<h, l> _host;
 
    private:
+      void ensureInitialized(const char *method) const noexcept;
+
       /////////////////////
       // CLAP Interfaces //
       /////////////////////

@@ -125,14 +125,14 @@ namespace clap { namespace helpers {
       _plugin.desc = desc;
       _plugin.init = Plugin<h, l>::clapInit;
       _plugin.destroy = Plugin<h, l>::clapDestroy;
-      _plugin.get_extension = nullptr;
-      _plugin.process = nullptr;
-      _plugin.activate = nullptr;
-      _plugin.deactivate = nullptr;
-      _plugin.start_processing = nullptr;
-      _plugin.stop_processing = nullptr;
-      _plugin.reset = nullptr;
-      _plugin.on_main_thread = nullptr;
+      _plugin.get_extension = Plugin<h, l>::clapExtension;
+      _plugin.process = Plugin<h, l>::clapProcess;
+      _plugin.activate = Plugin<h, l>::clapActivate;
+      _plugin.deactivate = Plugin<h, l>::clapDeactivate;
+      _plugin.start_processing = Plugin<h, l>::clapStartProcessing;
+      _plugin.stop_processing = Plugin<h, l>::clapStopProcessing;
+      _plugin.reset = Plugin<h, l>::clapReset;
+      _plugin.on_main_thread = Plugin<h, l>::clapOnMainThread;
    }
 
    /////////////////////
@@ -146,20 +146,29 @@ namespace clap { namespace helpers {
    bool Plugin<h, l>::clapInit(const clap_plugin *plugin) noexcept {
       auto &self = from(plugin, false);
 
-      self._plugin.get_extension = Plugin<h, l>::clapExtension;
-      self._plugin.process = Plugin<h, l>::clapProcess;
-      self._plugin.activate = Plugin<h, l>::clapActivate;
-      self._plugin.deactivate = Plugin<h, l>::clapDeactivate;
-      self._plugin.start_processing = Plugin<h, l>::clapStartProcessing;
-      self._plugin.stop_processing = Plugin<h, l>::clapStopProcessing;
-      self._plugin.reset = Plugin<h, l>::clapReset;
-      self._plugin.on_main_thread = Plugin<h, l>::clapOnMainThread;
+      if (l >= CheckingLevel::Minimal && self._wasInitialized) {
+         std::cerr << "clap_plugin.init() has been called twice" << std::endl;
+         if (h == MisbehaviourHandler::Terminate)
+            std::terminate();
+         return true;
+      }
 
       self._wasInitialized = true;
 
       self._host.init();
       self.ensureMainThread("clap_plugin.init");
       return self.init();
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   void Plugin<h, l>::ensureInitialized(const char *method) const noexcept {
+      if (l == CheckingLevel::None)
+         return;
+
+      std::cerr << "clap_plugin." << method << "() was called before clap_plugin.init()" << std::endl;
+
+      if (h == MisbehaviourHandler::Terminate)
+         std::terminate();
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
@@ -183,6 +192,7 @@ namespace clap { namespace helpers {
    template <MisbehaviourHandler h, CheckingLevel l>
    void Plugin<h, l>::clapOnMainThread(const clap_plugin *plugin) noexcept {
       auto &self = from(plugin);
+      self.ensureInitialized("on_maint_thread");
       self.ensureMainThread("clap_plugin.on_main_thread");
 
       self.runCallbacksOnMainThread();
@@ -221,6 +231,7 @@ namespace clap { namespace helpers {
                                    uint32_t minFrameCount,
                                    uint32_t maxFrameCount) noexcept {
       auto &self = from(plugin);
+      self.ensureInitialized("activate");
       self.ensureMainThread("clap_plugin.activate");
 
       if (l >= CheckingLevel::Minimal) {
@@ -288,6 +299,7 @@ namespace clap { namespace helpers {
    template <MisbehaviourHandler h, CheckingLevel l>
    void Plugin<h, l>::clapDeactivate(const clap_plugin *plugin) noexcept {
       auto &self = from(plugin);
+      self.ensureInitialized("deactivate");
       self.ensureMainThread("clap_plugin.deactivate");
 
       if (l >= CheckingLevel::Minimal) {
@@ -305,6 +317,7 @@ namespace clap { namespace helpers {
    template <MisbehaviourHandler h, CheckingLevel l>
    bool Plugin<h, l>::clapStartProcessing(const clap_plugin *plugin) noexcept {
       auto &self = from(plugin);
+      self.ensureInitialized("start_processing");
       self.ensureAudioThread("clap_plugin.start_processing");
 
       if (l >= CheckingLevel::Minimal) {
@@ -327,6 +340,7 @@ namespace clap { namespace helpers {
    template <MisbehaviourHandler h, CheckingLevel l>
    void Plugin<h, l>::clapStopProcessing(const clap_plugin *plugin) noexcept {
       auto &self = from(plugin);
+      self.ensureInitialized("stop_processing");
       self.ensureAudioThread("clap_plugin.stop_processing");
 
       if (l >= CheckingLevel::Minimal) {
@@ -349,6 +363,7 @@ namespace clap { namespace helpers {
    template <MisbehaviourHandler h, CheckingLevel l>
    void Plugin<h, l>::clapReset(const clap_plugin *plugin) noexcept {
       auto &self = from(plugin);
+      self.ensureInitialized("reset");
       self.ensureAudioThread("clap_plugin.reset");
 
       if (l >= CheckingLevel::Minimal) {
@@ -365,6 +380,7 @@ namespace clap { namespace helpers {
    clap_process_status Plugin<h, l>::clapProcess(const clap_plugin *plugin,
                                                  const clap_process *process) noexcept {
       auto &self = from(plugin);
+      self.ensureInitialized("process");
       self.ensureAudioThread("clap_plugin.process");
 
       if (l >= CheckingLevel::Minimal) {
@@ -386,6 +402,7 @@ namespace clap { namespace helpers {
    template <MisbehaviourHandler h, CheckingLevel l>
    const void *Plugin<h, l>::clapExtension(const clap_plugin *plugin, const char *id) noexcept {
       auto &self = from(plugin);
+      self.ensureInitialized("extension");
       self.ensureMainThread("clap_plugin.extension");
 
       if (!strcmp(id, CLAP_EXT_STATE) && self.implementsState())
@@ -1362,7 +1379,10 @@ namespace clap { namespace helpers {
       if (!_host.canUseThreadCheck() || _host.isMainThread())
          return;
 
-      std::terminate();
+      std::cerr << "thread-error: this code must be running on the main thread" << std::endl;
+
+      if (h == MisbehaviourHandler::Terminate)
+         std::terminate();
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
@@ -1373,7 +1393,10 @@ namespace clap { namespace helpers {
       if (!_host.canUseThreadCheck() || _host.isAudioThread())
          return;
 
-      std::terminate();
+      std::cerr << "thread-error: this code must be running on the audio thread" << std::endl;
+
+      if (h == MisbehaviourHandler::Terminate)
+         std::terminate();
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
