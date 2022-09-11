@@ -162,7 +162,7 @@ namespace clap { namespace helpers {
 
    template <MisbehaviourHandler h, CheckingLevel l>
    void Plugin<h, l>::ensureInitialized(const char *method) const noexcept {
-      if (l == CheckingLevel::None)
+      if (l == CheckingLevel::None || _wasInitialized)
          return;
 
       std::cerr << "clap_plugin." << method << "() was called before clap_plugin.init()" << std::endl;
