@@ -15,6 +15,8 @@ namespace clap { namespace helpers {
 
       void init();
 
+      const clap_host *host() const noexcept { return _host; }
+
       ///////////////
       // clap_host //
       ///////////////
