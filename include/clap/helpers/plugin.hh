@@ -452,7 +452,7 @@ namespace clap { namespace helpers {
       bool _isGuiFloating = false;
       bool _isGuiEmbedded = false;
 
-      std::mutex _mainThredCallbacksLock;
-      std::queue<std::function<void()>> _mainThredCallbacks;
+      std::mutex _mainThreadCallbacksLock;
+      std::queue<std::function<void()>> _mainThreadCallbacks;
    };
 }} // namespace clap::helpers

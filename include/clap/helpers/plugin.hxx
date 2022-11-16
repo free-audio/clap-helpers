@@ -213,11 +213,11 @@ namespace clap { namespace helpers {
          std::function<void()> cb;
 
          {
-            std::lock_guard<std::mutex> guard(_mainThredCallbacksLock);
-            if (_mainThredCallbacks.empty())
+            std::lock_guard<std::mutex> guard(_mainThreadCallbacksLock);
+            if (_mainThreadCallbacks.empty())
                return;
-            cb = std::move(_mainThredCallbacks.front());
-            _mainThredCallbacks.pop();
+            cb = std::move(_mainThreadCallbacks.front());
+            _mainThreadCallbacks.pop();
          }
 
          if (cb)
@@ -1485,8 +1485,8 @@ namespace clap { namespace helpers {
          return;
       }
 
-      std::lock_guard<std::mutex> guard(_mainThredCallbacksLock);
-      _mainThredCallbacks.emplace(std::move(callback));
+      std::lock_guard<std::mutex> guard(_mainThreadCallbacksLock);
+      _mainThreadCallbacks.emplace(std::move(callback));
       _host.requestCallback();
    }
 
