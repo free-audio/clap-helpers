@@ -9,7 +9,7 @@ set_target_properties(clap-helpers PROPERTIES
     POSITION_INDEPENDENT_CODE ON
     CXX_STANDARD 11)
 target_include_directories(clap-helpers INTERFACE include)
-target_link_libraries(clap-helpers INTERFACE clap-core)
+target_link_libraries(clap-helpers INTERFACE clap)
 
 # CLAP_BUILD_TESTS is inherited from clap
 if (Catch2_FOUND)
