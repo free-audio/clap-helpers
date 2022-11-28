@@ -18,7 +18,7 @@ if (Catch2_FOUND)
         tests/param-queue-tests.cc
         tests/main.cc)
     set_target_properties(clap-helpers-tests PROPERTIES CXX_STANDARD 11)
-    target_link_libraries(clap-helpers-tests clap-helpers clap-core Catch2::Catch2)
+    target_link_libraries(clap-helpers-tests clap-helpers clap Catch2::Catch2)
     target_compile_definitions(clap-helpers-tests PUBLIC -DCATCH_CONFIG_PREFIX_ALL)
     add_test(NAME test-clap-helpers COMMAND clap-helpers-tests)
     add_dependencies(clap-tests clap-helpers-tests)
