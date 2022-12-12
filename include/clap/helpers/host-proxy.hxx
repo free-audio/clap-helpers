@@ -20,14 +20,14 @@ namespace clap { namespace helpers {
       getExtension(_hostNotePorts, CLAP_EXT_NOTE_PORTS);
       getExtension(_hostTimerSupport, CLAP_EXT_TIMER_SUPPORT);
       getExtension(_hostPosixFdSupport, CLAP_EXT_POSIX_FD_SUPPORT);
-      getExtension(_hostFileReference, CLAP_EXT_FILE_REFERENCE);
+      getExtension(_hostResourceDirectory, CLAP_EXT_RESOURCE_DIRECTORY);
       getExtension(_hostLatency, CLAP_EXT_LATENCY);
       getExtension(_hostGui, CLAP_EXT_GUI);
       getExtension(_hostParams, CLAP_EXT_PARAMS);
       getExtension(_hostTrackInfo, CLAP_EXT_TRACK_INFO);
       getExtension(_hostState, CLAP_EXT_STATE);
       getExtension(_hostNoteName, CLAP_EXT_NOTE_NAME);
-      getExtension(_hostQuickControls, CLAP_EXT_QUICK_CONTROLS);
+      getExtension(_hostRemoteControls, CLAP_EXT_REMOTE_CONTROLS);
       getExtension(_hostVoiceInfo, CLAP_EXT_VOICE_INFO);
    }
 
@@ -516,31 +516,31 @@ namespace clap { namespace helpers {
    }
 
    //////////////////////////////
-   // clap_host_quick_controls //
+   // clap_host_remote_controls //
    //////////////////////////////
    template <MisbehaviourHandler h, CheckingLevel l>
-   bool HostProxy<h, l>::canUseQuickControls() const noexcept {
-      if (!_hostQuickControls)
+   bool HostProxy<h, l>::canUseRemoteControls() const noexcept {
+      if (!_hostRemoteControls)
          return false;
 
-      if (_hostQuickControls->changed && _hostQuickControls->suggest_page)
+      if (_hostRemoteControls->changed && _hostRemoteControls->suggest_page)
          return true;
 
-      hostMisbehaving("clap_host_quick_controls is partially implemented");
+      hostMisbehaving("clap_host_remote_controls is partially implemented");
       return false;
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   void HostProxy<h, l>::quickControlsChanged() const noexcept {
-      assert(canUseQuickControls());
-      ensureMainThread("quick_controls.changed");
-      _hostQuickControls->changed(_host);
+   void HostProxy<h, l>::remoteControlsChanged() const noexcept {
+      assert(canUseRemoteControls());
+      ensureMainThread("remote_controls.changed");
+      _hostRemoteControls->changed(_host);
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   void HostProxy<h, l>::quickControlsSuggestPage(clap_id page_id) const noexcept {
-      assert(canUseQuickControls());
-      ensureMainThread("quick_controls.suggest_page");
-      _hostQuickControls->suggest_page(_host, page_id);
+   void HostProxy<h, l>::remoteControlsSuggestPage(clap_id page_id) const noexcept {
+      assert(canUseRemoteControls());
+      ensureMainThread("remote_controls.suggest_page");
+      _hostRemoteControls->suggest_page(_host, page_id);
    }
 }} // namespace clap::helpers

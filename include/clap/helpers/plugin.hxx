@@ -64,8 +64,8 @@ namespace clap { namespace helpers {
    };
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   const clap_plugin_quick_controls Plugin<h, l>::_pluginQuickControls = {
-      clapQuickControlsPageCount, clapQuickControlsPageGet};
+   const clap_plugin_remote_controls Plugin<h, l>::_pluginRemoteControls = {
+      clapRemoteControlsPageCount, clapRemoteControlsPageGet};
 
    template <MisbehaviourHandler h, CheckingLevel l>
    const clap_plugin_latency Plugin<h, l>::_pluginLatency = {
@@ -165,7 +165,8 @@ namespace clap { namespace helpers {
       if (l == CheckingLevel::None || _wasInitialized)
          return;
 
-      std::cerr << "clap_plugin." << method << "() was called before clap_plugin.init()" << std::endl;
+      std::cerr << "clap_plugin." << method << "() was called before clap_plugin.init()"
+                << std::endl;
 
       if (h == MisbehaviourHandler::Terminate)
          std::terminate();
@@ -177,8 +178,7 @@ namespace clap { namespace helpers {
       self.ensureMainThread("clap_plugin.destroy");
       self._isBeingDestroyed = true;
 
-      if (self._isGuiCreated)
-      {
+      if (self._isGuiCreated) {
          if (l >= CheckingLevel::Minimal)
             self._host.pluginMisbehaving("host forgot to destroy the gui");
          clapGuiDestroy(plugin);
@@ -407,7 +407,8 @@ namespace clap { namespace helpers {
 
       if (!strcmp(id, CLAP_EXT_STATE) && self.implementsState())
          return &_pluginState;
-      if (!strcmp(id, CLAP_EXT_STATE_CONTEXT) && self.implementsStateContext() && self.implementsState())
+      if (!strcmp(id, CLAP_EXT_STATE_CONTEXT) && self.implementsStateContext() &&
+          self.implementsState())
          return &_pluginState;
       if (!strcmp(id, CLAP_EXT_PRESET_LOAD) && self.implementsPresetLoad())
          return &_pluginPresetLoad;
@@ -423,8 +424,8 @@ namespace clap { namespace helpers {
          return &_pluginAudioPortsConfig;
       if (!strcmp(id, CLAP_EXT_PARAMS) && self.implementsParams())
          return &_pluginParams;
-      if (!strcmp(id, CLAP_EXT_QUICK_CONTROLS) && self.implementQuickControls())
-         return &_pluginQuickControls;
+      if (!strcmp(id, CLAP_EXT_REMOTE_CONTROLS) && self.implementRemoteControls())
+         return &_pluginRemoteControls;
       if (!strcmp(id, CLAP_EXT_NOTE_PORTS) && self.implementsNotePorts())
          return &_pluginNotePorts;
       if (!strcmp(id, CLAP_EXT_NOTE_NAME) && self.implementsNoteName())
@@ -861,36 +862,36 @@ namespace clap { namespace helpers {
    }
 
    //----------------------------//
-   // clap_plugin_quick_controls //
+   // clap_plugin_remote_controls //
    //----------------------------//
    template <MisbehaviourHandler h, CheckingLevel l>
-   uint32_t Plugin<h, l>::clapQuickControlsPageCount(const clap_plugin *plugin) noexcept {
+   uint32_t Plugin<h, l>::clapRemoteControlsPageCount(const clap_plugin *plugin) noexcept {
       auto &self = from(plugin);
-      self.ensureMainThread("clap_plugin_quick_controls.page_count");
+      self.ensureMainThread("clap_plugin_remote_controls.page_count");
 
-      return self.quickControlsPageCount();
+      return self.remoteControlsPageCount();
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   bool Plugin<h, l>::clapQuickControlsPageGet(const clap_plugin *plugin,
-                                               uint32_t page_index,
-                                               clap_quick_controls_page *page) noexcept {
+   bool Plugin<h, l>::clapRemoteControlsPageGet(const clap_plugin *plugin,
+                                                uint32_t page_index,
+                                                clap_remote_controls_page *page) noexcept {
       auto &self = from(plugin);
-      self.ensureMainThread("clap_plugin_quick_controls.page_info");
+      self.ensureMainThread("clap_plugin_remote_controls.page_info");
 
       if (l >= CheckingLevel::Minimal) {
-         uint32_t count = clapQuickControlsPageCount(plugin);
+         uint32_t count = clapRemoteControlsPageCount(plugin);
          if (page_index >= count) {
             std::ostringstream msg;
-            msg
-               << "Host called clap_plugin_quick_controls.page_info() with an index out of bounds: "
-               << page_index << " >= " << count;
+            msg << "Host called clap_plugin_remote_controls.page_info() with an index out of "
+                   "bounds: "
+                << page_index << " >= " << count;
             self.hostMisbehaving(msg.str());
             return false;
          }
       }
 
-      return self.quickControlsPageGet(page_index, page);
+      return self.remoteControlsPageGet(page_index, page);
    }
 
    //------------------------//
@@ -1098,18 +1099,19 @@ namespace clap { namespace helpers {
          uint32_t testWidth = *width;
          uint32_t testHeight = *height;
 
-         if (!self.guiAdjustSize(&testWidth, &testHeight))
-         {
-            self._host.pluginMisbehaving("clap_plugin_gui.adjust_size() failed when called with adjusted values");
+         if (!self.guiAdjustSize(&testWidth, &testHeight)) {
+            self._host.pluginMisbehaving(
+               "clap_plugin_gui.adjust_size() failed when called with adjusted values");
             return true;
          }
 
-         if (testWidth != *width || testHeight != *height)
-         {
+         if (testWidth != *width || testHeight != *height) {
             std::ostringstream os;
             os << "clap_plugin_gui.adjust_size() isn't stable:" << std::endl
-               << "  (" << inputWidth << ", " << inputHeight << ") -> (" << *width << ", " << *height << ")" << std::endl
-               << "  (" << *width << ", " << *height << ") -> (" << testWidth << ", " << testHeight << ")" << std::endl
+               << "  (" << inputWidth << ", " << inputHeight << ") -> (" << *width << ", "
+               << *height << ")" << std::endl
+               << "  (" << *width << ", " << *height << ") -> (" << testWidth << ", " << testHeight
+               << ")" << std::endl
                << "  !! Check you're rounding math!";
             self._host.pluginMisbehaving(os.str());
          }

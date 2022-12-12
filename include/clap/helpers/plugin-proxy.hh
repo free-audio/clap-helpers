@@ -21,7 +21,7 @@ namespace clap { namespace helpers {
       const clap_plugin *const _plugin;
 
       const clap_plugin_params *_pluginParams = nullptr;
-      const clap_plugin_quick_controls *_pluginQuickControls = nullptr;
+      const clap_plugin_remote_controls *_pluginRemoteControls = nullptr;
       const clap_plugin_audio_ports *_pluginAudioPorts = nullptr;
       const clap_plugin_gui *_pluginGui = nullptr;
       const clap_plugin_gui_x11 *_pluginGuiX11 = nullptr;

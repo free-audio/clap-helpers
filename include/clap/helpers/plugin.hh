@@ -125,7 +125,7 @@ namespace clap { namespace helpers {
       // clap_plugin_audio_ports_config //
       //--------------------------------//
 
-      virtual bool  implementsAudioPortsConfig() const noexcept { return false; }
+      virtual bool implementsAudioPortsConfig() const noexcept { return false; }
       virtual uint32_t audioPortsConfigCount() const noexcept { return 0; }
       virtual bool audioPortsGetConfig(uint32_t index,
                                        clap_audio_ports_config *config) const noexcept {
@@ -154,16 +154,16 @@ namespace clap { namespace helpers {
       virtual bool isValidParamId(clap_id paramId) const noexcept;
 
       //----------------------------//
-      // clap_plugin_quick_controls //
+      // clap_plugin_remote_controls //
       //----------------------------//
-      virtual bool implementQuickControls() const noexcept { return false; }
-      virtual uint32_t quickControlsPageCount() noexcept { return 0; }
-      virtual bool quickControlsPageGet(uint32_t pageIndex,
-                                        clap_quick_controls_page *page) noexcept {
+      virtual bool implementRemoteControls() const noexcept { return false; }
+      virtual uint32_t remoteControlsPageCount() noexcept { return 0; }
+      virtual bool remoteControlsPageGet(uint32_t pageIndex,
+                                         clap_remote_controls_page *page) noexcept {
          return false;
       }
-      virtual void quickControlsSelectPage(clap_id pageId) noexcept {}
-      virtual clap_id quickControlsSelectedPage() noexcept { return CLAP_INVALID_ID; }
+      virtual void remoteControlsSelectPage(clap_id pageId) noexcept {}
+      virtual clap_id remoteControlsSelectedPage() noexcept { return CLAP_INVALID_ID; }
 
       //------------------------//
       // clap_plugin_note_ports //
@@ -365,11 +365,11 @@ namespace clap { namespace helpers {
                                   const clap_input_events *in,
                                   const clap_output_events *out) noexcept;
 
-      // clap_plugin_quick_controls
-      static uint32_t clapQuickControlsPageCount(const clap_plugin *plugin) noexcept;
-      static bool clapQuickControlsPageGet(const clap_plugin *plugin,
-                                           uint32_t page_index,
-                                           clap_quick_controls_page *page) noexcept;
+      // clap_plugin_remote_controls
+      static uint32_t clapRemoteControlsPageCount(const clap_plugin *plugin) noexcept;
+      static bool clapRemoteControlsPageGet(const clap_plugin *plugin,
+                                            uint32_t page_index,
+                                            clap_remote_controls_page *page) noexcept;
 
       // clap_plugin_note_port
       static uint32_t clapNotePortsCount(const clap_plugin *plugin, bool is_input) noexcept;
@@ -430,7 +430,7 @@ namespace clap { namespace helpers {
       static const clap_plugin_audio_ports _pluginAudioPorts;
       static const clap_plugin_audio_ports_config _pluginAudioPortsConfig;
       static const clap_plugin_params _pluginParams;
-      static const clap_plugin_quick_controls _pluginQuickControls;
+      static const clap_plugin_remote_controls _pluginRemoteControls;
       static const clap_plugin_latency _pluginLatency;
       static const clap_plugin_note_ports _pluginNotePorts;
       static const clap_plugin_note_name _pluginNoteName;

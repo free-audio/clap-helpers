@@ -126,11 +126,11 @@ namespace clap { namespace helpers {
       bool posixFdSupportUnregister(int fd) const noexcept;
 
       //////////////////////////////
-      // clap_host_quick_controls //
+      // clap_host_remote_controls //
       //////////////////////////////
-      bool canUseQuickControls() const noexcept;
-      void quickControlsChanged() const noexcept;
-      void quickControlsSuggestPage(clap_id page_id) const noexcept;
+      bool canUseRemoteControls() const noexcept;
+      void remoteControlsChanged() const noexcept;
+      void remoteControlsSuggestPage(clap_id page_id) const noexcept;
 
       ///////////////////////////
       // clap_host_thread_pool //
@@ -156,7 +156,7 @@ namespace clap { namespace helpers {
       const clap_host_audio_ports *_hostAudioPorts = nullptr;
       const clap_host_audio_ports_config *_hostAudioPortsConfig = nullptr;
       const clap_host_note_ports *_hostNotePorts = nullptr;
-      const clap_host_file_reference *_hostFileReference = nullptr;
+      const clap_host_resource_directory *_hostResourceDirectory = nullptr;
       const clap_host_latency *_hostLatency = nullptr;
       const clap_host_gui *_hostGui = nullptr;
       const clap_host_timer_support *_hostTimerSupport = nullptr;
@@ -165,7 +165,7 @@ namespace clap { namespace helpers {
       const clap_host_track_info *_hostTrackInfo = nullptr;
       const clap_host_state *_hostState = nullptr;
       const clap_host_note_name *_hostNoteName = nullptr;
-      const clap_host_quick_controls *_hostQuickControls = nullptr;
+      const clap_host_remote_controls *_hostRemoteControls = nullptr;
       const clap_host_voice_info *_hostVoiceInfo = nullptr;
       const clap_host_tail *_hostTail = nullptr;
    };
