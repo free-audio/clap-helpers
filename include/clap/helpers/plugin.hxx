@@ -66,6 +66,7 @@ namespace clap { namespace helpers {
    template <MisbehaviourHandler h, CheckingLevel l>
    const clap_plugin_param_indication Plugin<h, l>::_pluginParamIndication = {
       clapParamIndicationSetMapping,
+      clapParamIndicationSetAutomation,
    };
 
    template <MisbehaviourHandler h, CheckingLevel l>
