@@ -421,24 +421,24 @@ namespace clap { namespace helpers {
       static bool clapVoiceInfoGet(const clap_plugin *plugin, clap_voice_info *info) noexcept;
 
       // interfaces
-      static const clap_plugin_render _pluginRender;
-      static const clap_plugin_thread_pool _pluginThreadPool;
-      static const clap_plugin_state _pluginState;
-      static const clap_plugin_state_context _pluginStateContext;
-      static const clap_plugin_preset_load _pluginPresetLoad;
-      static const clap_plugin_track_info _pluginTrackInfo;
       static const clap_plugin_audio_ports _pluginAudioPorts;
       static const clap_plugin_audio_ports_config _pluginAudioPortsConfig;
-      static const clap_plugin_params _pluginParams;
-      static const clap_plugin_remote_controls _pluginRemoteControls;
-      static const clap_plugin_latency _pluginLatency;
-      static const clap_plugin_note_ports _pluginNotePorts;
-      static const clap_plugin_note_name _pluginNoteName;
-      static const clap_plugin_timer_support _pluginTimerSupport;
-      static const clap_plugin_posix_fd_support _pluginPosixFdSupport;
       static const clap_plugin_gui _pluginGui;
-      static const clap_plugin_voice_info _pluginVoiceInfo;
+      static const clap_plugin_latency _pluginLatency;
+      static const clap_plugin_note_name _pluginNoteName;
+      static const clap_plugin_note_ports _pluginNotePorts;
+      static const clap_plugin_params _pluginParams;
+      static const clap_plugin_posix_fd_support _pluginPosixFdSupport;
+      static const clap_plugin_preset_load _pluginPresetLoad;
+      static const clap_plugin_remote_controls _pluginRemoteControls;
+      static const clap_plugin_render _pluginRender;
+      static const clap_plugin_state _pluginState;
+      static const clap_plugin_state_context _pluginStateContext;
       static const clap_plugin_tail _pluginTail;
+      static const clap_plugin_thread_pool _pluginThreadPool;
+      static const clap_plugin_timer_support _pluginTimerSupport;
+      static const clap_plugin_track_info _pluginTrackInfo;
+      static const clap_plugin_voice_info _pluginVoiceInfo;
 
       // state
       bool _wasInitialized = false;
