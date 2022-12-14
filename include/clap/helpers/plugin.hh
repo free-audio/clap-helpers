@@ -157,9 +157,14 @@ namespace clap { namespace helpers {
       // clap_plugin_param_indication //
       //------------------------------//
       virtual bool implementsParamIndication() const noexcept { return false; }
-      virtual void paramIndicationSet(clap_id param_id,
-                                      bool has_indication,
-                                      const clap_color_t *indication_color) noexcept {}
+      virtual void paramIndicationSetMapping(clap_id param_id,
+                                             bool has_mapping,
+                                             const clap_color_t *color,
+                                             const char *label,
+                                             const char *description) noexcept {}
+      virtual void paramIndicationSetAutomation(clap_id param_id,
+                                                uint32_t automation_state,
+                                                const clap_color_t *color) noexcept {}
 
       //----------------------------//
       // clap_plugin_remote_controls //
@@ -374,10 +379,16 @@ namespace clap { namespace helpers {
                                   const clap_output_events *out) noexcept;
 
       // clap_plugin_param_indication
-      static void clapParamIndicationSet(const clap_plugin_t *plugin,
-                                         clap_id param_id,
-                                         bool has_indication,
-                                         const clap_color_t *indication_color) noexcept;
+      static void clapParamIndicationSetMapping(const clap_plugin_t *plugin,
+                                                clap_id param_id,
+                                                bool has_mapping,
+                                                const clap_color_t *color,
+                                                const char *label,
+                                                const char *description) noexcept;
+      static void clapParamIndicationSetAutomation(const clap_plugin_t *plugin,
+                                                   clap_id param_id,
+                                                   uint32_t automation_state,
+                                                   const clap_color_t *color) noexcept;
 
       // clap_plugin_remote_controls
       static uint32_t clapRemoteControlsPageCount(const clap_plugin *plugin) noexcept;

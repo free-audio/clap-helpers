@@ -65,7 +65,7 @@ namespace clap { namespace helpers {
 
    template <MisbehaviourHandler h, CheckingLevel l>
    const clap_plugin_param_indication Plugin<h, l>::_pluginParamIndication = {
-      clapParamIndicationSet,
+      clapParamIndicationSetMapping,
    };
 
    template <MisbehaviourHandler h, CheckingLevel l>
@@ -873,23 +873,47 @@ namespace clap { namespace helpers {
    //------------------------------//
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   void Plugin<h, l>::clapParamIndicationSet(const clap_plugin_t *plugin,
-                                             clap_id param_id,
-                                             bool has_indication,
-                                             const clap_color_t *indication_color) noexcept {
+   void Plugin<h, l>::clapParamIndicationSetMapping(const clap_plugin_t *plugin,
+                                                    clap_id param_id,
+                                                    bool has_mapping,
+                                                    const clap_color_t *color,
+                                                    const char *label,
+                                                    const char *description) noexcept {
       auto &self = from(plugin);
       self.checkMainThread();
 
       if (l >= CheckingLevel::Minimal) {
          if (!self.isValidParamId(param_id)) {
             std::ostringstream msg;
-            msg << "clap_plugin_param_indication.set() called with invalid param_id: " << param_id;
+            msg << "clap_plugin_param_indication.set_mapping() called with invalid param_id: "
+                << param_id;
             self.hostMisbehaving(msg.str());
             return;
          }
       }
 
-      self.paramIndicationSet(param_id, has_indication, indication_color);
+      self.paramIndicationSetMapping(param_id, has_mapping, color, label, description);
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   void Plugin<h, l>::clapParamIndicationSetAutomation(const clap_plugin_t *plugin,
+                                                       clap_id param_id,
+                                                       uint32_t automation_state,
+                                                       const clap_color_t *color) noexcept {
+      auto &self = from(plugin);
+      self.checkMainThread();
+
+      if (l >= CheckingLevel::Minimal) {
+         if (!self.isValidParamId(param_id)) {
+            std::ostringstream msg;
+            msg << "clap_plugin_param_indication.set_automation() called with invalid param_id: "
+                << param_id;
+            self.hostMisbehaving(msg.str());
+            return;
+         }
+      }
+
+      self.paramIndicationSetAutomation(param_id, automation_state, color);
    }
 
    //----------------------------//
