@@ -64,6 +64,11 @@ namespace clap { namespace helpers {
    };
 
    template <MisbehaviourHandler h, CheckingLevel l>
+   const clap_plugin_param_indication Plugin<h, l>::_pluginParamIndication = {
+      clapParamIndicationSet,
+   };
+
+   template <MisbehaviourHandler h, CheckingLevel l>
    const clap_plugin_remote_controls Plugin<h, l>::_pluginRemoteControls = {
       clapRemoteControlsPageCount, clapRemoteControlsPageGet};
 
@@ -424,6 +429,8 @@ namespace clap { namespace helpers {
          return &_pluginAudioPortsConfig;
       if (!strcmp(id, CLAP_EXT_PARAMS) && self.implementsParams())
          return &_pluginParams;
+      if (!strcmp(id, CLAP_EXT_PARAM_INDICATION) && self.implementsParamIndication())
+         return &_pluginParamIndication;
       if (!strcmp(id, CLAP_EXT_REMOTE_CONTROLS) && self.implementRemoteControls())
          return &_pluginRemoteControls;
       if (!strcmp(id, CLAP_EXT_NOTE_PORTS) && self.implementsNotePorts())
@@ -859,6 +866,30 @@ namespace clap { namespace helpers {
             return true;
       }
       return false;
+   }
+
+   //------------------------------//
+   // clap_plugin_param_indication //
+   //------------------------------//
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   void Plugin<h, l>::clapParamIndicationSet(const clap_plugin_t *plugin,
+                                             clap_id param_id,
+                                             bool has_indication,
+                                             const clap_color_t *indication_color) noexcept {
+      auto &self = from(plugin);
+      self.checkMainThread();
+
+      if (l >= CheckingLevel::Minimal) {
+         if (!self.isValidParamId(param_id)) {
+            std::ostringstream msg;
+            msg << "clap_plugin_param_indication.set() called with invalid param_id: " << param_id;
+            self.hostMisbehaving(msg.str());
+            return;
+         }
+      }
+
+      self.paramIndicationSet(param_id, has_indication, indication_color);
    }
 
    //----------------------------//
