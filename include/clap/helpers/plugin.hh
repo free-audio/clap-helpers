@@ -158,8 +158,8 @@ namespace clap { namespace helpers {
       //------------------------------//
       virtual bool implementsParamIndication() const noexcept { return false; }
       virtual void paramIndicationSet(clap_id param_id,
-                                      bool is_mapped,
-                                      const clap_color_t *mapping_color) {}
+                                      bool has_indication,
+                                      const clap_color_t *indication_color) noexcept {}
 
       //----------------------------//
       // clap_plugin_remote_controls //
