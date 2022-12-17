@@ -122,6 +122,12 @@ namespace clap { namespace helpers {
    };
 
    template <MisbehaviourHandler h, CheckingLevel l>
+   const clap_plugin_context_menu Plugin<h, l>::_pluginContextMenu = {
+      clapContextMenuPopulate,
+      clapContextMenuPerform,
+   };
+
+   template <MisbehaviourHandler h, CheckingLevel l>
    const clap_plugin_voice_info Plugin<h, l>::_pluginVoiceInfo = {
       clapVoiceInfoGet,
    };
@@ -458,6 +464,8 @@ namespace clap { namespace helpers {
          return &_pluginVoiceInfo;
       if (!strcmp(id, CLAP_EXT_TAIL) && self.implementsTail())
          return &_pluginTail;
+      if (!strcmp(id, CLAP_EXT_CONTEXT_MENU))
+         return &_pluginContextMenu;
 
       return self.extension(id);
    }
@@ -1444,6 +1452,29 @@ namespace clap { namespace helpers {
       }
 
       return self.guiSuggestTitle(title);
+   }
+
+   //--------------------------//
+   // clap_plugin_context_menu //
+   //--------------------------//
+   template <MisbehaviourHandler h, CheckingLevel l>
+   bool Plugin<h, l>::clapContextMenuPopulate(const clap_plugin_t *plugin,
+                                              const clap_context_menu_target_t *target,
+                                              const clap_context_menu_builder_t *builder) noexcept {
+      auto &self = from(plugin);
+      self.ensureMainThread("clap_plugin_context_menu.populate");
+
+      return self.contextMenuPopulate(target, builder);
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   bool Plugin<h, l>::clapContextMenuPerform(const clap_plugin_t *plugin,
+                                             const clap_context_menu_target_t *target,
+                                             clap_id action_id) noexcept {
+      auto &self = from(plugin);
+      self.ensureMainThread("clap_plugin_context_menu.perform");
+
+      return self.contextMenuPerform(target, action_id);
    }
 
    /////////////

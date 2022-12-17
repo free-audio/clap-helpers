@@ -238,6 +238,19 @@ namespace clap { namespace helpers {
       virtual bool guiSetParent(const clap_window *window) noexcept { return false; }
       virtual bool guiSetTransient(const clap_window *window) noexcept { return false; }
 
+      //--------------------------//
+      // clap_plugin_context_menu //
+      //--------------------------//
+      virtual bool implementsContextMenu() const noexcept { return false; }
+      virtual bool contextMenuPopulate(const clap_context_menu_target_t *target,
+                                       const clap_context_menu_builder_t *builder) noexcept {
+         return false;
+      }
+      virtual bool contextMenuPerform(const clap_context_menu_target_t *target,
+                                      clap_id action_id) noexcept {
+         return false;
+      }
+
       //------------------------//
       // clap_plugin_voice_info //
       //------------------------//
@@ -369,9 +382,9 @@ namespace clap { namespace helpers {
       static bool
       clapAudioPortsActivationCanActivateWhileProcessing(const clap_plugin_t *plugin) noexcept;
       static void clapAudioPortsActivationSetActive(const clap_plugin_t *plugin,
-                                                         bool is_input,
-                                                         uint32_t port_index,
-                                                         bool is_active) noexcept;
+                                                    bool is_input,
+                                                    uint32_t port_index,
+                                                    bool is_active) noexcept;
 
       // clap_plugin_params
       static uint32_t clapParamsCount(const clap_plugin *plugin) noexcept;
@@ -460,6 +473,15 @@ namespace clap { namespace helpers {
 
       static bool clapVoiceInfoGet(const clap_plugin *plugin, clap_voice_info *info) noexcept;
 
+      // clap_plugin_context_menu
+      static bool clapContextMenuPopulate(const clap_plugin_t *plugin,
+                                          const clap_context_menu_target_t *target,
+                                          const clap_context_menu_builder_t *builder) noexcept;
+
+      static bool clapContextMenuPerform(const clap_plugin_t *plugin,
+                                         const clap_context_menu_target_t *target,
+                                         clap_id action_id) noexcept;
+
       // interfaces
       static const clap_plugin_audio_ports _pluginAudioPorts;
       static const clap_plugin_audio_ports_config _pluginAudioPortsConfig;
@@ -481,6 +503,7 @@ namespace clap { namespace helpers {
       static const clap_plugin_timer_support _pluginTimerSupport;
       static const clap_plugin_track_info _pluginTrackInfo;
       static const clap_plugin_voice_info _pluginVoiceInfo;
+      static const clap_plugin_context_menu _pluginContextMenu;
 
       // state
       bool _wasInitialized = false;
