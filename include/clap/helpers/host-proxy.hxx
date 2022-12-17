@@ -29,6 +29,7 @@ namespace clap { namespace helpers {
       getExtension(_hostNoteName, CLAP_EXT_NOTE_NAME);
       getExtension(_hostRemoteControls, CLAP_EXT_REMOTE_CONTROLS);
       getExtension(_hostVoiceInfo, CLAP_EXT_VOICE_INFO);
+      getExtension(_hostContextMenu, CLAP_EXT_CONTEXT_MENU);
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
@@ -542,5 +543,58 @@ namespace clap { namespace helpers {
       assert(canUseRemoteControls());
       ensureMainThread("remote_controls.suggest_page");
       _hostRemoteControls->suggest_page(_host, page_id);
+   }
+
+   ////////////////////////////
+   // clap_host_context_menu //
+   ////////////////////////////
+   template <MisbehaviourHandler h, CheckingLevel l>
+   bool HostProxy<h, l>::canUseHostContextMenu() const noexcept {
+      if (!_hostContextMenu)
+         return false;
+
+      if (_hostContextMenu->populate && _hostContextMenu->perform && _hostContextMenu->can_popup &&
+          _hostContextMenu->popup)
+         return true;
+
+      hostMisbehaving("clap_host_context_menu is partially implemented");
+      return false;
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   bool
+   HostProxy<h, l>::contextMenuPopulate(const clap_host_t *host,
+                                        const clap_context_menu_target_t *target,
+                                        const clap_context_menu_builder_t *builder) const noexcept {
+      assert(canUseHostContextMenu());
+      ensureMainThread("context_menu.populate");
+      return _hostContextMenu->populate(_host, target, builder);
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   bool HostProxy<h, l>::contextMenuPerform(const clap_host_t *host,
+                                            const clap_context_menu_target_t *target,
+                                            clap_id action_id) const noexcept {
+      assert(canUseHostContextMenu());
+      ensureMainThread("context_menu.perform");
+      return _hostContextMenu->perform(_host, target, action_id);
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   bool HostProxy<h, l>::contextMenuCanPopup(const clap_host_t *host) const noexcept {
+      assert(canUseHostContextMenu());
+      ensureMainThread("context_menu.can_popup");
+      return _hostContextMenu->can_popup(_host);
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   bool HostProxy<h, l>::contextMenuPopup(const clap_host_t *host,
+                                          const clap_context_menu_target_t *target,
+                                          int32_t screen_index,
+                                          int32_t x,
+                                          int32_t y) const noexcept {
+      assert(canUseHostContextMenu());
+      ensureMainThread("context_menu.popup");
+      return _hostContextMenu->can_popup(_host);
    }
 }} // namespace clap::helpers

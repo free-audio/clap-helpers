@@ -144,6 +144,23 @@ namespace clap { namespace helpers {
       bool canUseVoiceInfo() const noexcept;
       void voiceInfoChanged() const noexcept;
 
+      ////////////////////////////
+      // clap_host_context_menu //
+      ////////////////////////////
+      bool canUseHostContextMenu() const noexcept;
+      bool contextMenuPopulate(const clap_host_t *host,
+                               const clap_context_menu_target_t *target,
+                               const clap_context_menu_builder_t *builder) const noexcept;
+      bool contextMenuPerform(const clap_host_t *host,
+                              const clap_context_menu_target_t *target,
+                              clap_id action_id) const noexcept;
+      bool contextMenuCanPopup(const clap_host_t *host) const noexcept;
+      bool contextMenuPopup(const clap_host_t *host,
+                            const clap_context_menu_target_t *target,
+                            int32_t screen_index,
+                            int32_t x,
+                            int32_t y) const noexcept;
+
    protected:
       void ensureMainThread(const char *method) const noexcept;
       void ensureAudioThread(const char *method) const noexcept;
@@ -168,5 +185,6 @@ namespace clap { namespace helpers {
       const clap_host_remote_controls *_hostRemoteControls = nullptr;
       const clap_host_voice_info *_hostVoiceInfo = nullptr;
       const clap_host_tail *_hostTail = nullptr;
+      const clap_host_context_menu *_hostContextMenu = nullptr;
    };
 }} // namespace clap::helpers
