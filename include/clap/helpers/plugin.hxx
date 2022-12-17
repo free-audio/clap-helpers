@@ -54,6 +54,12 @@ namespace clap { namespace helpers {
    };
 
    template <MisbehaviourHandler h, CheckingLevel l>
+   const clap_plugin_audio_ports_activation Plugin<h, l>::_pluginAudioPortsActivation = {
+      clapAudioPortsActivationCanActivateWhileProcessing,
+      clapAudioPortsActivationSetActive,
+   };
+
+   template <MisbehaviourHandler h, CheckingLevel l>
    const clap_plugin_params Plugin<h, l>::_pluginParams = {
       clapParamsCount,
       clapParamsInfo,
@@ -426,6 +432,8 @@ namespace clap { namespace helpers {
          return &_pluginLatency;
       if (!strcmp(id, CLAP_EXT_AUDIO_PORTS) && self.implementsAudioPorts())
          return &_pluginAudioPorts;
+      if (!strcmp(id, CLAP_EXT_AUDIO_PORTS_ACTIVATION) && self.implementsAudioPorts())
+         return &_pluginAudioPortsActivation;
       if (!strcmp(id, CLAP_EXT_AUDIO_PORTS_CONFIG) && self.implementsAudioPortsConfig())
          return &_pluginAudioPortsConfig;
       if (!strcmp(id, CLAP_EXT_PARAMS) && self.implementsParams())
@@ -671,6 +679,35 @@ namespace clap { namespace helpers {
       }
 
       return self.audioPortsSetConfig(config_id);
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   bool Plugin<h, l>::clapAudioPortsActivationCanActivateWhileProcessing(
+      const clap_plugin_t *plugin) noexcept {
+      auto &self = from(plugin);
+      self.ensureMainThread("clap_plugin_audio_ports_activation.can_activate_while_processing");
+
+      return self.audioPortsActivationCanActivateWhileProcessing();
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   void Plugin<h, l>::clapAudioPortsActivationSetActive(const clap_plugin_t *plugin,
+                                                        bool is_input,
+                                                        uint32_t port_index,
+                                                        bool is_active) noexcept {
+      auto &self = from(plugin);
+      self.ensureMainThread("clap_plugin_audio_ports_activation.set_active");
+
+      if (l >= CheckingLevel::Minimal) {
+         if (self.isActive() && !self.audioPortsActivationCanActivateWhileProcessing()) {
+            self.hostMisbehaving(
+               "it is illegal to call clap_audio_ports_activation.set_active() if the plugin is "
+               "active if "
+               "clap_plugin_audio_ports_activation.can_activate_while_processing() returns false");
+         }
+      }
+
+      return self.audioPortsActivationSetActive(is_input, port_index, is_active);
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>

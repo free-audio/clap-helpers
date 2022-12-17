@@ -124,7 +124,6 @@ namespace clap { namespace helpers {
       //--------------------------------//
       // clap_plugin_audio_ports_config //
       //--------------------------------//
-
       virtual bool implementsAudioPortsConfig() const noexcept { return false; }
       virtual uint32_t audioPortsConfigCount() const noexcept { return 0; }
       virtual bool audioPortsGetConfig(uint32_t index,
@@ -132,6 +131,14 @@ namespace clap { namespace helpers {
          return false;
       }
       virtual bool audioPortsSetConfig(clap_id configId) noexcept { return false; }
+
+      //------------------------------------//
+      // clap_plugin_audio_ports_activation //
+      //------------------------------------//
+      virtual bool implementsAudioPortsActivation() const noexcept { return false; }
+      virtual bool audioPortsActivationCanActivateWhileProcessing() const noexcept { return false; }
+      virtual void
+      audioPortsActivationSetActive(bool is_input, uint32_t port_index, bool is_active) noexcept {}
 
       //--------------------//
       // clap_plugin_params //
@@ -358,6 +365,14 @@ namespace clap { namespace helpers {
                                           clap_audio_ports_config *config) noexcept;
       static bool clapAudioPortsSetConfig(const clap_plugin *plugin, clap_id config_id) noexcept;
 
+      // clap_plugin_audio_ports_activation
+      static bool
+      clapAudioPortsActivationCanActivateWhileProcessing(const clap_plugin_t *plugin) noexcept;
+      static void clapAudioPortsActivationSetActive(const clap_plugin_t *plugin,
+                                                         bool is_input,
+                                                         uint32_t port_index,
+                                                         bool is_active) noexcept;
+
       // clap_plugin_params
       static uint32_t clapParamsCount(const clap_plugin *plugin) noexcept;
       static bool clapParamsInfo(const clap_plugin *plugin,
@@ -448,6 +463,7 @@ namespace clap { namespace helpers {
       // interfaces
       static const clap_plugin_audio_ports _pluginAudioPorts;
       static const clap_plugin_audio_ports_config _pluginAudioPortsConfig;
+      static const clap_plugin_audio_ports_activation _pluginAudioPortsActivation;
       static const clap_plugin_gui _pluginGui;
       static const clap_plugin_latency _pluginLatency;
       static const clap_plugin_note_name _pluginNoteName;
