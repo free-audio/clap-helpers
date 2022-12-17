@@ -595,6 +595,6 @@ namespace clap { namespace helpers {
                                           int32_t y) const noexcept {
       assert(canUseHostContextMenu());
       ensureMainThread("context_menu.popup");
-      return _hostContextMenu->can_popup(_host);
+      return _hostContextMenu->popup(_host, target, screen_index, x, y);
    }
 }} // namespace clap::helpers
