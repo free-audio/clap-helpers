@@ -182,8 +182,6 @@ namespace clap { namespace helpers {
                                          clap_remote_controls_page *page) noexcept {
          return false;
       }
-      virtual void remoteControlsSelectPage(clap_id pageId) noexcept {}
-      virtual clap_id remoteControlsSelectedPage() noexcept { return CLAP_INVALID_ID; }
 
       //------------------------//
       // clap_plugin_note_ports //
