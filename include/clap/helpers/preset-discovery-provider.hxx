@@ -75,4 +75,10 @@ namespace clap { namespace helpers {
       self.ensureInitialized();
       return self.getExtension(id);
    }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   PresetDiscoveryProvider<h, l> &PresetDiscoveryProvider<h, l>::from(const clap_preset_discovery_provider *provider) noexcept
+   {
+      return *static_cast<PresetDiscoveryProvider<h, l>*>(provider->provider_data);
+   }
 }} // namespace clap::helpers
