@@ -44,8 +44,11 @@ namespace clap { namespace helpers {
       // clap_preset_discovery_provider //
       //--------------------------------//
       virtual bool init() noexcept { return true; }
-      virtual bool getMetadata(const char *uri,
-                               const clap_preset_discovery_metadata_receiver_t *metadata_receiver);
+      virtual bool
+      getMetadata(const char *uri,
+                  const clap_preset_discovery_metadata_receiver_t *metadata_receiver) noexcept {
+         return false;
+      }
       virtual const void *extension(const char *id) noexcept { return nullptr; }
 
       ///////////////
