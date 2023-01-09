@@ -64,7 +64,7 @@ namespace clap { namespace helpers {
       const char *uri,
       const clap_preset_discovery_metadata_receiver_t *metadata_receiver) noexcept {
       auto &self = from(provider);
-      self.ensureInitialized();
+      self.ensureInitialized("get_metadata");
       return self.getMetadata(uri, metadata_receiver);
    }
 
@@ -72,13 +72,25 @@ namespace clap { namespace helpers {
    const void *PresetDiscoveryProvider<h, l>::providerGetExtension(
       const clap_preset_discovery_provider *provider, const char *id) noexcept {
       auto &self = from(provider);
-      self.ensureInitialized();
-      return self.getExtension(id);
+      self.ensureInitialized("get_extension");
+      return self.extension(id);
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   PresetDiscoveryProvider<h, l> &PresetDiscoveryProvider<h, l>::from(const clap_preset_discovery_provider *provider) noexcept
-   {
-      return *static_cast<PresetDiscoveryProvider<h, l>*>(provider->provider_data);
+   PresetDiscoveryProvider<h, l> &
+   PresetDiscoveryProvider<h, l>::from(const clap_preset_discovery_provider *provider) noexcept {
+      return *static_cast<PresetDiscoveryProvider<h, l> *>(provider->provider_data);
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   void PresetDiscoveryProvider<h, l>::ensureInitialized(const char *method) const noexcept {
+      if (l >= CheckingLevel::Minimal) {
+         if (!_wasInitialized) {
+            std::cerr << "clap_preset_discovery_provider." << method
+                      << "() was called before init()." << std::endl;
+            if (h == MisbehaviourHandler::Terminate)
+               std::terminate();
+         }
+      }
    }
 }} // namespace clap::helpers
