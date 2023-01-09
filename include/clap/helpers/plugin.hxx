@@ -34,7 +34,7 @@ namespace clap { namespace helpers {
 
    template <MisbehaviourHandler h, CheckingLevel l>
    const clap_plugin_preset_load Plugin<h, l>::_pluginPresetLoad = {
-      clapPresetLoadFromFile,
+      clapPresetLoadFromUri,
    };
 
    template <MisbehaviourHandler h, CheckingLevel l>
@@ -578,20 +578,18 @@ namespace clap { namespace helpers {
    // clap_plugin_preset_load //
    //-------------------------//
    template <MisbehaviourHandler h, CheckingLevel l>
-   bool Plugin<h, l>::clapPresetLoadFromFile(const clap_plugin *plugin, const char *path) noexcept {
+   bool Plugin<h, l>::clapPresetLoadFromUri(const clap_plugin *plugin, const char *uri) noexcept {
       auto &self = from(plugin);
-      self.ensureMainThread("clap_plugin_preset_load.from_file");
+      self.ensureMainThread("clap_plugin_preset_load.from_uri");
 
       if (l >= CheckingLevel::Minimal) {
-         if (!path) {
-            self.hostMisbehaving("host called clap_plugin_preset_load.from_file with a null path");
+         if (!uri) {
+            self.hostMisbehaving("host called clap_plugin_preset_load.from_uri with a null uri");
             return false;
          }
       }
 
-      // TODO check if the file is readable
-
-      return self.presetLoadFromFile(path);
+      return self.presetLoadFromUri(uri);
    }
 
    //------------------------//

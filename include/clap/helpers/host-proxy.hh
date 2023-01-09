@@ -147,7 +147,7 @@ namespace clap { namespace helpers {
       ////////////////////////////
       // clap_host_context_menu //
       ////////////////////////////
-      bool canUseHostContextMenu() const noexcept;
+      bool canUseContextMenu() const noexcept;
       bool contextMenuPopulate(const clap_host_t *host,
                                const clap_context_menu_target_t *target,
                                const clap_context_menu_builder_t *builder) const noexcept;
@@ -160,6 +160,13 @@ namespace clap { namespace helpers {
                             int32_t screen_index,
                             int32_t x,
                             int32_t y) const noexcept;
+
+      ///////////////////////////
+      // clap_host_preset_load //
+      ///////////////////////////
+      bool canUsePresetLoad() const noexcept;
+      void presetLoadOnError(const char *uri, int32_t os_error, const char *msg) const noexcept;
+      void presetLoadLoaded(const char *uri) const noexcept;
 
    protected:
       void ensureMainThread(const char *method) const noexcept;
@@ -186,5 +193,6 @@ namespace clap { namespace helpers {
       const clap_host_voice_info *_hostVoiceInfo = nullptr;
       const clap_host_tail *_hostTail = nullptr;
       const clap_host_context_menu *_hostContextMenu = nullptr;
+      const clap_host_preset_load *_hostPresetLoad = nullptr;
    };
 }} // namespace clap::helpers
