@@ -22,7 +22,8 @@ namespace clap { namespace helpers {
    template <MisbehaviourHandler h, CheckingLevel l>
    class PresetDiscoveryProvider {
    public:
-      const clap_preset_discovery_provider *provider() noexcept { return &_provider; }
+      const clap_preset_discovery_provider *provider() const noexcept { return &_provider; }
+      const clap_preset_discovery_indexer *indexer() const noexcept { return _indexer; }
 
    protected:
       PresetDiscoveryProvider(const clap_preset_discovery_provider_descriptor *desc,
