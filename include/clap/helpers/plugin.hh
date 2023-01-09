@@ -137,8 +137,10 @@ namespace clap { namespace helpers {
       //------------------------------------//
       virtual bool implementsAudioPortsActivation() const noexcept { return false; }
       virtual bool audioPortsActivationCanActivateWhileProcessing() const noexcept { return false; }
-      virtual void
-      audioPortsActivationSetActive(bool is_input, uint32_t port_index, bool is_active) noexcept {}
+      virtual bool
+      audioPortsActivationSetActive(bool is_input, uint32_t port_index, bool is_active) noexcept {
+         return false;
+      }
 
       //--------------------//
       // clap_plugin_params //
@@ -379,7 +381,7 @@ namespace clap { namespace helpers {
       // clap_plugin_audio_ports_activation
       static bool
       clapAudioPortsActivationCanActivateWhileProcessing(const clap_plugin_t *plugin) noexcept;
-      static void clapAudioPortsActivationSetActive(const clap_plugin_t *plugin,
+      static bool clapAudioPortsActivationSetActive(const clap_plugin_t *plugin,
                                                     bool is_input,
                                                     uint32_t port_index,
                                                     bool is_active) noexcept;

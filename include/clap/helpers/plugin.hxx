@@ -699,7 +699,7 @@ namespace clap { namespace helpers {
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   void Plugin<h, l>::clapAudioPortsActivationSetActive(const clap_plugin_t *plugin,
+   bool Plugin<h, l>::clapAudioPortsActivationSetActive(const clap_plugin_t *plugin,
                                                         bool is_input,
                                                         uint32_t port_index,
                                                         bool is_active) noexcept {
