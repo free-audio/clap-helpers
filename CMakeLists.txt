@@ -16,7 +16,8 @@ if (Catch2_FOUND)
     add_executable(clap-helpers-tests EXCLUDE_FROM_ALL
         tests/plugin.cc
         tests/param-queue-tests.cc
-        tests/main.cc)
+        tests/main.cc
+        tests/preset-discovery-provider.cc)
     set_target_properties(clap-helpers-tests PROPERTIES CXX_STANDARD 11)
     target_link_libraries(clap-helpers-tests clap-helpers clap Catch2::Catch2)
     target_compile_definitions(clap-helpers-tests PUBLIC -DCATCH_CONFIG_PREFIX_ALL)
