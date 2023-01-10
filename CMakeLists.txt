@@ -17,6 +17,7 @@ if (Catch2_FOUND)
         tests/plugin.cc
         tests/param-queue-tests.cc
         tests/main.cc
+        tests/preset-discovery-indexer.cc
         tests/preset-discovery-provider.cc)
     set_target_properties(clap-helpers-tests PROPERTIES CXX_STANDARD 11)
     target_link_libraries(clap-helpers-tests clap-helpers clap Catch2::Catch2)

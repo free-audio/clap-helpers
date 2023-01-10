@@ -1,24 +1,13 @@
 #pragma once
 
-#include <cassert>
-#include <functional>
-#include <mutex>
-#include <queue>
-#include <string>
-#include <string_view>
-#include <vector>
-
 #include <clap/clap.h>
 
 #include "checking-level.hh"
-#include "host-proxy.hh"
 #include "misbehaviour-handler.hh"
 
 namespace clap { namespace helpers {
 
    /// @brief C++ glue and checks
-   ///
-   /// @note for an higher level implementation, see @ref PluginHelper
    template <MisbehaviourHandler h, CheckingLevel l>
    class PresetDiscoveryProvider {
    public:
@@ -69,7 +58,7 @@ namespace clap { namespace helpers {
       const clap_preset_discovery_provider _provider;
       const clap_preset_discovery_indexer *const _indexer;
 
-      // clap_plugin
+      // clap_preset_discovery_provider
       static bool providerInit(const clap_preset_discovery_provider *provider) noexcept;
       static void providerDestroy(const clap_preset_discovery_provider *provider) noexcept;
       static bool providerGetMetadata(
