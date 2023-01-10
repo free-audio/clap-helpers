@@ -34,17 +34,16 @@ namespace clap { namespace helpers {
       //--------------------------------//
       virtual void onError(int32_t os_error, const char *error_message) noexcept {}
 
-      virtual void markAsContainerFile() noexcept {}
-
-      virtual void beginContainedPreset(const char *path, const char *load_uri) noexcept {}
+      virtual bool
+      beginPreset(const char *name, const char *subpath, const char *load_key) noexcept {
+         return false;
+      }
 
       virtual void addPluginId(uint32_t plugin_abi, const char *plugin_id) noexcept {}
 
       virtual void setCollectionId(const char *collection_id) noexcept {}
 
       virtual void setFlags(uint32_t flags) noexcept {}
-
-      virtual void setName(const char *name) noexcept {}
 
       virtual void addCreator(const char *creator) noexcept {}
 
@@ -73,13 +72,11 @@ namespace clap { namespace helpers {
                                   int32_t os_error,
                                   const char *error_message) noexcept;
 
-      static void receiverMarkAsContainerFile(
-         const struct clap_preset_discovery_metadata_receiver *receiver) noexcept;
-
-      static void
-      receiverBeginContainedPreset(const struct clap_preset_discovery_metadata_receiver *receiver,
-                                   const char *path,
-                                   const char *load_uri) noexcept;
+      static bool
+      receiverBeginPreset(const struct clap_preset_discovery_metadata_receiver *receiver,
+                          const char *name,
+                          const char *subpath,
+                          const char *load_key) noexcept;
 
       static void
       receiverAddPluginId(const struct clap_preset_discovery_metadata_receiver *receiver,
@@ -92,9 +89,6 @@ namespace clap { namespace helpers {
 
       static void receiverSetFlags(const struct clap_preset_discovery_metadata_receiver *receiver,
                                    uint32_t flags) noexcept;
-
-      static void receiverSetName(const struct clap_preset_discovery_metadata_receiver *receiver,
-                                  const char *name) noexcept;
 
       static void receiverAddCreator(const struct clap_preset_discovery_metadata_receiver *receiver,
                                      const char *creator) noexcept;

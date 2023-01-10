@@ -11,12 +11,10 @@ namespace clap { namespace helpers {
       : _receiver({
            this,
            receiverOnError,
-           receiverMarkAsContainerFile,
-           receiverBeginContainedPreset,
+           receiverBeginPreset,
            receiverAddPluginId,
            receiverSetCollectionId,
            receiverSetFlags,
-           receiverSetName,
            receiverAddCreator,
            receiverSetDescription,
            receiverSetTimestamps,
@@ -40,19 +38,13 @@ namespace clap { namespace helpers {
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   void PresetDiscoveryMetadataReceiver<h, l>::receiverMarkAsContainerFile(
-      const struct clap_preset_discovery_metadata_receiver *receiver) noexcept {
-      auto &self = from(receiver);
-      return self.markAsContainerFile();
-   }
-
-   template <MisbehaviourHandler h, CheckingLevel l>
-   void PresetDiscoveryMetadataReceiver<h, l>::receiverBeginContainedPreset(
+   bool PresetDiscoveryMetadataReceiver<h, l>::receiverBeginPreset(
       const struct clap_preset_discovery_metadata_receiver *receiver,
-      const char *path,
-      const char *load_uri) noexcept {
+      const char *name,
+      const char *subpath,
+      const char *load_key) noexcept {
       auto &self = from(receiver);
-      return self.beginContainedPreset(path, load_uri);
+      return self.beginPreset(name, subpath, load_key);
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
@@ -77,13 +69,6 @@ namespace clap { namespace helpers {
       const struct clap_preset_discovery_metadata_receiver *receiver, uint32_t flags) noexcept {
       auto &self = from(receiver);
       return self.setFlags(flags);
-   }
-
-   template <MisbehaviourHandler h, CheckingLevel l>
-   void PresetDiscoveryMetadataReceiver<h, l>::receiverSetName(
-      const struct clap_preset_discovery_metadata_receiver *receiver, const char *name) noexcept {
-      auto &self = from(receiver);
-      return self.setName(name);
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
