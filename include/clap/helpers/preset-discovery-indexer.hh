@@ -62,7 +62,7 @@ namespace clap { namespace helpers {
 
       const clap_preset_discovery_indexer _indexer;
 
-      // clap_plugin
+      // clap_preset_discovery_indexer
       static bool indexerDeclareFiletype(const struct clap_preset_discovery_indexer *indexer,
                                          const clap_preset_discovery_filetype_t *filetype);
 

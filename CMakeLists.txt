@@ -18,7 +18,8 @@ if (Catch2_FOUND)
         tests/param-queue-tests.cc
         tests/main.cc
         tests/preset-discovery-indexer.cc
-        tests/preset-discovery-provider.cc)
+        tests/preset-discovery-provider.cc
+        tests/preset-discovery-metadata-receiver.cc)
     set_target_properties(clap-helpers-tests PROPERTIES CXX_STANDARD 11)
     target_link_libraries(clap-helpers-tests clap-helpers clap Catch2::Catch2)
     target_compile_definitions(clap-helpers-tests PUBLIC -DCATCH_CONFIG_PREFIX_ALL)
