@@ -578,7 +578,7 @@ namespace clap { namespace helpers {
    // clap_plugin_preset_load //
    //-------------------------//
    template <MisbehaviourHandler h, CheckingLevel l>
-   bool Plugin<h, l>::clapPresetLoadFromUri(const clap_plugin *plugin, const char *uri) noexcept {
+   bool Plugin<h, l>::clapPresetLoadFromUri(const clap_plugin *plugin, const char *uri, const char *load_key) noexcept {
       auto &self = from(plugin);
       self.ensureMainThread("clap_plugin_preset_load.from_uri");
 
@@ -589,7 +589,7 @@ namespace clap { namespace helpers {
          }
       }
 
-      return self.presetLoadFromUri(uri);
+      return self.presetLoadFromUri(uri, load_key);
    }
 
    //------------------------//

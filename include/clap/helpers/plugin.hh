@@ -103,7 +103,7 @@ namespace clap { namespace helpers {
       // clap_plugin_preset_load //
       //-------------------------//
       virtual bool implementsPresetLoad() const noexcept { return false; }
-      virtual bool presetLoadFromUri(const char *uri) noexcept { return false; }
+      virtual bool presetLoadFromUri(const char *uri, const char *load_key) noexcept { return false; }
 
       //------------------------//
       // clap_plugin_track_info //
@@ -361,7 +361,7 @@ namespace clap { namespace helpers {
                                        uint32_t context) noexcept;
 
       // clap_plugin_preset
-      static bool clapPresetLoadFromUri(const clap_plugin *plugin, const char *uri) noexcept;
+      static bool clapPresetLoadFromUri(const clap_plugin *plugin, const char *uri, const char *load_key) noexcept;
 
       // clap_plugin_track_info
       static void clapTrackInfoChanged(const clap_plugin *plugin) noexcept;
