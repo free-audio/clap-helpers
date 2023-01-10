@@ -2,6 +2,15 @@
 
 #include <catch2/catch.hpp>
 
+template class clap::helpers::PresetDiscoveryProvider<clap::helpers::MisbehaviourHandler::Terminate,
+                                                      clap::helpers::CheckingLevel::Maximal>;
+template class clap::helpers::PresetDiscoveryProvider<clap::helpers::MisbehaviourHandler::Terminate,
+                                                      clap::helpers::CheckingLevel::Minimal>;
+template class clap::helpers::PresetDiscoveryProvider<clap::helpers::MisbehaviourHandler::Terminate,
+                                                      clap::helpers::CheckingLevel::None>;
+template class clap::helpers::PresetDiscoveryProvider<clap::helpers::MisbehaviourHandler::Ignore,
+                                                      clap::helpers::CheckingLevel::Maximal>;
+
 CATCH_TEST_CASE("PresetDiscoveryProvider - Link") {
    clap::helpers::PresetDiscoveryProvider<clap::helpers::MisbehaviourHandler::Terminate,
                                           clap::helpers::CheckingLevel::Maximal> *p0 = nullptr;

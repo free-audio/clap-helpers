@@ -33,27 +33,20 @@ namespace clap { namespace helpers {
       //--------------------------------//
       // clap_preset_discovery_provider //
       //--------------------------------//
-      virtual bool declareFiletype(const struct clap_preset_discovery_indexer *indexer,
-                                   const clap_preset_discovery_filetype_t *filetype) noexcept {
+      virtual bool declareFiletype(const clap_preset_discovery_filetype_t *filetype) noexcept {
          return true;
       }
 
-      virtual bool declareLocation(const struct clap_preset_discovery_indexer *indexer,
-                                   const clap_preset_discovery_location_t *location) noexcept {
+      virtual bool declareLocation(const clap_preset_discovery_location_t *location) noexcept {
          return true;
       }
 
       virtual bool
-      declareCollection(const struct clap_preset_discovery_indexer *indexer,
-                        const clap_preset_discovery_collection_t *collection) noexcept {
+      declareCollection(const clap_preset_discovery_collection_t *collection) noexcept {
          return true;
       }
 
-      virtual bool
-      declareSetInvalidationWatchFile(const struct clap_preset_discovery_indexer *indexer,
-                                      const char *path) noexcept {
-         return true;
-      }
+      virtual bool setInvalidationWatchFile(const char *path) noexcept { return true; }
 
       virtual const void *extension(const char *id) noexcept { return nullptr; }
 

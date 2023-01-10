@@ -59,7 +59,7 @@ namespace clap { namespace helpers {
    bool PresetDiscoveryIndexer<h, l>::indexerSetInvalidationWatchFile(
       const struct clap_preset_discovery_indexer *indexer, const char *path) {
       auto &self = from(indexer);
-      return self.SetInvalidationWatchFile(path);
+      return self.setInvalidationWatchFile(path);
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
