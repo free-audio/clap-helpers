@@ -166,7 +166,7 @@ namespace clap { namespace helpers {
       ///////////////////////////
       bool canUsePresetLoad() const noexcept;
       void presetLoadOnError(const char *uri, int32_t os_error, const char *msg) const noexcept;
-      void presetLoadLoaded(const char *uri, const char *subpath) const noexcept;
+      void presetLoadLoaded(const char *uri, const char *load_key) const noexcept;
 
    protected:
       void ensureMainThread(const char *method) const noexcept;

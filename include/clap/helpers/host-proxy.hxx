@@ -625,11 +625,11 @@ namespace clap { namespace helpers {
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   void HostProxy<h, l>::presetLoadLoaded(const char *uri, const char *subpath) const noexcept
+   void HostProxy<h, l>::presetLoadLoaded(const char *uri, const char *load_key) const noexcept
    {
       assert(canUsePresetLoad());
       ensureMainThread("preset_load.loaded");
 
-      _hostPresetLoad->loaded(_host, uri, subpath);
+      _hostPresetLoad->loaded(_host, uri, load_key);
    }
 }} // namespace clap::helpers
