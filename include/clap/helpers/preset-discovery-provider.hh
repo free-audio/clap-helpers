@@ -11,6 +11,12 @@ namespace clap { namespace helpers {
    template <MisbehaviourHandler h, CheckingLevel l>
    class PresetDiscoveryProvider {
    public:
+      // not copyable, not moveable
+      PresetDiscoveryProvider(const PresetDiscoveryProvider &) = delete;
+      PresetDiscoveryProvider(PresetDiscoveryProvider &&) = delete;
+      PresetDiscoveryProvider &operator=(const PresetDiscoveryProvider &) = delete;
+      PresetDiscoveryProvider &operator=(PresetDiscoveryProvider &&) = delete;
+
       const clap_preset_discovery_provider *provider() const noexcept { return &_provider; }
       const clap_preset_discovery_indexer *indexer() const noexcept { return _indexer; }
 
@@ -18,12 +24,6 @@ namespace clap { namespace helpers {
       PresetDiscoveryProvider(const clap_preset_discovery_provider_descriptor *desc,
                               const clap_preset_discovery_indexer *indexer);
       virtual ~PresetDiscoveryProvider() = default;
-
-      // not copyable, not moveable
-      PresetDiscoveryProvider(const PresetDiscoveryProvider &) = delete;
-      PresetDiscoveryProvider(PresetDiscoveryProvider &&) = delete;
-      PresetDiscoveryProvider &operator=(const PresetDiscoveryProvider &) = delete;
-      PresetDiscoveryProvider &operator=(PresetDiscoveryProvider &&) = delete;
 
       /////////////////////////
       // Methods to override //

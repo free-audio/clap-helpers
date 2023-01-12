@@ -22,17 +22,17 @@ namespace clap { namespace helpers {
    template <MisbehaviourHandler h, CheckingLevel l>
    class Plugin {
    public:
-      const clap_plugin *clapPlugin() noexcept { return &_plugin; }
-
-   protected:
-      Plugin(const clap_plugin_descriptor *desc, const clap_host *host);
-      virtual ~Plugin() = default;
-
       // not copyable, not moveable
       Plugin(const Plugin &) = delete;
       Plugin(Plugin &&) = delete;
       Plugin &operator=(const Plugin &) = delete;
       Plugin &operator=(Plugin &&) = delete;
+
+      const clap_plugin *clapPlugin() noexcept { return &_plugin; }
+
+   protected:
+      Plugin(const clap_plugin_descriptor *desc, const clap_host *host);
+      virtual ~Plugin() = default;
 
       /////////////////////////
       // Methods to override //

@@ -15,15 +15,15 @@ namespace clap { namespace helpers {
          return &_receiver;
       }
 
-   protected:
-      PresetDiscoveryMetadataReceiver();
-      virtual ~PresetDiscoveryMetadataReceiver() = default;
-
       // not copyable, not moveable
       PresetDiscoveryMetadataReceiver(const PresetDiscoveryMetadataReceiver &) = delete;
       PresetDiscoveryMetadataReceiver(PresetDiscoveryMetadataReceiver &&) = delete;
       PresetDiscoveryMetadataReceiver &operator=(const PresetDiscoveryMetadataReceiver &) = delete;
       PresetDiscoveryMetadataReceiver &operator=(PresetDiscoveryMetadataReceiver &&) = delete;
+
+   protected:
+      PresetDiscoveryMetadataReceiver();
+      virtual ~PresetDiscoveryMetadataReceiver() = default;
 
       /////////////////////////
       // Methods to override //

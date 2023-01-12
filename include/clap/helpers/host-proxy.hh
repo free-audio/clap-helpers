@@ -13,6 +13,12 @@ namespace clap { namespace helpers {
    public:
       HostProxy(const clap_host *host);
 
+      // not copyable, not moveable
+      HostProxy(const HostProxy &) = delete;
+      HostProxy(HostProxy &&) = delete;
+      HostProxy &operator=(const HostProxy &) = delete;
+      HostProxy &operator=(HostProxy &&) = delete;
+
       void init();
 
       const clap_host *host() const noexcept { return _host; }
