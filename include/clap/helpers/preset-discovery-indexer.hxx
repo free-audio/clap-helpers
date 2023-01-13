@@ -20,7 +20,7 @@ namespace clap { namespace helpers {
            this,
            indexerDeclareFiletype,
            indexerDeclareLocation,
-           indexerDeclareCollection,
+           indexerDeclareSoundPack,
            indexerSetInvalidationWatchFile,
            indexerGetExtension,
         }) {}
@@ -48,11 +48,11 @@ namespace clap { namespace helpers {
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   bool PresetDiscoveryIndexer<h, l>::indexerDeclareCollection(
+   bool PresetDiscoveryIndexer<h, l>::indexerDeclareSoundPack(
       const struct clap_preset_discovery_indexer *indexer,
-      const clap_preset_discovery_collection_t *collection) {
+      const clap_preset_discovery_soundpack_t *soundpack) {
       auto &self = from(indexer);
-      return self.declareCollection(collection);
+      return self.declareSoundPack(soundpack);
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>

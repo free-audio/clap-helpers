@@ -41,8 +41,7 @@ namespace clap { namespace helpers {
          return true;
       }
 
-      virtual bool
-      declareCollection(const clap_preset_discovery_collection_t *collection) noexcept {
+      virtual bool declareSoundPack(const clap_preset_discovery_soundpack_t *soundpack) noexcept {
          return true;
       }
 
@@ -69,8 +68,8 @@ namespace clap { namespace helpers {
       static bool indexerDeclareLocation(const struct clap_preset_discovery_indexer *indexer,
                                          const clap_preset_discovery_location_t *location);
 
-      static bool indexerDeclareCollection(const struct clap_preset_discovery_indexer *indexer,
-                                           const clap_preset_discovery_collection_t *collection);
+      static bool indexerDeclareSoundPack(const struct clap_preset_discovery_indexer *indexer,
+                                          const clap_preset_discovery_soundpack_t *soundpack);
 
       static bool
       indexerSetInvalidationWatchFile(const struct clap_preset_discovery_indexer *indexer,
