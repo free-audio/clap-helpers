@@ -39,7 +39,7 @@ namespace clap { namespace helpers {
          return false;
       }
 
-      virtual void addPluginId(uint32_t plugin_abi, const char *plugin_id) noexcept {}
+      virtual void addPluginId(const clap_plugin_id_t *plugin_id) noexcept {}
 
       virtual void setCollectionId(const char *collection_id) noexcept {}
 
@@ -80,8 +80,7 @@ namespace clap { namespace helpers {
 
       static void
       receiverAddPluginId(const struct clap_preset_discovery_metadata_receiver *receiver,
-                          uint32_t plugin_abi,
-                          const char *plugin_id) noexcept;
+                          const clap_plugin_id_t *plugin_id) noexcept;
 
       static void
       receiverSetCollectionId(const struct clap_preset_discovery_metadata_receiver *receiver,

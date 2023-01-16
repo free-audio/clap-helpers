@@ -50,10 +50,9 @@ namespace clap { namespace helpers {
    template <MisbehaviourHandler h, CheckingLevel l>
    void PresetDiscoveryMetadataReceiver<h, l>::receiverAddPluginId(
       const struct clap_preset_discovery_metadata_receiver *receiver,
-      uint32_t plugin_abi,
-      const char *plugin_id) noexcept {
+      const clap_plugin_id_t *plugin_id) noexcept {
       auto &self = from(receiver);
-      return self.addPluginId(plugin_abi, plugin_id);
+      return self.addPluginId(plugin_id);
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
