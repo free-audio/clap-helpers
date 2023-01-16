@@ -34,10 +34,7 @@ namespace clap { namespace helpers {
       //--------------------------------//
       virtual void onError(int32_t os_error, const char *error_message) noexcept {}
 
-      virtual bool
-      beginPreset(const char *name, const char *subpath, const char *load_key) noexcept {
-         return false;
-      }
+      virtual bool beginPreset(const char *name, const char *load_key) noexcept { return false; }
 
       virtual void addPluginId(const clap_plugin_id_t *plugin_id) noexcept {}
 
@@ -75,7 +72,6 @@ namespace clap { namespace helpers {
       static bool
       receiverBeginPreset(const struct clap_preset_discovery_metadata_receiver *receiver,
                           const char *name,
-                          const char *subpath,
                           const char *load_key) noexcept;
 
       static void

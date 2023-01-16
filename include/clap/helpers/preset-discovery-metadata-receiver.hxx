@@ -41,10 +41,9 @@ namespace clap { namespace helpers {
    bool PresetDiscoveryMetadataReceiver<h, l>::receiverBeginPreset(
       const struct clap_preset_discovery_metadata_receiver *receiver,
       const char *name,
-      const char *subpath,
       const char *load_key) noexcept {
       auto &self = from(receiver);
-      return self.beginPreset(name, subpath, load_key);
+      return self.beginPreset(name, load_key);
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
