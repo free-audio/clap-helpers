@@ -14,6 +14,7 @@ target_link_libraries(clap-helpers INTERFACE clap)
 # CLAP_BUILD_TESTS is inherited from clap
 if (Catch2_FOUND)
     add_executable(clap-helpers-tests EXCLUDE_FROM_ALL
+        tests/hex-encoder.cc
         tests/plugin.cc
         tests/param-queue-tests.cc
         tests/main.cc
