@@ -299,7 +299,7 @@ namespace clap { namespace helpers {
       //////////////////////
       bool isActive() const noexcept { return _isActive; }
       bool isProcessing() const noexcept { return _isProcessing; }
-      int sampleRate() const noexcept {
+      double sampleRate() const noexcept {
          assert(_isActive && "sample rate is only known if the plugin is active");
          assert(_sampleRate > 0);
          return _sampleRate;
