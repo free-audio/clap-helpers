@@ -46,7 +46,8 @@ namespace clap { namespace helpers {
 
       virtual void setDescription(const char *description) noexcept {}
 
-      virtual void setTimestamps(uint64_t creation_time, uint64_t modification_time) noexcept {}
+      virtual void setTimestamps(clap_timestamp_t creation_time,
+                                 clap_timestamp_t modification_time) noexcept {}
 
       virtual void addFeature(const char *feature) noexcept {}
 
@@ -94,8 +95,8 @@ namespace clap { namespace helpers {
 
       static void
       receiverSetTimestamps(const struct clap_preset_discovery_metadata_receiver *receiver,
-                            uint64_t creation_time,
-                            uint64_t modification_time) noexcept;
+                            clap_timestamp_t creation_time,
+                            clap_timestamp_t modification_time) noexcept;
 
       static void receiverAddFeature(const struct clap_preset_discovery_metadata_receiver *receiver,
                                      const char *feature) noexcept;

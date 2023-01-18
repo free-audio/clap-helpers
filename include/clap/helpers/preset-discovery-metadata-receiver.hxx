@@ -88,8 +88,8 @@ namespace clap { namespace helpers {
    template <MisbehaviourHandler h, CheckingLevel l>
    void PresetDiscoveryMetadataReceiver<h, l>::receiverSetTimestamps(
       const struct clap_preset_discovery_metadata_receiver *receiver,
-      uint64_t creation_time,
-      uint64_t modification_time) noexcept {
+      clap_timestamp_t creation_time,
+      clap_timestamp_t modification_time) noexcept {
       auto &self = from(receiver);
       return self.setTimestamps(creation_time, modification_time);
    }
