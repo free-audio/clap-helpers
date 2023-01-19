@@ -45,8 +45,6 @@ namespace clap { namespace helpers {
          return true;
       }
 
-      virtual bool setInvalidationWatchFile(const char *path) noexcept { return true; }
-
       virtual const void *extension(const char *id) noexcept { return nullptr; }
 
       ///////////////
@@ -70,10 +68,6 @@ namespace clap { namespace helpers {
 
       static bool indexerDeclareSoundPack(const struct clap_preset_discovery_indexer *indexer,
                                           const clap_preset_discovery_soundpack_t *soundpack);
-
-      static bool
-      indexerSetInvalidationWatchFile(const struct clap_preset_discovery_indexer *indexer,
-                                      const char *path);
 
       static const void *indexerGetExtension(const clap_preset_discovery_indexer *indexer,
                                              const char *id) noexcept;
