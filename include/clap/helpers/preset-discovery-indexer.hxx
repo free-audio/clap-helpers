@@ -21,7 +21,6 @@ namespace clap { namespace helpers {
            indexerDeclareFiletype,
            indexerDeclareLocation,
            indexerDeclareSoundPack,
-           indexerSetInvalidationWatchFile,
            indexerGetExtension,
         }) {}
 
@@ -53,13 +52,6 @@ namespace clap { namespace helpers {
       const clap_preset_discovery_soundpack_t *soundpack) {
       auto &self = from(indexer);
       return self.declareSoundPack(soundpack);
-   }
-
-   template <MisbehaviourHandler h, CheckingLevel l>
-   bool PresetDiscoveryIndexer<h, l>::indexerSetInvalidationWatchFile(
-      const struct clap_preset_discovery_indexer *indexer, const char *path) {
-      auto &self = from(indexer);
-      return self.setInvalidationWatchFile(path);
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
