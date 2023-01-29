@@ -3,6 +3,7 @@
 #include <cstring>
 #include <cstdint>
 #include <vector>
+#include <stdexcept>
 
 #include <clap/events.h>
 
@@ -33,7 +34,7 @@ namespace clap { namespace helpers {
       clap_event_header *allocate(size_t align, size_t size) {
          assert(size >= sizeof(clap_event_header));
          if (size > _maxEventSize)
-            return nullptr;
+            throw std::invalid_argument("size is greater than the maximum allowed event size");
 
          // ensure we have space to store into the vector
          if (_events.capacity() == _events.size())
@@ -71,11 +72,14 @@ namespace clap { namespace helpers {
       }
 
       void push(const clap_event_header *h) {
-         auto ptr = allocate(SAFE_ALIGN, h->size);
-         if (!ptr)
-            return;
+         if (_events.size() == _events.capacity())
+            _events.reserve(_events.capacity() * 2);
 
-         std::memcpy(ptr, h, h->size);
+         if (!tryPush(h))
+            growHeap();
+
+         if (!tryPush(h))
+            throw std::bad_alloc();
       }
 
       bool tryPush(const clap_event_header *h) {
@@ -84,6 +88,26 @@ namespace clap { namespace helpers {
             return false;
 
          std::memcpy(ptr, h, h->size);
+
+         if (h->space_id == CLAP_CORE_EVENT_SPACE_ID)
+         {
+            switch (h->type)
+            {
+            case CLAP_EVENT_MIDI_SYSEX:
+               {
+                  auto ev = reinterpret_cast<clap_event_midi_sysex *>(ptr);
+                  auto buffer = static_cast<uint8_t *>(_heap.tryAllocate(1, ev->size));
+                  if (!buffer) {
+                     _events.pop_back();
+                     return false;
+                  }
+                  std::copy_n(ev->buffer, ev->size, buffer);
+                  ev->buffer = buffer;
+               }
+               break;
+            }
+         }
+
          return true;
       }
 
@@ -110,6 +134,9 @@ namespace clap { namespace helpers {
          return &_boundedOutputEvents;
       }
 
+      Heap& heap() { return _heap; }
+      const Heap& heap() const { return _heap; }
+
    private:
       static uint32_t clapSize(const struct clap_input_events *list) {
          auto *self = static_cast<const EventList *>(list->ctx);
@@ -133,6 +160,22 @@ namespace clap { namespace helpers {
                                       const clap_event_header_t *event) {
          auto *self = static_cast<EventList *>(list->ctx);
          return self->tryPush(event);
+      }
+
+      void growHeap()
+      {
+         std::vector<uint32_t> events(std::move(_events));
+         _events = std::vector<uint32_t>(events.capacity());
+
+         Heap heap(std::move(_heap));
+         _heap.reserve(heap.size() * 2);
+
+         // we need to perform a full copy of all the events in case there was some pointers in
+         for (auto offset : events) {
+            auto const ptr = heap.ptrFromBase(offset);
+            auto hdr = static_cast<clap_event_header *>(ptr);
+            push(hdr);
+         }
       }
 
       const clap_input_events _inputEvents = {this, &clapSize, &clapGet};
