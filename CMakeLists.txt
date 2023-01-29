@@ -23,7 +23,7 @@ if (Catch2_FOUND)
         tests/preset-discovery-provider.cc
         tests/preset-discovery-metadata-receiver.cc)
     set_target_properties(clap-helpers-tests PROPERTIES CXX_STANDARD 11)
-    target_link_libraries(clap-helpers-tests clap-helpers clap Catch2::Catch2)
+    target_link_libraries(clap-helpers-tests clap-helpers clap Catch2::Catch2WithMain)
     target_compile_definitions(clap-helpers-tests PUBLIC -DCATCH_CONFIG_PREFIX_ALL)
     add_test(NAME test-clap-helpers COMMAND clap-helpers-tests)
     add_dependencies(clap-tests clap-helpers-tests)

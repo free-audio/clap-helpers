@@ -1,6 +1,6 @@
 #include <clap/helpers/preset-discovery-metadata-receiver.hxx>
 
-#include <catch2/catch.hpp>
+#include <catch2/catch_all.hpp>
 
 template class clap::helpers::PresetDiscoveryMetadataReceiver<
    clap::helpers::MisbehaviourHandler::Terminate,

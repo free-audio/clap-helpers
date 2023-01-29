@@ -5,7 +5,7 @@
 #include <clap/helpers/reducing-param-queue.hh>
 #include <clap/helpers/reducing-param-queue.hxx>
 
-#include <catch2/catch.hpp>
+#include <catch2/catch_all.hpp>
 
 template class clap::helpers::Plugin<clap::helpers::MisbehaviourHandler::Terminate,
                                      clap::helpers::CheckingLevel::Maximal>;

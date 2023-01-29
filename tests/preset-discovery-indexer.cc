@@ -1,6 +1,6 @@
 #include <clap/helpers/preset-discovery-indexer.hxx>
 
-#include <catch2/catch.hpp>
+#include <catch2/catch_all.hpp>
 
 template class clap::helpers::PresetDiscoveryIndexer<clap::helpers::MisbehaviourHandler::Terminate,
                                                      clap::helpers::CheckingLevel::Maximal>;
