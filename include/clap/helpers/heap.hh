@@ -17,9 +17,31 @@ namespace clap { namespace helpers {
       ~Heap() { std::free(_base); }
 
       Heap(const Heap &) = delete;
-      Heap(Heap &&) = delete;
       Heap &operator=(const Heap &) = delete;
-      Heap &operator=(Heap &&) = delete;
+
+      Heap(Heap &&h)
+      : _size(h._size)
+      , _brk(h._brk)
+      , _base(h._base)
+      {
+         h._size = 0;
+         h._base = nullptr;
+         h._brk = 0;
+      }
+
+      Heap &operator=(Heap &&h)
+      {
+         std::free(_base);
+         _base = h._base;
+         _brk = h._brk;
+         _size = h._size;
+
+         h._size = 0;
+         h._base = nullptr;
+         h._brk = 0;
+
+         return *this;
+      }
 
       bool tryReserve(const size_t heapSize) {
          if (heapSize <= _size)
