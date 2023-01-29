@@ -17,6 +17,7 @@ if (Catch2_FOUND)
         tests/hex-encoder.cc
         tests/plugin.cc
         tests/param-queue-tests.cc
+        tests/event-list-tests.cc
         tests/main.cc
         tests/preset-discovery-indexer.cc
         tests/preset-discovery-provider.cc
