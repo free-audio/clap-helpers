@@ -4,6 +4,7 @@
 #include <cstring>
 #include <stdexcept>
 #include <vector>
+#include <functional>
 
 #include <clap/events.h>
 
@@ -17,9 +18,12 @@ namespace clap { namespace helpers {
 
       explicit EventList(uint32_t initialHeapSize = 4096,
                          uint32_t initialEventsCapacity = 128,
-                         uint32_t maxEventSize = 1024)
+                         uint32_t maxEventSize = 1024,
+                         const SpaceResolver& spaceResolver = {})
          : _maxEventSize(maxEventSize), _heap(initialHeapSize) {
          _events.reserve(initialEventsCapacity);
+
+         // TODO: resolve known events space
       }
 
       EventList(const EventList &) = delete;
