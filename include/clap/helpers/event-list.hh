@@ -1,9 +1,9 @@
 #pragma once
 
-#include <cstring>
 #include <cstdint>
-#include <vector>
+#include <cstring>
 #include <stdexcept>
+#include <vector>
 
 #include <clap/events.h>
 
@@ -13,6 +13,8 @@ namespace clap { namespace helpers {
 
    class EventList {
    public:
+      using SpaceResolver = std::function<clap_id(clap_id)>;
+
       explicit EventList(uint32_t initialHeapSize = 4096,
                          uint32_t initialEventsCapacity = 128,
                          uint32_t maxEventSize = 1024)
@@ -89,22 +91,19 @@ namespace clap { namespace helpers {
 
          std::memcpy(ptr, h, h->size);
 
-         if (h->space_id == CLAP_CORE_EVENT_SPACE_ID)
-         {
-            switch (h->type)
-            {
-            case CLAP_EVENT_MIDI_SYSEX:
-               {
-                  auto ev = reinterpret_cast<clap_event_midi_sysex *>(ptr);
-                  auto buffer = static_cast<uint8_t *>(_heap.tryAllocate(1, ev->size));
-                  if (!buffer) {
-                     _events.pop_back();
-                     return false;
-                  }
-                  std::copy_n(ev->buffer, ev->size, buffer);
-                  ev->buffer = buffer;
+         if (h->space_id == CLAP_CORE_EVENT_SPACE_ID) {
+            switch (h->type) {
+            case CLAP_EVENT_MIDI_SYSEX: {
+               auto ev = reinterpret_cast<clap_event_midi_sysex *>(ptr);
+               auto buffer = static_cast<uint8_t *>(_heap.tryAllocate(1, ev->size));
+               if (!buffer) {
+                  _events.pop_back();
+                  return false;
                }
-               break;
+               std::copy_n(ev->buffer, ev->size, buffer);
+               ev->buffer = buffer;
+               _canReallocHeap = false;
+            } break;
             }
          }
 
@@ -124,6 +123,7 @@ namespace clap { namespace helpers {
       void clear() {
          _heap.clear();
          _events.clear();
+         _canReallocHeap = true;
       }
 
       const clap_input_events *clapInputEvents() const noexcept { return &_inputEvents; }
@@ -134,8 +134,8 @@ namespace clap { namespace helpers {
          return &_boundedOutputEvents;
       }
 
-      Heap& heap() { return _heap; }
-      const Heap& heap() const { return _heap; }
+      Heap &heap() { return _heap; }
+      const Heap &heap() const { return _heap; }
 
    private:
       static uint32_t clapSize(const struct clap_input_events *list) {
@@ -162,8 +162,12 @@ namespace clap { namespace helpers {
          return self->tryPush(event);
       }
 
-      void growHeap()
-      {
+      void growHeap() {
+         if (_canReallocHeap) {
+            _heap.reserve(_heap.size() * 2);
+            return;
+         }
+
          std::vector<uint32_t> events(std::move(_events));
          _events = std::vector<uint32_t>(events.capacity());
 
@@ -186,6 +190,12 @@ namespace clap { namespace helpers {
 
       Heap _heap;
       std::vector<uint32_t> _events;
+
+      // If the heap can be realloc()'ated or not.
+      // If any complex event involving pointers, like sysex are in the list then it can't be
+      // simply reallocated, and needs to go through the creation of a new heap and vector and
+      // re-insert all elements again.
+      bool _canReallocHeap = true;
    };
 
 }} // namespace clap::helpers
