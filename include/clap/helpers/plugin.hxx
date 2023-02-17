@@ -427,7 +427,7 @@ namespace clap { namespace helpers {
          return &_pluginState;
       if (!strcmp(id, CLAP_EXT_STATE_CONTEXT) && self.implementsStateContext() &&
           self.implementsState())
-         return &_pluginState;
+         return &_pluginStateContext;
       if (!strcmp(id, CLAP_EXT_PRESET_LOAD) && self.implementsPresetLoad())
          return &_pluginPresetLoad;
       if (!strcmp(id, CLAP_EXT_RENDER) && self.implementsRender())
