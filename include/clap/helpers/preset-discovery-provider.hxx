@@ -1,7 +1,7 @@
 #pragma once
 
-#include <iostream>
 #include <cassert>
+#include <iostream>
 
 #include "preset-discovery-provider.hh"
 
@@ -62,11 +62,12 @@ namespace clap { namespace helpers {
    template <MisbehaviourHandler h, CheckingLevel l>
    bool PresetDiscoveryProvider<h, l>::providerGetMetadata(
       const clap_preset_discovery_provider *provider,
-      const char *uri,
+      uint32_t location_kind,
+      const char *location,
       const clap_preset_discovery_metadata_receiver_t *metadata_receiver) noexcept {
       auto &self = from(provider);
       self.ensureInitialized("get_metadata");
-      return self.getMetadata(uri, metadata_receiver);
+      return self.getMetadata(location_kind, location, metadata_receiver);
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>

@@ -63,7 +63,8 @@ namespace clap { namespace helpers {
       static void providerDestroy(const clap_preset_discovery_provider *provider) noexcept;
       static bool providerGetMetadata(
          const clap_preset_discovery_provider *provider,
-         const char *uri,
+         uint32_t location_kind,
+         const char *location,
          const clap_preset_discovery_metadata_receiver_t *metadata_receiver) noexcept;
       static const void *providerGetExtension(const clap_preset_discovery_provider *provider,
                                               const char *id) noexcept;
