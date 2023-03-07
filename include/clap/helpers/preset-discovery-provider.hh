@@ -34,7 +34,8 @@ namespace clap { namespace helpers {
       //--------------------------------//
       virtual bool init() noexcept { return true; }
       virtual bool
-      getMetadata(const char *uri,
+      getMetadata(uint32_t location_kind,
+                  const char *location,
                   const clap_preset_discovery_metadata_receiver_t *metadata_receiver) noexcept {
          return false;
       }
