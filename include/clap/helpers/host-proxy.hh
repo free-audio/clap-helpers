@@ -171,8 +171,14 @@ namespace clap { namespace helpers {
       // clap_host_preset_load //
       ///////////////////////////
       bool canUsePresetLoad() const noexcept;
-      void presetLoadOnError(uint32_t location_kind, const char *location, int32_t os_error, const char *msg) const noexcept;
-      void presetLoadLoaded(uint32_t location_kind, const char *location, const char *load_key) const noexcept;
+      void presetLoadOnError(uint32_t location_kind,
+                             const char *location,
+                             const char *load_key,
+                             int32_t os_error,
+                             const char *msg) const noexcept;
+      void presetLoadLoaded(uint32_t location_kind,
+                            const char *location,
+                            const char *load_key) const noexcept;
 
    protected:
       void ensureMainThread(const char *method) const noexcept;

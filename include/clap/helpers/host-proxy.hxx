@@ -603,8 +603,7 @@ namespace clap { namespace helpers {
    // clap_host_preset_load //
    ///////////////////////////
    template <MisbehaviourHandler h, CheckingLevel l>
-   bool HostProxy<h, l>::canUsePresetLoad() const noexcept
-   {
+   bool HostProxy<h, l>::canUsePresetLoad() const noexcept {
       if (!_hostPresetLoad)
          return false;
 
@@ -616,17 +615,21 @@ namespace clap { namespace helpers {
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   void HostProxy<h, l>::presetLoadOnError(uint32_t location_kind, const char *location, int32_t os_error, const char *msg) const noexcept
-   {
+   void HostProxy<h, l>::presetLoadOnError(uint32_t location_kind,
+                                           const char *location,
+                                           const char *load_key,
+                                           int32_t os_error,
+                                           const char *msg) const noexcept {
       assert(canUsePresetLoad());
       ensureMainThread("preset_load.on_error");
 
-      _hostPresetLoad->on_error(_host, location_kind, location, os_error, msg);
+      _hostPresetLoad->on_error(_host, location_kind, location, load_key, os_error, msg);
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   void HostProxy<h, l>::presetLoadLoaded(uint32_t location_kind, const char *location, const char *load_key) const noexcept
-   {
+   void HostProxy<h, l>::presetLoadLoaded(uint32_t location_kind,
+                                          const char *location,
+                                          const char *load_key) const noexcept {
       assert(canUsePresetLoad());
       ensureMainThread("preset_load.loaded");
 
