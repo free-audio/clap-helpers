@@ -34,7 +34,7 @@ namespace clap { namespace helpers {
 
    template <MisbehaviourHandler h, CheckingLevel l>
    const clap_plugin_preset_load Plugin<h, l>::_pluginPresetLoad = {
-      clapPresetLoadFromUri,
+      clapPresetLoadFromLocation,
    };
 
    template <MisbehaviourHandler h, CheckingLevel l>
@@ -578,18 +578,22 @@ namespace clap { namespace helpers {
    // clap_plugin_preset_load //
    //-------------------------//
    template <MisbehaviourHandler h, CheckingLevel l>
-   bool Plugin<h, l>::clapPresetLoadFromUri(const clap_plugin *plugin, const char *uri, const char *load_key) noexcept {
+   bool Plugin<h, l>::clapPresetLoadFromLocation(const clap_plugin *plugin,
+                                                 uint32_t location_kind,
+                                                 const char *location,
+                                                 const char *load_key) noexcept {
       auto &self = from(plugin);
-      self.ensureMainThread("clap_plugin_preset_load.from_uri");
+      self.ensureMainThread("clap_plugin_preset_load.from_location");
 
       if (l >= CheckingLevel::Minimal) {
-         if (!uri) {
-            self.hostMisbehaving("host called clap_plugin_preset_load.from_uri with a null uri");
+         if (!location) {
+            self.hostMisbehaving(
+               "host called clap_plugin_preset_load.from_location with a null uri");
             return false;
          }
       }
 
-      return self.presetLoadFromUri(uri, load_key);
+      return self.presetLoadFromLocation(location_kind, location, load_key);
    }
 
    //------------------------//
