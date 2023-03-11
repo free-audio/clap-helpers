@@ -111,6 +111,7 @@ namespace clap { namespace helpers {
       // clap_host_gui //
       ///////////////////
       bool canUseGui() const noexcept;
+      void guiResizeHintsChanged() const noexcept;
       bool guiRequestResize(uint32_t width, uint32_t height) const noexcept;
       bool guiRequestShow() const noexcept;
       bool guiRequestHide() const noexcept;

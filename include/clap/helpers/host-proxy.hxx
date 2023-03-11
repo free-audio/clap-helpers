@@ -382,6 +382,13 @@ namespace clap { namespace helpers {
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
+   void HostProxy<h, l>::guiResizeHintsChanged() const noexcept {
+      assert(canUseGui());
+      ensureMainThread("gui.resize_hints_changed");
+      _hostGui->resize_hints_changed(_host);
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
    bool HostProxy<h, l>::guiRequestResize(uint32_t width, uint32_t height) const noexcept {
       assert(canUseGui());
       ensureMainThread("gui.request_resize");
