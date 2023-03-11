@@ -421,7 +421,6 @@ namespace clap { namespace helpers {
    const void *Plugin<h, l>::clapExtension(const clap_plugin *plugin, const char *id) noexcept {
       auto &self = from(plugin);
       self.ensureInitialized("extension");
-      self.ensureMainThread("clap_plugin.extension");
 
       if (!strcmp(id, CLAP_EXT_STATE) && self.implementsState())
          return &_pluginState;
