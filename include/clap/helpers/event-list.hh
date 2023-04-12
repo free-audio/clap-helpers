@@ -81,11 +81,15 @@ namespace clap { namespace helpers {
          if (_events.size() == _events.capacity())
             _events.reserve(_events.capacity() * 2);
 
-         if (!tryPush(h))
-            growHeap();
+         if (!tryPush(h)) {
+            growHeap(h->size);
 
-         if (!tryPush(h))
-            throw std::bad_alloc();
+            if (!tryPush(h)) {
+               // It is very likely that grow heap didn't allocate enough space, so check for a bug
+               // in growHeap()
+               throw std::bad_alloc();
+            }
+         }
       }
 
       bool tryPush(const clap_event_header *h) {
@@ -166,9 +170,12 @@ namespace clap { namespace helpers {
          return self->tryPush(event);
       }
 
-      void growHeap() {
+      void growHeap(size_t minFreeSpace) {
+         const size_t oldSize = _heap.size();
+         const size_t newSize = oldSize + std::max(oldSize, 16 * minFreeSpace);
+
          if (_canReallocHeap) {
-            _heap.reserve(_heap.size() * 2);
+            _heap.reserve(newSize);
             return;
          }
 
@@ -176,7 +183,7 @@ namespace clap { namespace helpers {
          _events = std::vector<uint32_t>(events.capacity());
 
          Heap heap(std::move(_heap));
-         _heap.reserve(heap.size() * 2);
+         _heap.reserve(newSize);
 
          // we need to perform a full copy of all the events in case there was some pointers in
          for (auto offset : events) {
