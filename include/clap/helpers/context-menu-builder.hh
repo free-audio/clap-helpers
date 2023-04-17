@@ -25,13 +25,13 @@ namespace clap { namespace helpers {
    private:
       static bool clapAddItem(const struct clap_context_menu_builder *builder,
                               clap_context_menu_item_kind_t item_kind,
-                              const void *item_data) {
+                              const void *item_data) noexcept {
          auto *self = static_cast<ContextMenuBuilder *>(builder->ctx);
          return self->addItem(item_kind, item_data);
       }
 
       static bool clapSupports(const struct clap_context_menu_builder *builder,
-                               clap_context_menu_item_kind_t item_kind) {
+                               clap_context_menu_item_kind_t item_kind) noexcept {
          auto *self = static_cast<ContextMenuBuilder *>(builder->ctx);
          return self->supports(item_kind);
       }
