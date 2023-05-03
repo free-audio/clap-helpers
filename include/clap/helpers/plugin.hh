@@ -164,6 +164,11 @@ namespace clap { namespace helpers {
       }
       virtual void paramsFlush(const clap_input_events *in,
                                const clap_output_events *out) noexcept {}
+
+      // This method is meant for implementing contract checking, it isn't part of CLAP.
+      // The default implementation will be slow, so consider overriding it with a faster one.
+      // Returns -1 if the parameter isn't found.
+      virtual int32_t getParamIndexForParamId(clap_id paramId) const noexcept;
       virtual bool isValidParamId(clap_id paramId) const noexcept;
 
       //------------------------------//

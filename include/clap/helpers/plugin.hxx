@@ -748,28 +748,50 @@ namespace clap { namespace helpers {
          }
       }
 
-      return self.paramsInfo(param_index, param_info);
+      const auto res = self.paramsInfo(param_index, param_info);
+
+      if (l >= CheckingLevel::Maximal && !res)
+      {
+         std::ostringstream os;
+         os << "clap_plugin_params.info(" << param_index << ") failed";
+         self._host.pluginMisbehaving(os.str());
+      }
+
+      return res;
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
    bool Plugin<h, l>::clapParamsValue(const clap_plugin *plugin,
-                                      clap_id param_id,
+                                      clap_id paramId,
                                       double *value) noexcept {
       auto &self = from(plugin);
       self.ensureMainThread("clap_plugin_params.value");
 
       if (l >= CheckingLevel::Minimal) {
-         if (!self.isValidParamId(param_id)) {
+         if (!self.isValidParamId(paramId)) {
             std::ostringstream msg;
-            msg << "clap_plugin_params.value called with invalid param_id: " << param_id;
-            self.hostMisbehaving(msg.str());
+            msg << "clap_plugin_params.value called with invalid param_id: " << paramId;
+            self.hostMisbehaving(msg);
             return false;
          }
       }
 
-      // TODO extra checks
+      const bool succeed = self.paramsValue(paramId, value);
 
-      return self.paramsValue(param_id, value);
+      if (l >= CheckingLevel::Maximal) {
+         const auto paramIndex = self.getParamIndexForParamId(paramId);
+         if (paramIndex >= 0) {
+            clap_param_info info;
+            if (clapParamsInfo(&self._plugin, paramIndex, &info) &&
+               (*value < info.min_value || info.max_value < *value)) {
+                  std::ostringstream msg;
+                  msg << "clap_plugin_params.value(" << paramId << ") = " << *value << ", is out of range";
+                  self._host.pluginMisbehaving(msg);
+            }
+         }
+      }
+
+      return succeed;
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
@@ -820,7 +842,17 @@ namespace clap { namespace helpers {
                   continue;
                }
 
-               // TODO: check range?
+               const auto paramIndex = self.getParamIndexForParamId(pev->param_id);
+               if (paramIndex != -1) {
+                  clap_param_info info;
+                  if (clapParamsInfo(&self._plugin, paramIndex, &info) &&
+                      (pev->value < info.min_value || info.max_value < pev->value)) {
+                     std::ostringstream msg;
+                     msg << "clap_plugin_params.flush() produced the value " << pev->value
+                         << " for parameter " << pev->param_id << " which is out of bounds";
+                     self._host.pluginMisbehaving(msg);
+                  }
+               }
             }
          }
 
@@ -847,6 +879,20 @@ namespace clap { namespace helpers {
             msg << "clap_plugin_params.value_to_text called with invalid param_id: " << param_id;
             self.hostMisbehaving(msg.str());
             return false;
+         }
+
+         if (l >= CheckingLevel::Maximal) {
+            const auto paramIndex = self.getParamIndexForParamId(param_id);
+            if (paramIndex != -1) {
+               clap_param_info info;
+               if (clapParamsInfo(&self._plugin, paramIndex, &info) &&
+                   (value < info.min_value || info.max_value < value)) {
+                  std::ostringstream msg;
+                  msg << "clap_plugin_params.value_to_text() the value " << value
+                      << " for parameter " << param_id << " is out of bounds";
+                  self.hostMisbehaving(msg);
+               }
+            }
          }
 
          if (!display) {
@@ -895,24 +941,47 @@ namespace clap { namespace helpers {
          }
       }
 
-      return self.paramsTextToValue(param_id, display, value);
+      if (!self.paramsTextToValue(param_id, display, value))
+         return false;
+
+      if (l >= CheckingLevel::Maximal) {
+         const auto paramIndex = self.getParamIndexForParamId(param_id);
+         if (paramIndex != -1) {
+            clap_param_info info;
+            if (clapParamsInfo(&self._plugin, paramIndex, &info) &&
+                  (*value < info.min_value || info.max_value < *value)) {
+               std::ostringstream msg;
+               msg << "clap_plugin_params.text_to_value() produced the value " << value
+                     << " for parameter " << param_id << " which is out of bounds";
+               self._host.pluginMisbehaving(msg);
+            }
+         }
+      }
+      return true;
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   int32_t Plugin<h, l>::getParamIndexForParamId(clap_id param_id) const noexcept {
+      checkMainThread();
+
+      const auto count = paramsCount();
+      clap_param_info info;
+      for (uint32_t i = 0; i < count; ++i) {
+         if (!clapParamsInfo(&_plugin, i, &info))
+            continue;
+
+         if (info.id == param_id)
+            return i;
+      }
+
+      return -1;
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
    bool Plugin<h, l>::isValidParamId(clap_id param_id) const noexcept {
       checkMainThread();
 
-      auto count = paramsCount();
-      clap_param_info info;
-      for (uint32_t i = 0; i < count; ++i) {
-         if (!paramsInfo(i, &info))
-            // TODO: fatal error?
-            continue;
-
-         if (info.id == param_id)
-            return true;
-      }
-      return false;
+      return getParamIndexForParamId(param_id) != -1;
    }
 
    //------------------------------//
