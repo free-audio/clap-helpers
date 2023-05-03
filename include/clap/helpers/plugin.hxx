@@ -771,7 +771,7 @@ namespace clap { namespace helpers {
          if (!self.isValidParamId(paramId)) {
             std::ostringstream msg;
             msg << "clap_plugin_params.value called with invalid param_id: " << paramId;
-            self.hostMisbehaving(msg);
+            self.hostMisbehaving(msg.str());
             return false;
          }
       }
@@ -786,7 +786,7 @@ namespace clap { namespace helpers {
                (*value < info.min_value || info.max_value < *value)) {
                   std::ostringstream msg;
                   msg << "clap_plugin_params.value(" << paramId << ") = " << *value << ", is out of range";
-                  self._host.pluginMisbehaving(msg);
+                  self._host.pluginMisbehaving(msg.str());
             }
          }
       }
@@ -850,7 +850,7 @@ namespace clap { namespace helpers {
                      std::ostringstream msg;
                      msg << "clap_plugin_params.flush() produced the value " << pev->value
                          << " for parameter " << pev->param_id << " which is out of bounds";
-                     self._host.pluginMisbehaving(msg);
+                     self._host.pluginMisbehaving(msg.str());
                   }
                }
             }
@@ -890,7 +890,7 @@ namespace clap { namespace helpers {
                   std::ostringstream msg;
                   msg << "clap_plugin_params.value_to_text() the value " << value
                       << " for parameter " << param_id << " is out of bounds";
-                  self.hostMisbehaving(msg);
+                  self.hostMisbehaving(msg.str());
                }
             }
          }
@@ -953,7 +953,7 @@ namespace clap { namespace helpers {
                std::ostringstream msg;
                msg << "clap_plugin_params.text_to_value() produced the value " << value
                      << " for parameter " << param_id << " which is out of bounds";
-               self._host.pluginMisbehaving(msg);
+               self._host.pluginMisbehaving(msg.str());
             }
          }
       }
