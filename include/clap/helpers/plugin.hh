@@ -221,7 +221,7 @@ namespace clap { namespace helpers {
       // clap_plugin_posix_fd_support //
       //------------------------------//
       virtual bool implementsPosixFdSupport() const noexcept { return false; }
-      virtual void onPosixFd(int fd, int flags) noexcept {}
+      virtual void onPosixFd(int fd, clap_posix_fd_flags_t flags) noexcept {}
 
       //-----------------//
       // clap_plugin_gui //

@@ -464,14 +464,14 @@ namespace clap { namespace helpers {
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   bool HostProxy<h, l>::posixFdSupportRegister(int fd, int flags) const noexcept {
+   bool HostProxy<h, l>::posixFdSupportRegister(int fd, clap_posix_fd_flags_t flags) const noexcept {
       assert(canUsePosixFdSupport());
       ensureMainThread("posix_fd_support.register");
       return _hostPosixFdSupport->register_fd(_host, fd, flags);
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   bool HostProxy<h, l>::posixFdSupportModify(int fd, int flags) const noexcept {
+   bool HostProxy<h, l>::posixFdSupportModify(int fd, clap_posix_fd_flags_t flags) const noexcept {
       assert(canUsePosixFdSupport());
       ensureMainThread("posix_fd_support.modify");
       return _hostPosixFdSupport->modify_fd(_host, fd, flags);

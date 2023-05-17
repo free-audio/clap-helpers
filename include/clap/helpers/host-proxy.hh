@@ -128,8 +128,8 @@ namespace clap { namespace helpers {
       // clap_host_fd_support //
       //////////////////////////
       bool canUsePosixFdSupport() const noexcept;
-      bool posixFdSupportRegister(int fd, int flags) const noexcept;
-      bool posixFdSupportModify(int fd, int flags) const noexcept;
+      bool posixFdSupportRegister(int fd, clap_posix_fd_flags_t flags) const noexcept;
+      bool posixFdSupportModify(int fd, clap_posix_fd_flags_t flags) const noexcept;
       bool posixFdSupportUnregister(int fd) const noexcept;
 
       //////////////////////////////
