@@ -63,7 +63,7 @@ namespace clap { namespace helpers {
 
       void clear() { _brk = 0; }
 
-      void *tryAllocate(uint32_t align, uint32_t size) {
+      void *tryAllocate(size_t align, size_t size) {
          assert(_brk <= _size);
          void *ptr = _base + _brk;
          size_t space = _size - _brk;
@@ -71,13 +71,13 @@ namespace clap { namespace helpers {
          if (!std::align(align, size, ptr, space))
             return nullptr;
 
-         auto offset = static_cast<uint8_t *>(ptr) - _base;
+         auto offset = static_cast<size_t>(static_cast<uint8_t *>(ptr) - _base);
          _brk = offset + size;
          std::memset(ptr, 0, size);
          return ptr;
       }
 
-      void *allocate(uint32_t align, uint32_t size) {
+      void *allocate(size_t align, size_t size) {
          assert(_brk <= _size);
          if (size + _brk > _size)
             reserve(_size * 2);
