@@ -95,7 +95,7 @@ namespace clap { namespace helpers {
 
       size_t offsetFromBase(const void *ptr) const {
          assert(ptr >= _base && "ptr before heap's base");
-         size_t offset = static_cast<const uint8_t *>(ptr) - _base;
+         size_t offset = static_cast<size_t>(static_cast<const uint8_t *>(ptr) - _base);
          assert(offset < _size && "ptr after heap's end");
          return offset;
       }
