@@ -208,8 +208,8 @@ namespace clap { namespace helpers {
       // clap_plugin_note_name //
       //-----------------------//
       virtual bool implementsNoteName() const noexcept { return false; }
-      virtual int noteNameCount() noexcept { return 0; }
-      virtual bool noteNameGet(int index, clap_note_name *noteName) noexcept { return false; }
+      virtual uint32_t noteNameCount() noexcept { return 0; }
+      virtual bool noteNameGet(uint32_t index, clap_note_name *noteName) noexcept { return false; }
 
       //---------------------------//
       // clap_plugin_timer_support //
