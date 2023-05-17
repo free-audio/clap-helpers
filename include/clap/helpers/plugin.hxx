@@ -782,7 +782,7 @@ namespace clap { namespace helpers {
          const auto paramIndex = self.getParamIndexForParamId(paramId);
          if (paramIndex >= 0) {
             clap_param_info info;
-            if (clapParamsInfo(&self._plugin, paramIndex, &info) &&
+            if (clapParamsInfo(&self._plugin, static_cast<uint32_t>(paramIndex), &info) &&
                (*value < info.min_value || info.max_value < *value)) {
                   std::ostringstream msg;
                   msg << "clap_plugin_params.value(" << paramId << ") = " << *value << ", is out of range";
@@ -845,7 +845,7 @@ namespace clap { namespace helpers {
                const auto paramIndex = self.getParamIndexForParamId(pev->param_id);
                if (paramIndex != -1) {
                   clap_param_info info;
-                  if (clapParamsInfo(&self._plugin, paramIndex, &info) &&
+                  if (clapParamsInfo(&self._plugin, static_cast<uint32_t>(paramIndex), &info) &&
                       (pev->value < info.min_value || info.max_value < pev->value)) {
                      std::ostringstream msg;
                      msg << "clap_plugin_params.flush() produced the value " << pev->value
@@ -885,7 +885,7 @@ namespace clap { namespace helpers {
             const auto paramIndex = self.getParamIndexForParamId(param_id);
             if (paramIndex != -1) {
                clap_param_info info;
-               if (clapParamsInfo(&self._plugin, paramIndex, &info) &&
+               if (clapParamsInfo(&self._plugin, static_cast<uint32_t>(paramIndex), &info) &&
                    (value < info.min_value || info.max_value < value)) {
                   std::ostringstream msg;
                   msg << "clap_plugin_params.value_to_text() the value " << value
@@ -948,7 +948,7 @@ namespace clap { namespace helpers {
          const auto paramIndex = self.getParamIndexForParamId(param_id);
          if (paramIndex != -1) {
             clap_param_info info;
-            if (clapParamsInfo(&self._plugin, paramIndex, &info) &&
+            if (clapParamsInfo(&self._plugin, static_cast<uint32_t>(paramIndex), &info) &&
                   (*value < info.min_value || info.max_value < *value)) {
                std::ostringstream msg;
                msg << "clap_plugin_params.text_to_value() produced the value " << value
@@ -971,7 +971,7 @@ namespace clap { namespace helpers {
             continue;
 
          if (info.id == param_id)
-            return i;
+            return static_cast<int32_t>(i);
       }
 
       return -1;
