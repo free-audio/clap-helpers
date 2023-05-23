@@ -170,6 +170,7 @@ namespace clap { namespace helpers {
       // Returns -1 if the parameter isn't found.
       virtual int32_t getParamIndexForParamId(clap_id paramId) const noexcept;
       virtual bool isValidParamId(clap_id paramId) const noexcept;
+      virtual bool getParamInfoForParamId(clap_id paramId, clap_param_info *info) const noexcept;
 
       //------------------------------//
       // clap_plugin_param_indication //

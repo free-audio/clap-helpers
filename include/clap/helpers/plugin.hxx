@@ -779,14 +779,13 @@ namespace clap { namespace helpers {
       const bool succeed = self.paramsValue(paramId, value);
 
       if (l >= CheckingLevel::Maximal) {
-         const auto paramIndex = self.getParamIndexForParamId(paramId);
-         if (paramIndex >= 0) {
-            clap_param_info info;
-            if (clapParamsInfo(&self._plugin, paramIndex, &info) &&
-               (*value < info.min_value || info.max_value < *value)) {
-                  std::ostringstream msg;
-                  msg << "clap_plugin_params.value(" << paramId << ") = " << *value << ", is out of range";
-                  self._host.pluginMisbehaving(msg.str());
+         clap_param_info info;
+         if (self.getParamInfoForParamId(paramId, &info)) {
+            if (*value < info.min_value || info.max_value < *value) {
+               std::ostringstream msg;
+               msg << "clap_plugin_params.value(" << paramId << ") = " << *value
+                   << ", is out of range";
+               self._host.pluginMisbehaving(msg.str());
             }
          }
       }
@@ -842,11 +841,9 @@ namespace clap { namespace helpers {
                   continue;
                }
 
-               const auto paramIndex = self.getParamIndexForParamId(pev->param_id);
-               if (paramIndex != -1) {
-                  clap_param_info info;
-                  if (clapParamsInfo(&self._plugin, paramIndex, &info) &&
-                      (pev->value < info.min_value || info.max_value < pev->value)) {
+               clap_param_info info;
+               if (self.getParamInfoForParamId(pev->param_id, &info)) {
+                  if (pev->value < info.min_value || info.max_value < pev->value) {
                      std::ostringstream msg;
                      msg << "clap_plugin_params.flush() produced the value " << pev->value
                          << " for parameter " << pev->param_id << " which is out of bounds";
@@ -882,11 +879,9 @@ namespace clap { namespace helpers {
          }
 
          if (l >= CheckingLevel::Maximal) {
-            const auto paramIndex = self.getParamIndexForParamId(param_id);
-            if (paramIndex != -1) {
-               clap_param_info info;
-               if (clapParamsInfo(&self._plugin, paramIndex, &info) &&
-                   (value < info.min_value || info.max_value < value)) {
+            clap_param_info info;
+            if (self.getParamInfoForParamId(param_id, &info)) {
+               if (value < info.min_value || info.max_value < value) {
                   std::ostringstream msg;
                   msg << "clap_plugin_params.value_to_text() the value " << value
                       << " for parameter " << param_id << " is out of bounds";
@@ -945,14 +940,12 @@ namespace clap { namespace helpers {
          return false;
 
       if (l >= CheckingLevel::Maximal) {
-         const auto paramIndex = self.getParamIndexForParamId(param_id);
-         if (paramIndex != -1) {
-            clap_param_info info;
-            if (clapParamsInfo(&self._plugin, paramIndex, &info) &&
-                  (*value < info.min_value || info.max_value < *value)) {
+         clap_param_info info;
+         if (self.getParamInfoForParamId(param_id, &info)) {
+            if (*value < info.min_value || info.max_value < *value) {
                std::ostringstream msg;
                msg << "clap_plugin_params.text_to_value() produced the value " << value
-                     << " for parameter " << param_id << " which is out of bounds";
+                   << " for parameter " << param_id << " which is out of bounds";
                self._host.pluginMisbehaving(msg.str());
             }
          }
@@ -973,6 +966,18 @@ namespace clap { namespace helpers {
          if (info.id == param_id)
             return i;
       }
+
+      return -1;
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   bool Plugin<h, l>::getParamInfoForParamId(clap_id paramId, clap_param_info *info) const noexcept {
+      checkMainThread();
+
+      const auto count = paramsCount();
+      for (uint32_t i = 0; i < count; ++i)
+         if (!clapParamsInfo(&_plugin, i, info) && info->id == paramId)
+            return true;
 
       return -1;
    }
