@@ -750,8 +750,7 @@ namespace clap { namespace helpers {
 
       const auto res = self.paramsInfo(param_index, param_info);
 
-      if (l >= CheckingLevel::Maximal && !res)
-      {
+      if (l >= CheckingLevel::Maximal && !res) {
          std::ostringstream os;
          os << "clap_plugin_params.info(" << param_index << ") failed";
          self._host.pluginMisbehaving(os.str());
@@ -784,7 +783,7 @@ namespace clap { namespace helpers {
             if (*value < info.min_value || info.max_value < *value) {
                std::ostringstream msg;
                msg << "clap_plugin_params.value(" << paramId << ") = " << *value
-                   << ", is out of range";
+                   << ", is out of range [" << info.min_value << " .. " << info.max_value << "]";
                self._host.pluginMisbehaving(msg.str());
             }
          }
@@ -846,7 +845,8 @@ namespace clap { namespace helpers {
                   if (pev->value < info.min_value || info.max_value < pev->value) {
                      std::ostringstream msg;
                      msg << "clap_plugin_params.flush() produced the value " << pev->value
-                         << " for parameter " << pev->param_id << " which is out of bounds";
+                         << " for parameter " << pev->param_id << " which is out of bounds: ["
+                         << info.min_value << " .. " << info.max_value << "]";
                      self._host.pluginMisbehaving(msg.str());
                   }
                }
@@ -884,7 +884,8 @@ namespace clap { namespace helpers {
                if (value < info.min_value || info.max_value < value) {
                   std::ostringstream msg;
                   msg << "clap_plugin_params.value_to_text() the value " << value
-                      << " for parameter " << param_id << " is out of bounds";
+                      << " for parameter " << param_id << " is out of bounds: ["
+                         << info.min_value << " .. " << info.max_value << "]";
                   self.hostMisbehaving(msg.str());
                }
             }
@@ -945,7 +946,8 @@ namespace clap { namespace helpers {
             if (*value < info.min_value || info.max_value < *value) {
                std::ostringstream msg;
                msg << "clap_plugin_params.text_to_value() produced the value " << value
-                   << " for parameter " << param_id << " which is out of bounds";
+                   << " for parameter " << param_id << " which is out of bounds: ["
+                         << info.min_value << " .. " << info.max_value << "]";
                self._host.pluginMisbehaving(msg.str());
             }
          }
@@ -971,7 +973,8 @@ namespace clap { namespace helpers {
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   bool Plugin<h, l>::getParamInfoForParamId(clap_id paramId, clap_param_info *info) const noexcept {
+   bool Plugin<h, l>::getParamInfoForParamId(clap_id paramId,
+                                             clap_param_info *info) const noexcept {
       checkMainThread();
 
       const auto count = paramsCount();
