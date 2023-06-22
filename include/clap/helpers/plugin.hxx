@@ -477,6 +477,13 @@ namespace clap { namespace helpers {
       auto &self = from(plugin);
       self.ensureMainThread("clap_plugin_latency.get");
 
+      if (l >= CheckingLevel::Minimal) {
+         if (!self._isActive)
+            self.hostMisbehaving("It is wrong to query the latency before the plugin is activated, "
+                                 "because if the plugin dosen't know the sample rate, it can't "
+                                 "know the number of samples of latency.");
+      }
+
       return self.latencyGet();
    }
 
@@ -486,6 +493,14 @@ namespace clap { namespace helpers {
    template <MisbehaviourHandler h, CheckingLevel l>
    uint32_t Plugin<h, l>::clapTailGet(const clap_plugin_t *plugin) noexcept {
       auto &self = from(plugin);
+
+      if (l >= CheckingLevel::Minimal) {
+         if (!self._isActive)
+            self.hostMisbehaving("It is wrong to query the tail before the plugin is activated, "
+                                 "because if the plugin dosen't know the sample rate, it can't "
+                                 "know the tail length in samples.");
+      }
+
       return self.tailGet();
    }
 
