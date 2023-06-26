@@ -997,7 +997,7 @@ namespace clap { namespace helpers {
          if (!clapParamsInfo(&_plugin, i, info) && info->id == paramId)
             return true;
 
-      return -1;
+      return false;
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
