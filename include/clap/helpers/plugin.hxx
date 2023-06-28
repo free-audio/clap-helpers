@@ -522,8 +522,13 @@ namespace clap { namespace helpers {
 
       switch (mode) {
       case CLAP_RENDER_REALTIME:
-      case CLAP_RENDER_OFFLINE:
          return self.renderSetMode(mode);
+
+      case CLAP_RENDER_OFFLINE: {
+         if (self.renderHasHardRealtimeRequirement())
+            return false;
+         return self.renderSetMode(mode);
+      }
 
       default: {
          std::ostringstream msg;
