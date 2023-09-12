@@ -198,9 +198,16 @@ namespace clap { namespace helpers {
 
       if (self._isGuiCreated) {
          if (l >= CheckingLevel::Minimal)
-            self._host.pluginMisbehaving("host forgot to destroy the gui");
+            self._host.hostMisbehaving("host forgot to destroy the gui");
          clapGuiDestroy(plugin);
       }
+
+      if (self._isActive) {
+         if (l >= CheckingLevel::Minimal)
+            self._host.hostMisbehaving("host forgot to deactivate the plugin before destroying it");
+         clapDeactivate(plugin);
+      }
+      assert(!self._isActive);
 
       self.runCallbacksOnMainThread();
 
