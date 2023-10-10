@@ -128,6 +128,14 @@ namespace clap { namespace helpers {
    };
 
    template <MisbehaviourHandler h, CheckingLevel l>
+   const clap_plugin_resource_directory Plugin<h, l>::_pluginResourceDirectory = {
+      clapResourceDirectorySetDirectory,
+      clapResourceDirectoryCollect,
+      clapResourceDirectoryGetFilesCount,
+      clapResourceDirectoryGetFilePath,
+   };
+
+   template <MisbehaviourHandler h, CheckingLevel l>
    const clap_plugin_voice_info Plugin<h, l>::_pluginVoiceInfo = {
       clapVoiceInfoGet,
    };
@@ -198,9 +206,16 @@ namespace clap { namespace helpers {
 
       if (self._isGuiCreated) {
          if (l >= CheckingLevel::Minimal)
-            self._host.pluginMisbehaving("host forgot to destroy the gui");
+            self._host.hostMisbehaving("host forgot to destroy the gui");
          clapGuiDestroy(plugin);
       }
+
+      if (self._isActive) {
+         if (l >= CheckingLevel::Minimal)
+            self._host.hostMisbehaving("host forgot to deactivate the plugin before destroying it");
+         clapDeactivate(plugin);
+      }
+      assert(!self._isActive);
 
       self.runCallbacksOnMainThread();
 
@@ -463,8 +478,10 @@ namespace clap { namespace helpers {
          return &_pluginVoiceInfo;
       if (!strcmp(id, CLAP_EXT_TAIL) && self.implementsTail())
          return &_pluginTail;
-      if (!strcmp(id, CLAP_EXT_CONTEXT_MENU))
+      if (!strcmp(id, CLAP_EXT_CONTEXT_MENU) && self.implementsContextMenu())
          return &_pluginContextMenu;
+      if (!strcmp(id, CLAP_EXT_RESOURCE_DIRECTORY) && self.implementsResourceDirectory())
+         return &_pluginResourceDirectory;
 
       return self.extension(id);
    }
@@ -477,6 +494,13 @@ namespace clap { namespace helpers {
       auto &self = from(plugin);
       self.ensureMainThread("clap_plugin_latency.get");
 
+      if (l >= CheckingLevel::Minimal) {
+         if (!self._isActive)
+            self.hostMisbehaving("It is wrong to query the latency before the plugin is activated, "
+                                 "because if the plugin dosen't know the sample rate, it can't "
+                                 "know the number of samples of latency.");
+      }
+
       return self.latencyGet();
    }
 
@@ -486,6 +510,14 @@ namespace clap { namespace helpers {
    template <MisbehaviourHandler h, CheckingLevel l>
    uint32_t Plugin<h, l>::clapTailGet(const clap_plugin_t *plugin) noexcept {
       auto &self = from(plugin);
+
+      if (l >= CheckingLevel::Minimal) {
+         if (!self._isActive)
+            self.hostMisbehaving("It is wrong to query the tail before the plugin is activated, "
+                                 "because if the plugin dosen't know the sample rate, it can't "
+                                 "know the tail length in samples.");
+      }
+
       return self.tailGet();
    }
 
@@ -507,8 +539,13 @@ namespace clap { namespace helpers {
 
       switch (mode) {
       case CLAP_RENDER_REALTIME:
-      case CLAP_RENDER_OFFLINE:
          return self.renderSetMode(mode);
+
+      case CLAP_RENDER_OFFLINE: {
+         if (self.renderHasHardRealtimeRequirement())
+            return false;
+         return self.renderSetMode(mode);
+      }
 
       default: {
          std::ostringstream msg;
@@ -585,9 +622,10 @@ namespace clap { namespace helpers {
       self.ensureMainThread("clap_plugin_preset_load.from_location");
 
       if (l >= CheckingLevel::Minimal) {
-         if (!location) {
+         if (location_kind == CLAP_PRESET_DISCOVERY_LOCATION_FILE && !location) {
             self.hostMisbehaving(
-               "host called clap_plugin_preset_load.from_location with a null uri");
+               "host called clap_plugin_preset_load.from_location with a null uri, for a preset "
+               "with location_kind CLAP_PRESET_DISCOVERY_LOCATION_FILE");
             return false;
          }
       }
@@ -750,8 +788,7 @@ namespace clap { namespace helpers {
 
       const auto res = self.paramsInfo(param_index, param_info);
 
-      if (l >= CheckingLevel::Maximal && !res)
-      {
+      if (l >= CheckingLevel::Maximal && !res) {
          std::ostringstream os;
          os << "clap_plugin_params.info(" << param_index << ") failed";
          self._host.pluginMisbehaving(os.str());
@@ -779,14 +816,13 @@ namespace clap { namespace helpers {
       const bool succeed = self.paramsValue(paramId, value);
 
       if (l >= CheckingLevel::Maximal) {
-         const auto paramIndex = self.getParamIndexForParamId(paramId);
-         if (paramIndex >= 0) {
-            clap_param_info info;
-            if (clapParamsInfo(&self._plugin, static_cast<uint32_t>(paramIndex), &info) &&
-               (*value < info.min_value || info.max_value < *value)) {
-                  std::ostringstream msg;
-                  msg << "clap_plugin_params.value(" << paramId << ") = " << *value << ", is out of range";
-                  self._host.pluginMisbehaving(msg.str());
+         clap_param_info info;
+         if (self.getParamInfoForParamId(paramId, &info)) {
+            if (*value < info.min_value || info.max_value < *value) {
+               std::ostringstream msg;
+               msg << "clap_plugin_params.value(" << paramId << ") = " << *value
+                   << ", is out of range [" << info.min_value << " .. " << info.max_value << "]";
+               self._host.pluginMisbehaving(msg.str());
             }
          }
       }
@@ -841,15 +877,14 @@ namespace clap { namespace helpers {
                   self.hostMisbehaving(msg.str());
                   continue;
                }
-
-               const auto paramIndex = self.getParamIndexForParamId(pev->param_id);
-               if (paramIndex != -1) {
-                  clap_param_info info;
-                  if (clapParamsInfo(&self._plugin, static_cast<uint32_t>(paramIndex), &info) &&
-                      (pev->value < info.min_value || info.max_value < pev->value)) {
+ 
+               clap_param_info info;
+               if (self.getParamInfoForParamId(pev->param_id, &info)) {
+                  if (pev->value < info.min_value || info.max_value < pev->value) {
                      std::ostringstream msg;
                      msg << "clap_plugin_params.flush() produced the value " << pev->value
-                         << " for parameter " << pev->param_id << " which is out of bounds";
+                         << " for parameter " << pev->param_id << " which is out of bounds: ["
+                         << info.min_value << " .. " << info.max_value << "]";
                      self._host.pluginMisbehaving(msg.str());
                   }
                }
@@ -882,14 +917,13 @@ namespace clap { namespace helpers {
          }
 
          if (l >= CheckingLevel::Maximal) {
-            const auto paramIndex = self.getParamIndexForParamId(param_id);
-            if (paramIndex != -1) {
-               clap_param_info info;
-               if (clapParamsInfo(&self._plugin, static_cast<uint32_t>(paramIndex), &info) &&
-                   (value < info.min_value || info.max_value < value)) {
+            clap_param_info info;
+            if (self.getParamInfoForParamId(param_id, &info)) {
+               if (value < info.min_value || info.max_value < value) {
                   std::ostringstream msg;
                   msg << "clap_plugin_params.value_to_text() the value " << value
-                      << " for parameter " << param_id << " is out of bounds";
+                      << " for parameter " << param_id << " is out of bounds: ["
+                         << info.min_value << " .. " << info.max_value << "]";
                   self.hostMisbehaving(msg.str());
                }
             }
@@ -945,14 +979,13 @@ namespace clap { namespace helpers {
          return false;
 
       if (l >= CheckingLevel::Maximal) {
-         const auto paramIndex = self.getParamIndexForParamId(param_id);
-         if (paramIndex != -1) {
-            clap_param_info info;
-            if (clapParamsInfo(&self._plugin, static_cast<uint32_t>(paramIndex), &info) &&
-                  (*value < info.min_value || info.max_value < *value)) {
+         clap_param_info info;
+         if (self.getParamInfoForParamId(param_id, &info)) {
+            if (*value < info.min_value || info.max_value < *value) {
                std::ostringstream msg;
                msg << "clap_plugin_params.text_to_value() produced the value " << value
-                     << " for parameter " << param_id << " which is out of bounds";
+                   << " for parameter " << param_id << " which is out of bounds: ["
+                         << info.min_value << " .. " << info.max_value << "]";
                self._host.pluginMisbehaving(msg.str());
             }
          }
@@ -975,6 +1008,19 @@ namespace clap { namespace helpers {
       }
 
       return -1;
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   bool Plugin<h, l>::getParamInfoForParamId(clap_id paramId,
+                                             clap_param_info *info) const noexcept {
+      checkMainThread();
+
+      const auto count = paramsCount();
+      for (uint32_t i = 0; i < count; ++i)
+         if (!clapParamsInfo(&_plugin, i, info) && info->id == paramId)
+            return true;
+
+      return false;
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
@@ -1545,6 +1591,42 @@ namespace clap { namespace helpers {
       self.ensureMainThread("clap_plugin_context_menu.perform");
 
       return self.contextMenuPerform(target, action_id);
+   }
+
+   //--------------------------------//
+   // clap_plugin_resource_directory //
+   //--------------------------------//
+   template <MisbehaviourHandler h, CheckingLevel l>
+   void Plugin<h, l>::clapResourceDirectorySetDirectory(const clap_plugin_t *plugin,
+                                                        const char *path,
+                                                        bool is_shared) noexcept {
+      auto &self = from(plugin);
+      self.ensureMainThread("clap_plugin_resource_directory.set_directory");
+      self.resourceDirectorySetDirectory(path, is_shared);
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   void Plugin<h, l>::clapResourceDirectoryCollect(const clap_plugin_t *plugin, bool all) noexcept {
+      auto &self = from(plugin);
+      self.ensureMainThread("clap_plugin_resource_directory.collect");
+      self.resourceDirectoryCollect(all);
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   uint32_t Plugin<h, l>::clapResourceDirectoryGetFilesCount(const clap_plugin_t *plugin) noexcept {
+      auto &self = from(plugin);
+      self.ensureMainThread("clap_plugin_resource_directory.get_files_count");
+      return self.resourceDirectoryGetFilesCount();
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   int32_t Plugin<h, l>::clapResourceDirectoryGetFilePath(const clap_plugin_t *plugin,
+                                                          uint32_t index,
+                                                          char *path,
+                                                          uint32_t path_size) noexcept {
+      auto &self = from(plugin);
+      self.ensureMainThread("clap_plugin_resource_directory.get_file_path");
+      return self.resourceDirectoryGetFilePath(index, path, path_size);
    }
 
    /////////////

@@ -181,6 +181,13 @@ namespace clap { namespace helpers {
                             const char *location,
                             const char *load_key) const noexcept;
 
+      //////////////////////////////////
+      // clap_host_resource_directory //
+      //////////////////////////////////
+      bool canUseResourceDirectory() const noexcept;
+      bool requestDirectory(bool isShared) const noexcept;
+      void releaseDirectory(bool isShared) const noexcept;
+
    protected:
       void ensureMainThread(const char *method) const noexcept;
       void ensureAudioThread(const char *method) const noexcept;
