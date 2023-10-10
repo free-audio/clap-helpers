@@ -128,6 +128,14 @@ namespace clap { namespace helpers {
    };
 
    template <MisbehaviourHandler h, CheckingLevel l>
+   const clap_plugin_resource_directory Plugin<h, l>::_pluginResourceDirectory = {
+      clapResourceDirectorySetDirectory,
+      clapResourceDirectoryCollect,
+      clapResourceDirectoryGetFilesCount,
+      clapResourceDirectoryGetFilePath,
+   };
+
+   template <MisbehaviourHandler h, CheckingLevel l>
    const clap_plugin_voice_info Plugin<h, l>::_pluginVoiceInfo = {
       clapVoiceInfoGet,
    };
@@ -472,6 +480,8 @@ namespace clap { namespace helpers {
          return &_pluginTail;
       if (!strcmp(id, CLAP_EXT_CONTEXT_MENU))
          return &_pluginContextMenu;
+      if (!strcmp(id, CLAP_EXT_RESOURCE_DIRECTORY) && self.implementsResourceDirectory())
+         return &_pluginResourceDirectory;
 
       return self.extension(id);
    }
@@ -1580,6 +1590,42 @@ namespace clap { namespace helpers {
       self.ensureMainThread("clap_plugin_context_menu.perform");
 
       return self.contextMenuPerform(target, action_id);
+   }
+
+   //--------------------------------//
+   // clap_plugin_resource_directory //
+   //--------------------------------//
+   template <MisbehaviourHandler h, CheckingLevel l>
+   void Plugin<h, l>::clapResourceDirectorySetDirectory(const clap_plugin_t *plugin,
+                                                        const char *path,
+                                                        bool is_shared) noexcept {
+      auto &self = from(plugin);
+      self.ensureMainThread("clap_plugin_resource_directory.set_directory");
+      self.resourceDirectorySetDirectory(path, is_shared);
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   void Plugin<h, l>::clapResourceDirectoryCollect(const clap_plugin_t *plugin, bool all) noexcept {
+      auto &self = from(plugin);
+      self.ensureMainThread("clap_plugin_resource_directory.collect");
+      self.resourceDirectoryCollect(all);
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   uint32_t Plugin<h, l>::clapResourceDirectoryGetFilesCount(const clap_plugin_t *plugin) noexcept {
+      auto &self = from(plugin);
+      self.ensureMainThread("clap_plugin_resource_directory.get_files_count");
+      return self.resourceDirectoryGetFilesCount();
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   int32_t Plugin<h, l>::clapResourceDirectoryGetFilePath(const clap_plugin_t *plugin,
+                                                          uint32_t index,
+                                                          char *path,
+                                                          uint32_t path_size) noexcept {
+      auto &self = from(plugin);
+      self.ensureMainThread("clap_plugin_resource_directory.get_file_path");
+      return self.resourceDirectoryGetFilePath(index, path, path_size);
    }
 
    /////////////

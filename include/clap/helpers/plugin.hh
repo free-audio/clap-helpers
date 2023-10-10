@@ -261,6 +261,19 @@ namespace clap { namespace helpers {
          return false;
       }
 
+      //--------------------------------//
+      // clap_plugin_resource_directory //
+      //--------------------------------//
+      virtual bool implementsResourceDirectory() const noexcept { return false; }
+      virtual void resourceDirectorySetDirectory(const char *path, bool isShared) noexcept {}
+      virtual void resourceDirectoryCollect(bool all) noexcept {}
+      virtual uint32_t resourceDirectoryGetFilesCount() const noexcept { return 0; }
+      virtual int32_t resourceDirectoryGetFilePath(uint32_t index,
+                                                   char *path,
+                                                   uint32_t pathSize) const noexcept {
+         return -1;
+      }
+
       //------------------------//
       // clap_plugin_voice_info //
       //------------------------//
@@ -495,6 +508,17 @@ namespace clap { namespace helpers {
                                          const clap_context_menu_target_t *target,
                                          clap_id action_id) noexcept;
 
+      // clap_plugin_resource_directory
+      static void clapResourceDirectorySetDirectory(const clap_plugin_t *plugin,
+                                                    const char *path,
+                                                    bool is_shared) noexcept;
+      static void clapResourceDirectoryCollect(const clap_plugin_t *plugin, bool all) noexcept;
+      static uint32_t clapResourceDirectoryGetFilesCount(const clap_plugin_t *plugin) noexcept;
+      static int32_t clapResourceDirectoryGetFilePath(const clap_plugin_t *plugin,
+                                                      uint32_t index,
+                                                      char *path,
+                                                      uint32_t path_size) noexcept;
+
       // interfaces
       static const clap_plugin_audio_ports _pluginAudioPorts;
       static const clap_plugin_audio_ports_config _pluginAudioPortsConfig;
@@ -517,6 +541,7 @@ namespace clap { namespace helpers {
       static const clap_plugin_track_info _pluginTrackInfo;
       static const clap_plugin_voice_info _pluginVoiceInfo;
       static const clap_plugin_context_menu _pluginContextMenu;
+      static const clap_plugin_resource_directory _pluginResourceDirectory;
 
       // state
       bool _wasInitialized = false;
