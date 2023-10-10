@@ -646,4 +646,33 @@ namespace clap { namespace helpers {
 
       _hostPresetLoad->loaded(_host, location_kind, location, load_key);
    }
+
+   //////////////////////////////////
+   // clap_host_resource_directory //
+   //////////////////////////////////
+   template <MisbehaviourHandler h, CheckingLevel l>
+   bool HostProxy<h, l>::canUseResourceDirectory() const noexcept {
+      if (!_hostResourceDirectory)
+         return false;
+
+      if (_hostResourceDirectory->request_directory && _hostResourceDirectory->release_directory)
+         return true;
+
+      hostMisbehaving("clap_host_resource_directory is partially implemented");
+      return false;
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   bool HostProxy<h, l>::requestDirectory(bool isShared) const noexcept {
+      assert(canUseResourceDirectory());
+      ensureMainThread("resource_directory.request_directory");
+      return _hostResourceDirectory->request_directory(_host, isShared);
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   void HostProxy<h, l>::releaseDirectory(bool isShared) const noexcept {
+      assert(canUseResourceDirectory());
+      ensureMainThread("resource_directory.release_directory");
+      _hostResourceDirectory->release_directory(_host, isShared);
+   }
 }} // namespace clap::helpers
