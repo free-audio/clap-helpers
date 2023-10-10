@@ -470,7 +470,7 @@ namespace clap { namespace helpers {
          return &_pluginVoiceInfo;
       if (!strcmp(id, CLAP_EXT_TAIL) && self.implementsTail())
          return &_pluginTail;
-      if (!strcmp(id, CLAP_EXT_CONTEXT_MENU))
+      if (!strcmp(id, CLAP_EXT_CONTEXT_MENU) && self.implementsContextMenu())
          return &_pluginContextMenu;
 
       return self.extension(id);
