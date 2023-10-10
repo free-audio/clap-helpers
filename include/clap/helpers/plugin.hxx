@@ -622,9 +622,10 @@ namespace clap { namespace helpers {
       self.ensureMainThread("clap_plugin_preset_load.from_location");
 
       if (l >= CheckingLevel::Minimal) {
-         if (!location) {
+         if (location_kind == CLAP_PRESET_DISCOVERY_LOCATION_FILE && !location) {
             self.hostMisbehaving(
-               "host called clap_plugin_preset_load.from_location with a null uri");
+               "host called clap_plugin_preset_load.from_location with a null uri, for a preset "
+               "with location_kind CLAP_PRESET_DISCOVERY_LOCATION_FILE");
             return false;
          }
       }
