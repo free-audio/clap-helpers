@@ -877,7 +877,7 @@ namespace clap { namespace helpers {
                   self.hostMisbehaving(msg.str());
                   continue;
                }
-
+ 
                clap_param_info info;
                if (self.getParamInfoForParamId(pev->param_id, &info)) {
                   if (pev->value < info.min_value || info.max_value < pev->value) {
@@ -1004,7 +1004,7 @@ namespace clap { namespace helpers {
             continue;
 
          if (info.id == param_id)
-            return i;
+            return static_cast<int32_t>(i);
       }
 
       return -1;
