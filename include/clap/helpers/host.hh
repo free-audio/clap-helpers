@@ -6,7 +6,6 @@
 #include "misbehaviour-handler.hh"
 
 namespace clap { namespace helpers {
-   template <MisbehaviourHandler h, CheckingLevel l>
    class Host {
    public:
       // not copyable, not moveable
@@ -31,6 +30,7 @@ namespace clap { namespace helpers {
       virtual void requestCallback() noexcept {}
 
       // clap_host_audio_ports
+      virtual void implementsAudioPorts() const noexcept { return false; }
       bool audioPortsIsRescanFlagSupported(uint32_t flag) noexcept { return false; }
       void audioPortsRescan(uint32_t flags) noexcept {}
 
@@ -52,10 +52,34 @@ namespace clap { namespace helpers {
       virtual void paramsClear(clap_id paramId, clap_param_clear_flags flags) noexcept {}
       virtual void paramsRequestFlush() noexcept {}
 
+      // clap_host_posix_fd_support
+      virtual bool implementsPosixFdSupport() const noexcept { return false; }
+      virtual bool posixFdSupportRegisterFd(int fd, clap_posix_fd_flags_t flags) noexcept { return false; }
+      virtual bool posixFdSupportModifyFd(int fd, clap_posix_fd_flags_t flags) noexcept { return false; }
+      virtual bool posixFdSupportUnregisterFd(int fd) noexcept { return false; }
+
+      // clap_host_remote_controls
+      virtual bool implementsRemoteControls() const noexcept { return false; }
+      virtual void remoteControlsChanged() noexcept {}
+      virtual void remoteControlsSuggestPage(clap_id pageId) noexcept {}
+
+      // clap_host_state
+      virtual bool implementsState() const noexcept { return false; }
+      virtual void stateMarkDirty() noexcept {}
+
+      // clap_host_timer_support
+      virtual bool implementsTimerSupport() const noexcept { return false; }
+      virtual bool timerSupportRegisterTimer(uint32_t periodMs, clap_id *timerId) noexcept { return false; }
+      virtual bool timerSupportUnregisterTimer(clap_id timerId) noexcept { return false; }
+
       // clap_host_thread_check
       virtual bool implementsThreadCheck() const noexcept { return false; }
       virtual bool threadCheckIsMainThread() noexcept { return false; }
       virtual bool threadCheckIsAudioThread() noexcept { return false; }
+
+      // clap_host_thread_pool
+      virtual bool implementsThreadPool() const noexcept { return false; }
+      virtual bool threadPoolRequestExec(uint32_t numTasks) noexcept { return false; }
 
       ///////////////
       // Utilities //
@@ -101,15 +125,39 @@ namespace clap { namespace helpers {
                                   clap_param_clear_flags flags) noexcept;
       static void clapParamsRequestFlush(const clap_host_t *host) noexcept;
 
+      // clap_host_posix_fd_support
+      static bool clapPosixFdSupportRegisterFd(const clap_host *host, int fd, clap_posix_fd_flags_t flags) noexcept;
+      static bool clapPosixFdSupportModifyFd(const clap_host *host, int fd, clap_posix_fd_flags_t flags) noexcept;
+      static bool clapPosixFdSupportUnregisterFd(const clap_host *host, int fd) noexcept;
+
+      // clap_host_remote_controls
+      static void clapRemoteControlsChanged(const clap_host *host) noexcept;
+      static void clapRemoteControlsSuggestPage(const clap_host *host, clap_id page_id) noexcept;
+
+      // clap_host_state
+      static void clapStateMarkDirty(const clap_host *host) noexcept;
+
+      // clap_host_timer_support
+      static bool clapTimerSupportRegisterTimer(const clap_host *host, uint32_t period_ms, clap_id *timer_id) noexcept;
+      static bool clapTimerSupportUnregisterTimer(const clap_host *host, clap_id timer_id) noexcept;
+
       // clap_host_thread_check
       static bool clapThreadCheckIsMainThread(const clap_host_t *host) noexcept;
       static bool clapThreadCheckIsAudioThread(const clap_host_t *host) noexcept;
+
+      // clap_host_thread_pool
+      static bool clapThreadPoolRequestExec(const clap_host *host, uint32_t num_tasks) noexcept;
 
       // interfaces
       static const clap_host_audio_ports _hostAudioPorts;
       static const clap_host_gui _hostGui;
       static const clap_host_log _hostLog;
       static const clap_host_params _hostParams;
+      static const clap_host_posix_fd_support _hostPosixFdSupport;
+      static const clap_host_remote_controls _hostRemoteControls;
+      static const clap_host_state _hostState;
+      static const clap_host_timer_support _hostTimerSupport;
       static const clap_host_thread_check _hostThreadCheck;
+      static const clap_host_thread_pool _hostThreadPool;
    };
 }} // namespace clap::helpers
