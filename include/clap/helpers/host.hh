@@ -2,9 +2,6 @@
 
 #include <clap/clap.h>
 
-#include "checking-level.hh"
-#include "misbehaviour-handler.hh"
-
 namespace clap { namespace helpers {
    class Host {
    public:
