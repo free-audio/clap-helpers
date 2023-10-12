@@ -39,6 +39,10 @@ namespace clap { namespace helpers {
       virtual bool guiRequestHide() noexcept { return false; }
       virtual void guiClosed(bool wasDestroyed) noexcept {}
 
+      // clap_host_latency
+      virtual bool implementsLatency() const noexcept { return false; }
+      static void latencyChanged() noexcept {}
+
       // clap_host_log
       virtual bool implementsLog() const noexcept { return false; }
       virtual void logLog(clap_log_severity severity, const char *message) const noexcept {}
@@ -68,6 +72,10 @@ namespace clap { namespace helpers {
       virtual bool implementsTimerSupport() const noexcept { return false; }
       virtual bool timerSupportRegisterTimer(uint32_t periodMs, clap_id *timerId) noexcept { return false; }
       virtual bool timerSupportUnregisterTimer(clap_id timerId) noexcept { return false; }
+
+      // clap_host_tail
+      virtual bool implementsTail() const noexcept { return false; }
+      static void tailChanged() noexcept {}
 
       // clap_host_thread_check
       virtual bool implementsThreadCheck() const noexcept { return false; }
@@ -110,6 +118,9 @@ namespace clap { namespace helpers {
       static bool clapGuiRequestHide(const clap_host_t *host) noexcept;
       static void clapGuiClosed(const clap_host_t *host, bool was_destroyed) noexcept;
 
+      // clap_host_latency
+      static void clapLatencyChanged(const clap_host_t *host) noexcept;
+
       // clap_host_log
       static void clapLogLog(const clap_host_t *host,
                              clap_log_severity severity,
@@ -138,6 +149,9 @@ namespace clap { namespace helpers {
       static bool clapTimerSupportRegisterTimer(const clap_host *host, uint32_t period_ms, clap_id *timer_id) noexcept;
       static bool clapTimerSupportUnregisterTimer(const clap_host *host, clap_id timer_id) noexcept;
 
+      // clap_host_tail
+      static void clapTailChanged(const clap_host_t *host) noexcept;
+
       // clap_host_thread_check
       static bool clapThreadCheckIsMainThread(const clap_host_t *host) noexcept;
       static bool clapThreadCheckIsAudioThread(const clap_host_t *host) noexcept;
@@ -148,12 +162,14 @@ namespace clap { namespace helpers {
       // interfaces
       static const clap_host_audio_ports _hostAudioPorts;
       static const clap_host_gui _hostGui;
+      static const clap_host_latency _hostLatency;
       static const clap_host_log _hostLog;
       static const clap_host_params _hostParams;
       static const clap_host_posix_fd_support _hostPosixFdSupport;
       static const clap_host_remote_controls _hostRemoteControls;
       static const clap_host_state _hostState;
       static const clap_host_timer_support _hostTimerSupport;
+      static const clap_host_tail _hostTail;
       static const clap_host_thread_check _hostThreadCheck;
       static const clap_host_thread_pool _hostThreadPool;
    };

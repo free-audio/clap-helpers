@@ -18,6 +18,10 @@ namespace clap { namespace helpers {
       clapGuiClosed,
    };
 
+   const clap_host_latency Host::_hostLatency = {
+      clapLatencyChanged,
+   };
+
    const clap_host_log Host::_hostLog = {
       clapLogLog,
    };
@@ -46,6 +50,10 @@ namespace clap { namespace helpers {
    const clap_host_timer_support Host::_hostTimerSupport = {
       clapTimerSupportRegisterTimer,
       clapTimerSupportUnregisterTimer,
+   };
+
+   const clap_host_tail Host::_hostTail = {
+      clapTailChanged,
    };
 
    const clap_host_thread_check Host::_hostThreadCheck = {
@@ -86,6 +94,8 @@ namespace clap { namespace helpers {
          return &_hostAudioPorts;
       if (!std::strcmp(extension, CLAP_EXT_GUI) && self.implementsGui())
          return &_hostGui;
+      if (!std::strcmp(extension_id, CLAP_EXT_LATENCY) && self.implementsLatency())
+         return &_hostLatency;
       if (!std::strcmp(extension_id, CLAP_EXT_LOG) && self.implementsLog())
          return &_hostLog;
       if (!std::strcmp(extension_id, CLAP_EXT_PARAMS) && self.implementsParams())
@@ -98,6 +108,8 @@ namespace clap { namespace helpers {
          return &_hostState;
       if (!strcmp(extension, CLAP_EXT_TIMER_SUPPORT) && self.implementsTimerSupport())
          return &_hostTimerSupport;
+      if (!std::strcmp(extension_id, CLAP_EXT_TAIL) && self.implementsTail())
+         return &_hostTail;
       if (!std::strcmp(extension_id, CLAP_EXT_THREAD_CHECK) && self.implementsThreadCheck())
          return &_hostThreadCheck;
       if (!strcmp(extension, CLAP_EXT_THREAD_POOL) && self.implementsThreadPool())
@@ -161,6 +173,14 @@ namespace clap { namespace helpers {
    void Host::clapGuiClosed(const clap_host_t *host, bool was_destroyed) noexcept {
       auto &self = from(host);
       self.guiClosed(was_destroyed);
+   }
+
+   //-------------------//
+   // clap_host_latency //
+   //-------------------//
+   void Host::clapLatencyChanged(const clap_host_t *host) noexcept {
+      auto &self = from(host);
+      self.latencyChanged();
    }
 
    //---------------//
@@ -231,6 +251,14 @@ namespace clap { namespace helpers {
    {
       auto &self = from(host);
       self.stateMarkDirty();
+   }
+
+   //----------------//
+   // clap_host_tail //
+   //----------------//
+   void Host::clapTailChanged(const clap_host_t *host) noexcept {
+      auto &self = from(host);
+      self.tailChanged();
    }
 
    //-------------------------//
