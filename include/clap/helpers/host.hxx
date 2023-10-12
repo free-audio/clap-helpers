@@ -87,8 +87,6 @@ namespace clap { namespace helpers {
    // clap_host //
    //-----------//
    const void *Host::clapGetExtension(const clap_host_t *host, const char *extension_id) noexcept {
-      // TODO ensure main thread
-      // TODO ensure clap_plugin->create has been called successfully, see old PluginHost::fromHost
       auto &self = from(host);
       if (!std::strcmp(extension_id, CLAP_EXT_AUDIO_PORTS) && self.implementsAudioPorts())
          return &_hostAudioPorts;
