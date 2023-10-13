@@ -575,8 +575,7 @@ namespace clap { namespace helpers {
 
    template <MisbehaviourHandler h, CheckingLevel l>
    bool
-   HostProxy<h, l>::contextMenuPopulate(const clap_host_t *host,
-                                        const clap_context_menu_target_t *target,
+   HostProxy<h, l>::contextMenuPopulate(const clap_context_menu_target_t *target,
                                         const clap_context_menu_builder_t *builder) const noexcept {
       assert(canUseContextMenu());
       ensureMainThread("context_menu.populate");
@@ -584,8 +583,7 @@ namespace clap { namespace helpers {
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   bool HostProxy<h, l>::contextMenuPerform(const clap_host_t *host,
-                                            const clap_context_menu_target_t *target,
+   bool HostProxy<h, l>::contextMenuPerform(const clap_context_menu_target_t *target,
                                             clap_id action_id) const noexcept {
       assert(canUseContextMenu());
       ensureMainThread("context_menu.perform");
@@ -593,15 +591,14 @@ namespace clap { namespace helpers {
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   bool HostProxy<h, l>::contextMenuCanPopup(const clap_host_t *host) const noexcept {
+   bool HostProxy<h, l>::contextMenuCanPopup() const noexcept {
       assert(canUseContextMenu());
       ensureMainThread("context_menu.can_popup");
       return _hostContextMenu->can_popup(_host);
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   bool HostProxy<h, l>::contextMenuPopup(const clap_host_t *host,
-                                          const clap_context_menu_target_t *target,
+   bool HostProxy<h, l>::contextMenuPopup(const clap_context_menu_target_t *target,
                                           int32_t screen_index,
                                           int32_t x,
                                           int32_t y) const noexcept {

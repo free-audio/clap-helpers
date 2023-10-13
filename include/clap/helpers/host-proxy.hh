@@ -155,15 +155,12 @@ namespace clap { namespace helpers {
       // clap_host_context_menu //
       ////////////////////////////
       bool canUseContextMenu() const noexcept;
-      bool contextMenuPopulate(const clap_host_t *host,
-                               const clap_context_menu_target_t *target,
+      bool contextMenuPopulate(const clap_context_menu_target_t *target,
                                const clap_context_menu_builder_t *builder) const noexcept;
-      bool contextMenuPerform(const clap_host_t *host,
-                              const clap_context_menu_target_t *target,
+      bool contextMenuPerform(const clap_context_menu_target_t *target,
                               clap_id action_id) const noexcept;
-      bool contextMenuCanPopup(const clap_host_t *host) const noexcept;
-      bool contextMenuPopup(const clap_host_t *host,
-                            const clap_context_menu_target_t *target,
+      bool contextMenuCanPopup() const noexcept;
+      bool contextMenuPopup(const clap_context_menu_target_t *target,
                             int32_t screen_index,
                             int32_t x,
                             int32_t y) const noexcept;
