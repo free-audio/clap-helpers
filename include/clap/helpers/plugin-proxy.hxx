@@ -14,6 +14,7 @@ namespace clap { namespace helpers {
       getExtension(_pluginAudioPorts, CLAP_EXT_AUDIO_PORTS);
       getExtension(_pluginGui, CLAP_EXT_GUI);
       getExtension(_pluginMidiMappings, CLAP_EXT_MIDI_MAPPINGS);
+      getExtension(_pluginNotePorts, CLAP_EXT_NOTE_PORTS);
       getExtension(_pluginParams, CLAP_EXT_PARAMS);
       getExtension(_pluginPosixFdSupport, CLAP_EXT_POSIX_FD_SUPPORT);
       getExtension(_pluginPresetLoad, CLAP_EXT_PRESET_LOAD);
@@ -260,6 +261,37 @@ namespace clap { namespace helpers {
       assert(canUseMidiMappings());
       ensureMainThread("midi_mappings.get");
       return _pluginMidiMappings->get(&_plugin, index, mapping);
+   }
+
+   ///////////////////////////////
+   // clap_plugin_note_ports //
+   ///////////////////////////////
+   template <MisbehaviourHandler h, CheckingLevel l>
+   bool PluginProxy<h, l>::canUseNotePorts() const noexcept {
+      if (!_pluginNotePorts)
+         return false;
+
+      if (_pluginNotePorts->count && _pluginNotePorts->get)
+         return true;
+
+      //pluginMisbehaving("clap_plugin_note_ports is partially implemented");
+      return false;
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   uint32_t PluginProxy<h, l>::notePortsCount(bool isInput) const noexcept {
+      assert(canUseNotePorts());
+      ensureMainThread("note_ports.count");
+      return _pluginNotePorts->count(&_plugin, isInput);
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   bool PluginProxy<h, l>::notePortsGet(uint32_t               index,
+                                        bool                   isInput,
+                                        clap_note_port_info_t *info) const noexcept {
+      assert(canUseNotePorts());
+      ensureMainThread("note_ports.get");
+      return _pluginNotePorts->get(&_plugin, index, isInput, info);
    }
 
    ////////////////////////
