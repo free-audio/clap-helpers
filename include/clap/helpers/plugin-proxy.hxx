@@ -403,6 +403,28 @@ namespace clap { namespace helpers {
       return _pluginState->load(&_plugin, taskIndex);
    }
 
+   //////////////////////
+   // clap_plugin_tail //
+   //////////////////////
+   template <MisbehaviourHandler h, CheckingLevel l>
+   bool PluginProxy<h, l>::canUseTail() const noexcept {
+      if (!_pluginTail)
+         return false;
+
+      if (_pluginTail->get)
+          return true;
+
+      //pluginMisbehaving("clap_plugin_tail is partially implemented");
+      return false;
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   uint32_t PluginProxy<h, l>::tailGet() const noexcept {
+      assert(canUseTail());
+      assert(false); // TODO [main-thread, audio-thread]
+      return pluginTail->get(&_plugin);
+   }
+
    /////////////////////////////
    // clap_plugin_thread_pool //
    /////////////////////////////

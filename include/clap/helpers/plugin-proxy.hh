@@ -99,6 +99,12 @@ namespace clap { namespace helpers {
       bool stateSave(const clap_ostream_t *stream) const noexcept;
       bool stateLoad(const clap_istream_t *stream) const noexcept;
 
+      //////////////////////
+      // clap_plugin_tail //
+      //////////////////////
+      bool canUseTail() const noexcept;
+      uint32_t tailGet() const noexcept;
+
       /////////////////////////////
       // clap_plugin_thread_pool //
       /////////////////////////////
@@ -124,6 +130,7 @@ namespace clap { namespace helpers {
       const clap_plugin_preset_load *_pluginPresetLoad = nullptr;
       const clap_plugin_remote_controls *_pluginRemoteControls = nullptr;
       const clap_plugin_state *_pluginState = nullptr;
+      const clap_plugin_tail *_pluginTail = nullptr;
       const clap_plugin_thread_pool *_pluginThreadPool = nullptr;
       const clap_plugin_timer_support *_pluginTimerSupport = nullptr;
    };
