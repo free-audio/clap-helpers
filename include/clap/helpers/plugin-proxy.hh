@@ -54,6 +54,13 @@ namespace clap { namespace helpers {
       bool guiShow() const noexcept;
       bool guiHide() const noexcept;
 
+      ///////////////////////////////
+      // clap_plugin_midi_mappings //
+      ///////////////////////////////
+      bool canUseMidiMappings() const noexcept;
+      uint32_t midiMappingsCount() const noexcept;
+      bool midiMappingsGet(uint32_t index, clap_midi_mapping_t *mapping) const noexcept;
+
       ////////////////////////
       // clap_plugin_params //
       ////////////////////////
@@ -132,6 +139,7 @@ namespace clap { namespace helpers {
 
       const clap_plugin_audio_ports *_pluginAudioPorts = nullptr;
       const clap_plugin_gui *_pluginGui = nullptr;
+      const clap_plugin_midi_mappings *_pluginMidiMappings = nullptr;
       const clap_plugin_params *_pluginParams = nullptr;
       const clap_plugin_posix_fd_support *_pluginPosixFdSupport = nullptr;
       const clap_plugin_preset_load *_pluginPresetLoad = nullptr;
