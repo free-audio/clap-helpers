@@ -374,6 +374,35 @@ namespace clap { namespace helpers {
       return _pluginRemoteControlsState->get(&_plugin, pageIndex, page);
    }
 
+   ////////////////////////
+   // clap_plugin_render //
+   ////////////////////////
+   template <MisbehaviourHandler h, CheckingLevel l>
+   bool PluginProxy<h, l>::canUseRender() const noexcept {
+      if (!_pluginRender)
+         return false;
+
+      if (_pluginRender->has_hard_realtime_requirement && _pluginRender->set)
+          return true;
+
+      //pluginMisbehaving("clap_plugin_render is partially implemented");
+      return false;     
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   bool PluginProxy<h, l>::renderHasHardRealtimeRequirement() const noexcept {
+      assert(canUseRender());
+      ensureMainThread("render.has_hard_realtime_requirement");
+      return _pluginRender->has_hard_realtime_requirement(&_plugin);
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   bool PluginProxy<h, l>::renderSet(clap_plugin_render_mode mode) const noexcept {
+      assert(canUseRender());
+      ensureMainThread("render.set");
+      return _pluginRender->set(&_plugin, mode);
+   }
+
    ///////////////////////
    // clap_plugin_state //
    ///////////////////////

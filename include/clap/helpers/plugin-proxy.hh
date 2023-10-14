@@ -92,6 +92,13 @@ namespace clap { namespace helpers {
       bool remoteControlsGet(uint32_t                     pageIndex,
                              clap_remote_controls_page_t *page) const noexcept;
 
+      ////////////////////////
+      // clap_plugin_render //
+      ////////////////////////
+      bool canUseRender() const noexcept;
+      bool renderHasHardRealtimeRequirement() const noexcept;
+      bool renderSet(clap_plugin_render_mode mode) const noexcept;
+
       ///////////////////////
       // clap_plugin_state //
       ///////////////////////
@@ -129,6 +136,7 @@ namespace clap { namespace helpers {
       const clap_plugin_posix_fd_support *_pluginPosixFdSupport = nullptr;
       const clap_plugin_preset_load *_pluginPresetLoad = nullptr;
       const clap_plugin_remote_controls *_pluginRemoteControls = nullptr;
+      const clap_plugin_render *_pluginRender = nullptr;
       const clap_plugin_state *_pluginState = nullptr;
       const clap_plugin_tail *_pluginTail = nullptr;
       const clap_plugin_thread_pool *_pluginThreadPool = nullptr;
