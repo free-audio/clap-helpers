@@ -14,6 +14,7 @@ namespace clap { namespace helpers {
       /////////////////
       // clap_plugin //
       /////////////////
+      const clap_plugin* clapPlugin() const { return &_plugin; }
       bool init() noexcept;
       template <typename T>
       void getExtension(const T *&ptr, const char *id) const noexcept;
