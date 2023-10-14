@@ -17,7 +17,9 @@ namespace clap { namespace helpers {
       getExtension(_pluginPosixFdSupport, CLAP_EXT_POSIX_FD_SUPPORT);
       getExtension(_pluginPresetLoad, CLAP_EXT_PRESET_LOAD);
       getExtension(_pluginRemoteControls, CLAP_EXT_REMOTE_CONTROLS);
+      getExtension(_pluginRender, CLAP_EXT_RENDER);
       getExtension(_pluginState, CLAP_EXT_STATE);
+      getExtension(_pluginTail, CLAP_EXT_TAIL);
       getExtension(_pluginThreadPool, CLAP_EXT_THREAD_POOL);
       getExtension(_pluginTimerSupport, CLAP_EXT_TIMER_SUPPORT);
       return true;
