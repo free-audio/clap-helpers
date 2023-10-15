@@ -102,7 +102,7 @@ namespace clap { namespace helpers {
          return &_hostPosixFdSupport;
       if (!strcmp(extension, CLAP_EXT_REMOTE_CONTROLS) && self.implementsRemoteControls())
          return &_hostRemoteControls;
-      if (!strcmp(extension, CLAP_EXT_STATE) && self.implementsHostState())
+      if (!strcmp(extension, CLAP_EXT_STATE) && self.implementsState())
          return &_hostState;
       if (!strcmp(extension, CLAP_EXT_TIMER_SUPPORT) && self.implementsTimerSupport())
          return &_hostTimerSupport;
