@@ -358,7 +358,7 @@ namespace clap { namespace helpers {
    void PluginProxy<h, l>::paramsFlush(const clap_input_events_t *in,
                                  const clap_output_events_t *out) const noexcept {
       assert(canUseParams());
-      assert(false); // TODO [active ? audio-thread : main-thread]
+      // TODO assert [active ? audio-thread : main-thread]
       _pluginParams->flush(&_plugin, in, out);
    }
 
@@ -514,7 +514,7 @@ namespace clap { namespace helpers {
    template <MisbehaviourHandler h, CheckingLevel l>
    uint32_t PluginProxy<h, l>::tailGet() const noexcept {
       assert(canUseTail());
-      assert(false); // TODO [main-thread, audio-thread]
+      // TODO assert [main-thread, audio-thread]
       return pluginTail->get(&_plugin);
    }
 
@@ -566,7 +566,7 @@ namespace clap { namespace helpers {
       if (l == CheckingLevel::None)
          return;
 
-      assert(false); // TODO !main-thread -> hostMisbehaving
+      // TODO assert [main-thread], otherwise -> hostMisbehaving
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
@@ -574,6 +574,6 @@ namespace clap { namespace helpers {
       if (l == CheckingLevel::None)
          return;
 
-      assert(false); // TODO !audio-thread -> hostMisbehaving
+      // TODO assert [audio-thread], otherwise -> hostMisbehaving
    }
 }} // namespace clap::helpers
