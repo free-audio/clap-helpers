@@ -8,7 +8,7 @@
 
 namespace clap { namespace helpers {
    template <MisbehaviourHandler h, CheckingLevel l>
-   HostProxy<h, l>::HostProxy(const ::clap_host *host) : _host(host) {}
+   HostProxy<h, l>::HostProxy(const ::clap_host &host) : _host(host) {}
 
    template <MisbehaviourHandler h, CheckingLevel l>
    void HostProxy<h, l>::init() {
@@ -39,8 +39,8 @@ namespace clap { namespace helpers {
       assert(!ptr);
       assert(id);
 
-      if (_host->get_extension)
-         ptr = static_cast<const T *>(_host->get_extension(_host, id));
+      if (_host.get_extension)
+         ptr = static_cast<const T *>(_host.get_extension(&_host, id));
    }
 
    ///////////////
@@ -48,17 +48,17 @@ namespace clap { namespace helpers {
    ///////////////
    template <MisbehaviourHandler h, CheckingLevel l>
    void HostProxy<h, l>::requestCallback() noexcept {
-      _host->request_callback(_host);
+      _host.request_callback(&_host);
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
    void HostProxy<h, l>::requestRestart() noexcept {
-      _host->request_restart(_host);
+      _host.request_restart(&_host);
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
    void HostProxy<h, l>::requestProcess() noexcept {
-      _host->request_process(_host);
+      _host.request_process(&_host);
    }
 
    /////////////

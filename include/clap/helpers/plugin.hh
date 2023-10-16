@@ -31,7 +31,7 @@ namespace clap { namespace helpers {
       const clap_plugin *clapPlugin() noexcept { return &_plugin; }
 
    protected:
-      Plugin(const clap_plugin_descriptor *desc, const clap_host *host);
+      Plugin(const clap_plugin_descriptor *desc, const clap_host &host);
       virtual ~Plugin() = default;
 
       /////////////////////////
