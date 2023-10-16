@@ -416,7 +416,7 @@ namespace clap { namespace helpers {
       if (!_pluginRemoteControls)
          return false;
 
-      if (_pluginRemoteControlsState->count && _pluginRemoteControls->get)
+      if (_pluginRemoteControls->count && _pluginRemoteControls->get)
           return true;
 
       //pluginMisbehaving("clap_plugin_remote_controls is partially implemented");
@@ -427,7 +427,7 @@ namespace clap { namespace helpers {
    uint32_t PluginProxy<h, l>::remoteControlsCount() const noexcept {
       assert(canUseRemoteControls());
       ensureMainThread("remote_controls.count");
-      return _pluginRemoteControlsState->count(&_plugin);
+      return _pluginRemoteControls->count(&_plugin);
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
@@ -435,7 +435,7 @@ namespace clap { namespace helpers {
                                              clap_remote_controls_page_t *page) const noexcept {
       assert(canUseRemoteControls());
       ensureMainThread("remote_controls.get");
-      return _pluginRemoteControlsState->get(&_plugin, pageIndex, page);
+      return _pluginRemoteControls->get(&_plugin, pageIndex, page);
    }
 
    ////////////////////////
@@ -486,14 +486,14 @@ namespace clap { namespace helpers {
    bool PluginProxy<h, l>::stateSave(const clap_ostream *stream) const noexcept {
       assert(canUseState());
       ensureMainThread("state.save");
-      return _pluginState->save(&_plugin, taskIndex);
+      return _pluginState->save(&_plugin);
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
    bool PluginProxy<h, l>::stateLoad(const clap_istream *stream) const noexcept {
       assert(canUseState());
       ensureMainThread("state.load");
-      return _pluginState->load(&_plugin, taskIndex);
+      return _pluginState->load(&_plugin);
    }
 
    //////////////////////
@@ -515,7 +515,7 @@ namespace clap { namespace helpers {
    uint32_t PluginProxy<h, l>::tailGet() const noexcept {
       assert(canUseTail());
       // TODO assert [main-thread, audio-thread]
-      return pluginTail->get(&_plugin);
+      return _pluginTail->get(&_plugin);
    }
 
    /////////////////////////////
