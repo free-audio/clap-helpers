@@ -5,12 +5,14 @@
 
 namespace clap { namespace helpers {
 
-   const clap_host_audio_ports Host::_hostAudioPorts = {
+   template <MisbehaviourHandler h, CheckingLevel l>
+   const clap_host_audio_ports Host<h, l>::_hostAudioPorts = {
       clapAudioPortsIsRescanFlagSupported,
       clapAudioPortsRescan,
    };
 
-   const clap_host_gui Host::_hostGui = {
+   template <MisbehaviourHandler h, CheckingLevel l>
+   const clap_host_gui Host<h, l>::_hostGui = {
       clapGuiResizeHintsChanged,
       clapGuiRequestResize,
       clapGuiRequestShow,
@@ -18,54 +20,65 @@ namespace clap { namespace helpers {
       clapGuiClosed,
    };
 
-   const clap_host_latency Host::_hostLatency = {
+   template <MisbehaviourHandler h, CheckingLevel l>
+   const clap_host_latency Host<h, l>::_hostLatency = {
       clapLatencyChanged,
    };
 
-   const clap_host_log Host::_hostLog = {
+   template <MisbehaviourHandler h, CheckingLevel l>
+   const clap_host_log Host<h, l>::_hostLog = {
       clapLogLog,
    };
 
-   const clap_host_params Host::_hostParams = {
+   template <MisbehaviourHandler h, CheckingLevel l>
+   const clap_host_params Host<h, l>::_hostParams = {
       clapParamsRescan,
       clapParamsClear,
       clapParamsRequestFlush,
    };
 
-   const clap_host_posix_fd_support Host::_hostPosixFdSupport = {
+   template <MisbehaviourHandler h, CheckingLevel l>
+   const clap_host_posix_fd_support Host<h, l>::_hostPosixFdSupport = {
       clapPosixFdSupportRegisterFd,
       clapPosixFdSupportModifyFd,
       clapPosixFdSupportUnregisterFd,
    };
 
-   const clap_host_remote_controls Host::_hostRemoteControls = {
+   template <MisbehaviourHandler h, CheckingLevel l>
+   const clap_host_remote_controls Host<h, l>::_hostRemoteControls = {
       clapRemoteControlsChanged,
       clapRemoteControlsSuggestPage,
    };
 
-   const clap_host_state Host::_hostState = {
+   template <MisbehaviourHandler h, CheckingLevel l>
+   const clap_host_state Host<h, l>::_hostState = {
       clapStateMarkDirty,
    };
 
-   const clap_host_timer_support Host::_hostTimerSupport = {
+   template <MisbehaviourHandler h, CheckingLevel l>
+   const clap_host_timer_support Host<h, l>::_hostTimerSupport = {
       clapTimerSupportRegisterTimer,
       clapTimerSupportUnregisterTimer,
    };
 
-   const clap_host_tail Host::_hostTail = {
+   template <MisbehaviourHandler h, CheckingLevel l>
+   const clap_host_tail Host<h, l>::_hostTail = {
       clapTailChanged,
    };
 
-   const clap_host_thread_check Host::_hostThreadCheck = {
+   template <MisbehaviourHandler h, CheckingLevel l>
+   const clap_host_thread_check Host<h, l>::_hostThreadCheck = {
       clapThreadCheckIsMainThread,
       clapThreadCheckIsAudioThread,
    };
 
-   const clap_host_thread_pool Host::_hostThreadPool = {
+   template <MisbehaviourHandler h, CheckingLevel l>
+   const clap_host_thread_pool Host<h, l>::_hostThreadPool = {
       clapThreadPoolRequestExec,
    };
 
-   Host::Host(const char *name, const char *vendor, const char *url, const char *version)
+   template <MisbehaviourHandler h, CheckingLevel l>
+   Host<h, l>::Host(const char *name, const char *vendor, const char *url, const char *version)
       : _host{
            CLAP_VERSION,
            this,
@@ -86,7 +99,9 @@ namespace clap { namespace helpers {
    //-----------//
    // clap_host //
    //-----------//
-   const void *Host::clapGetExtension(const clap_host_t *host, const char *extension_id) noexcept {
+   template <MisbehaviourHandler h, CheckingLevel l>
+   const void *Host<h, l>::clapGetExtension(const clap_host_t *host,
+                                            const char *extension_id) noexcept {
       auto &self = from(host);
       if (!std::strcmp(extension_id, CLAP_EXT_AUDIO_PORTS) && self.implementsAudioPorts())
          return &_hostAudioPorts;
@@ -108,24 +123,27 @@ namespace clap { namespace helpers {
          return &_hostTimerSupport;
       if (!std::strcmp(extension_id, CLAP_EXT_TAIL) && self.implementsTail())
          return &_hostTail;
-      if (!std::strcmp(extension_id, CLAP_EXT_THREAD_CHECK) && self.implementsThreadCheck())
+      if (!std::strcmp(extension_id, CLAP_EXT_THREAD_CHECK))
          return &_hostThreadCheck;
       if (!strcmp(extension_id, CLAP_EXT_THREAD_POOL) && self.implementsThreadPool())
          return &_hostThreadPool;
       return nullptr;
    }
 
-   void Host::clapRequestRestart(const clap_host_t *host) noexcept {
+   template <MisbehaviourHandler h, CheckingLevel l>
+   void Host<h, l>::clapRequestRestart(const clap_host_t *host) noexcept {
       auto &self = from(host);
       self.requestRestart();
    }
 
-   void Host::clapRequestProcess(const clap_host_t *host) noexcept {
+   template <MisbehaviourHandler h, CheckingLevel l>
+   void Host<h, l>::clapRequestProcess(const clap_host_t *host) noexcept {
       auto &self = from(host);
       self.requestProcess();
    }
 
-   void Host::clapRequestCallback(const clap_host_t *host) noexcept {
+   template <MisbehaviourHandler h, CheckingLevel l>
+   void Host<h, l>::clapRequestCallback(const clap_host_t *host) noexcept {
       auto &self = from(host);
       self.requestCallback();
    }
@@ -133,12 +151,15 @@ namespace clap { namespace helpers {
    //-----------------------//
    // clap_host_audio_ports //
    //-----------------------//
-   bool Host::clapAudioPortsIsRescanFlagSupported(const clap_host_t *host, uint32_t flag) noexcept {
+   template <MisbehaviourHandler h, CheckingLevel l>
+   bool Host<h, l>::clapAudioPortsIsRescanFlagSupported(const clap_host_t *host,
+                                                        uint32_t flag) noexcept {
       auto &self = from(host);
       return self.audioPortsIsRescanFlagSupported(flag);
    }
 
-   void Host::clapAudioPortsRescan(const clap_host_t *host, uint32_t flags) noexcept {
+   template <MisbehaviourHandler h, CheckingLevel l>
+   void Host<h, l>::clapAudioPortsRescan(const clap_host_t *host, uint32_t flags) noexcept {
       auto &self = from(host);
       self.audioPortsRescan(flags);
    }
@@ -146,29 +167,34 @@ namespace clap { namespace helpers {
    //---------------//
    // clap_host_gui //
    //---------------//
-   void Host::clapGuiResizeHintsChanged(const clap_host_t *host) noexcept {
+   template <MisbehaviourHandler h, CheckingLevel l>
+   void Host<h, l>::clapGuiResizeHintsChanged(const clap_host_t *host) noexcept {
       auto &self = from(host);
       self.guiResizeHintsChanged();
    }
 
-   bool Host::clapGuiRequestResize(const clap_host_t *host,
-                                   uint32_t width,
-                                   uint32_t height) noexcept {
+   template <MisbehaviourHandler h, CheckingLevel l>
+   bool Host<h, l>::clapGuiRequestResize(const clap_host_t *host,
+                                         uint32_t width,
+                                         uint32_t height) noexcept {
       auto &self = from(host);
       return self.guiRequestResize(width, height);
    }
 
-   bool Host::clapGuiRequestShow(const clap_host_t *host) noexcept {
+   template <MisbehaviourHandler h, CheckingLevel l>
+   bool Host<h, l>::clapGuiRequestShow(const clap_host_t *host) noexcept {
       auto &self = from(host);
       return self.guiRequestShow();
    }
 
-   bool Host::clapGuiRequestHide(const clap_host_t *host) noexcept {
+   template <MisbehaviourHandler h, CheckingLevel l>
+   bool Host<h, l>::clapGuiRequestHide(const clap_host_t *host) noexcept {
       auto &self = from(host);
       return self.guiRequestHide();
    }
 
-   void Host::clapGuiClosed(const clap_host_t *host, bool was_destroyed) noexcept {
+   template <MisbehaviourHandler h, CheckingLevel l>
+   void Host<h, l>::clapGuiClosed(const clap_host_t *host, bool was_destroyed) noexcept {
       auto &self = from(host);
       self.guiClosed(was_destroyed);
    }
@@ -176,7 +202,8 @@ namespace clap { namespace helpers {
    //-------------------//
    // clap_host_latency //
    //-------------------//
-   void Host::clapLatencyChanged(const clap_host_t *host) noexcept {
+   template <MisbehaviourHandler h, CheckingLevel l>
+   void Host<h, l>::clapLatencyChanged(const clap_host_t *host) noexcept {
       auto &self = from(host);
       self.latencyChanged();
    }
@@ -184,9 +211,10 @@ namespace clap { namespace helpers {
    //---------------//
    // clap_host_log //
    //---------------//
-   void Host::clapLogLog(const clap_host_t *host,
-                         clap_log_severity severity,
-                         const char *message) noexcept {
+   template <MisbehaviourHandler h, CheckingLevel l>
+   void Host<h, l>::clapLogLog(const clap_host_t *host,
+                               clap_log_severity severity,
+                               const char *message) noexcept {
       auto &self = from(host);
       self.logLog(severity, message);
    }
@@ -194,19 +222,23 @@ namespace clap { namespace helpers {
    //------------------//
    // clap_host_params //
    //------------------//
-   void Host::clapParamsRescan(const clap_host_t *host, clap_param_rescan_flags flags) noexcept {
+   template <MisbehaviourHandler h, CheckingLevel l>
+   void Host<h, l>::clapParamsRescan(const clap_host_t *host,
+                                     clap_param_rescan_flags flags) noexcept {
       auto &self = from(host);
       self.paramsRescan(flags);
    }
 
-   void Host::clapParamsClear(const clap_host_t *host,
-                              clap_id param_id,
-                              clap_param_clear_flags flags) noexcept {
+   template <MisbehaviourHandler h, CheckingLevel l>
+   void Host<h, l>::clapParamsClear(const clap_host_t *host,
+                                    clap_id param_id,
+                                    clap_param_clear_flags flags) noexcept {
       auto &self = from(host);
       self.paramsClear(param_id, flags);
    }
 
-   void Host::clapParamsRequestFlush(const clap_host_t *host) noexcept {
+   template <MisbehaviourHandler h, CheckingLevel l>
+   void Host<h, l>::clapParamsRequestFlush(const clap_host_t *host) noexcept {
       auto &self = from(host);
       self.paramsRequestFlush();
    }
@@ -214,17 +246,24 @@ namespace clap { namespace helpers {
    //----------------------------//
    // clap_host_posix_fd_support //
    //----------------------------//
-   bool Host::clapPosixFdSupportRegisterFd(const clap_host *host, int fd, clap_posix_fd_flags_t flags) noexcept {
+   template <MisbehaviourHandler h, CheckingLevel l>
+   bool Host<h, l>::clapPosixFdSupportRegisterFd(const clap_host *host,
+                                                 int fd,
+                                                 clap_posix_fd_flags_t flags) noexcept {
       auto &self = from(host);
       return self.posixFdSupportRegisterFd(fd, flags);
    }
 
-   bool Host::clapPosixFdSupportModifyFd(const clap_host *host, int fd, clap_posix_fd_flags_t flags) noexcept {
+   template <MisbehaviourHandler h, CheckingLevel l>
+   bool Host<h, l>::clapPosixFdSupportModifyFd(const clap_host *host,
+                                               int fd,
+                                               clap_posix_fd_flags_t flags) noexcept {
       auto &self = from(host);
       return self.posixFdSupportModifyFd(fd, flags);
    }
 
-   bool Host::clapPosixFdSupportUnregisterFd(const clap_host *host, int fd) noexcept {
+   template <MisbehaviourHandler h, CheckingLevel l>
+   bool Host<h, l>::clapPosixFdSupportUnregisterFd(const clap_host *host, int fd) noexcept {
       auto &self = from(host);
       return self.posixFdSupportUnregisterFd(fd);
    }
@@ -232,12 +271,14 @@ namespace clap { namespace helpers {
    //---------------------------//
    // clap_host_remote_controls //
    //---------------------------//
-   void Host::clapRemoteControlsChanged(const clap_host *host) noexcept {
+   template <MisbehaviourHandler h, CheckingLevel l>
+   void Host<h, l>::clapRemoteControlsChanged(const clap_host *host) noexcept {
       auto &self = from(host);
       self.remoteControlsChanged();
    }
 
-   void Host::clapRemoteControlsSuggestPage(const clap_host *host, clap_id page_id) noexcept {
+   template <MisbehaviourHandler h, CheckingLevel l>
+   void Host<h, l>::clapRemoteControlsSuggestPage(const clap_host *host, clap_id page_id) noexcept {
       auto &self = from(host);
       self.remoteControlsSuggestPage(page_id);
    }
@@ -245,8 +286,8 @@ namespace clap { namespace helpers {
    //---------------- //
    // clap_host_state //
    //-----------------//
-   void Host::clapStateMarkDirty(const clap_host *host) noexcept
-   {
+   template <MisbehaviourHandler h, CheckingLevel l>
+   void Host<h, l>::clapStateMarkDirty(const clap_host *host) noexcept {
       auto &self = from(host);
       self.stateMarkDirty();
    }
@@ -254,7 +295,8 @@ namespace clap { namespace helpers {
    //----------------//
    // clap_host_tail //
    //----------------//
-   void Host::clapTailChanged(const clap_host_t *host) noexcept {
+   template <MisbehaviourHandler h, CheckingLevel l>
+   void Host<h, l>::clapTailChanged(const clap_host_t *host) noexcept {
       auto &self = from(host);
       self.tailChanged();
    }
@@ -262,12 +304,17 @@ namespace clap { namespace helpers {
    //-------------------------//
    // clap_host_timer_support //
    //-------------------------//
-   bool Host::clapTimerSupportRegisterTimer(const clap_host *host, uint32_t period_ms, clap_id *timer_id) noexcept {
+   template <MisbehaviourHandler h, CheckingLevel l>
+   bool Host<h, l>::clapTimerSupportRegisterTimer(const clap_host *host,
+                                                  uint32_t period_ms,
+                                                  clap_id *timer_id) noexcept {
       auto &self = from(host);
       return self.timerSupportRegisterTimer(period_ms, timer_id);
    }
 
-   bool Host::clapTimerSupportUnregisterTimer(const clap_host *host, clap_id timer_id) noexcept {
+   template <MisbehaviourHandler h, CheckingLevel l>
+   bool Host<h, l>::clapTimerSupportUnregisterTimer(const clap_host *host,
+                                                    clap_id timer_id) noexcept {
       auto &self = from(host);
       return self.timerSupportUnregisterTimer(timer_id);
    }
@@ -275,12 +322,14 @@ namespace clap { namespace helpers {
    //------------------------//
    // clap_host_thread_check //
    //------------------------//
-   bool Host::clapThreadCheckIsMainThread(const clap_host_t *host) noexcept {
+   template <MisbehaviourHandler h, CheckingLevel l>
+   bool Host<h, l>::clapThreadCheckIsMainThread(const clap_host_t *host) noexcept {
       auto &self = from(host);
       return self.threadCheckIsMainThread();
    }
 
-   bool Host::clapThreadCheckIsAudioThread(const clap_host_t *host) noexcept {
+   template <MisbehaviourHandler h, CheckingLevel l>
+   bool Host<h, l>::clapThreadCheckIsAudioThread(const clap_host_t *host) noexcept {
       auto &self = from(host);
       return self.threadCheckIsAudioThread();
    }
@@ -288,7 +337,8 @@ namespace clap { namespace helpers {
    //-----------------------//
    // clap_host_thread_pool //
    //-----------------------//
-   bool Host::clapThreadPoolRequestExec(const clap_host *host, uint32_t num_tasks) noexcept {
+   template <MisbehaviourHandler h, CheckingLevel l>
+   bool Host<h, l>::clapThreadPoolRequestExec(const clap_host *host, uint32_t num_tasks) noexcept {
       auto &self = from(host);
       return self.threadPoolRequestExec(num_tasks);
    }
@@ -296,15 +346,24 @@ namespace clap { namespace helpers {
    ///////////////
    // Utilities //
    ///////////////
-   Host &Host::from(const clap_host *host) noexcept {
-      if (!host)
-         throw std::invalid_argument("Passed a null host pointer");
+   template <MisbehaviourHandler h, CheckingLevel l>
+   Host<h, l> &Host<h, l>::from(const clap_host *host) noexcept {
+      if constexpr (l >= CheckingLevel::Minimal) {
+         if (!host) [[unlikely]] {
+            std::cerr << "Passed an null host pointer" << std::endl;
+            std::terminate();
+         }
+      }
 
-      auto h = static_cast<Host *>(host->host_data);
-      if (!h)
-         throw std::invalid_argument(
-            "Passed an invalid host pointer because the host_data is null");
+      auto self = static_cast<Host *>(host->host_data);
+      if constexpr (l >= CheckingLevel::Minimal) {
+         if (!self) [[unlikely]] {
+            std::cerr << "Passed an invalid host pointer because the host_data is null"
+                      << std::endl;
+            std::terminate();
+         }
+      }
 
-      return *h;
+      return *self;
    }
 }} // namespace clap::helpers

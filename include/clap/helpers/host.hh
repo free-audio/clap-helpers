@@ -2,7 +2,11 @@
 
 #include <clap/clap.h>
 
+#include "checking-level.hh"
+#include "misbehaviour-handler.hh"
+
 namespace clap { namespace helpers {
+   template <MisbehaviourHandler h, CheckingLevel l>
    class Host {
    public:
       // not copyable, not moveable
@@ -22,9 +26,9 @@ namespace clap { namespace helpers {
       /////////////////////////
 
       // clap_host
-      virtual void requestRestart() noexcept {}
-      virtual void requestProcess() noexcept {}
-      virtual void requestCallback() noexcept {}
+      virtual void requestRestart() noexcept = 0;
+      virtual void requestProcess() noexcept = 0;
+      virtual void requestCallback() noexcept = 0;
 
       // clap_host_audio_ports
       virtual bool implementsAudioPorts() const noexcept { return false; }
@@ -78,9 +82,8 @@ namespace clap { namespace helpers {
       static void tailChanged() noexcept {}
 
       // clap_host_thread_check
-      virtual bool implementsThreadCheck() const noexcept { return false; }
-      virtual bool threadCheckIsMainThread() noexcept { return false; }
-      virtual bool threadCheckIsAudioThread() noexcept { return false; }
+      virtual bool threadCheckIsMainThread() noexcept = 0;
+      virtual bool threadCheckIsAudioThread() noexcept = 0;
 
       // clap_host_thread_pool
       virtual bool implementsThreadPool() const noexcept { return false; }
