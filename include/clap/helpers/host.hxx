@@ -90,7 +90,7 @@ namespace clap { namespace helpers {
       auto &self = from(host);
       if (!std::strcmp(extension_id, CLAP_EXT_AUDIO_PORTS) && self.implementsAudioPorts())
          return &_hostAudioPorts;
-      if (!std::strcmp(extension, CLAP_EXT_GUI) && self.implementsGui())
+      if (!std::strcmp(extension_id, CLAP_EXT_GUI) && self.implementsGui())
          return &_hostGui;
       if (!std::strcmp(extension_id, CLAP_EXT_LATENCY) && self.implementsLatency())
          return &_hostLatency;
@@ -98,19 +98,19 @@ namespace clap { namespace helpers {
          return &_hostLog;
       if (!std::strcmp(extension_id, CLAP_EXT_PARAMS) && self.implementsParams())
          return &_hostParams;
-      if (!strcmp(extension, CLAP_EXT_POSIX_FD_SUPPORT) && self.implementsPosixFdSupport())
+      if (!strcmp(extension_id, CLAP_EXT_POSIX_FD_SUPPORT) && self.implementsPosixFdSupport())
          return &_hostPosixFdSupport;
-      if (!strcmp(extension, CLAP_EXT_REMOTE_CONTROLS) && self.implementsRemoteControls())
+      if (!strcmp(extension_id, CLAP_EXT_REMOTE_CONTROLS) && self.implementsRemoteControls())
          return &_hostRemoteControls;
-      if (!strcmp(extension, CLAP_EXT_STATE) && self.implementsState())
+      if (!strcmp(extension_id, CLAP_EXT_STATE) && self.implementsState())
          return &_hostState;
-      if (!strcmp(extension, CLAP_EXT_TIMER_SUPPORT) && self.implementsTimerSupport())
+      if (!strcmp(extension_id, CLAP_EXT_TIMER_SUPPORT) && self.implementsTimerSupport())
          return &_hostTimerSupport;
       if (!std::strcmp(extension_id, CLAP_EXT_TAIL) && self.implementsTail())
          return &_hostTail;
       if (!std::strcmp(extension_id, CLAP_EXT_THREAD_CHECK) && self.implementsThreadCheck())
          return &_hostThreadCheck;
-      if (!strcmp(extension, CLAP_EXT_THREAD_POOL) && self.implementsThreadPool())
+      if (!strcmp(extension_id, CLAP_EXT_THREAD_POOL) && self.implementsThreadPool())
          return &_hostThreadPool;
       return nullptr;
    }
@@ -262,12 +262,12 @@ namespace clap { namespace helpers {
    //-------------------------//
    // clap_host_timer_support //
    //-------------------------//
-   static bool Host::clapTimerSupportRegisterTimer(const clap_host *host, uint32_t period_ms, clap_id *timer_id) noexcept {
+   bool Host::clapTimerSupportRegisterTimer(const clap_host *host, uint32_t period_ms, clap_id *timer_id) noexcept {
       auto &self = from(host);
       return self.timerSupportRegisterTimer(period_ms, timer_id);
    }
 
-   static bool Host::clapTimerSupportUnregisterTimer(const clap_host *host, clap_id timer_id) noexcept {
+   bool Host::clapTimerSupportUnregisterTimer(const clap_host *host, clap_id timer_id) noexcept {
       auto &self = from(host);
       return self.timerSupportUnregisterTimer(timer_id);
    }

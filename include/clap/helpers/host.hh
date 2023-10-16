@@ -106,8 +106,8 @@ namespace clap { namespace helpers {
       static void clapRequestCallback(const clap_host_t *host) noexcept;
 
       // clap_host_audio_ports
-      bool clapAudioPortsIsRescanFlagSupported(const clap_host_t *host, uint32_t flag) noexcept;
-      void clapAudioPortsRescan(const clap_host_t *host, uint32_t flags) noexcept;
+      static bool clapAudioPortsIsRescanFlagSupported(const clap_host_t *host, uint32_t flag) noexcept;
+      static void clapAudioPortsRescan(const clap_host_t *host, uint32_t flags) noexcept;
 
       // clap_host_gui
       static void clapGuiResizeHintsChanged(const clap_host_t *host) noexcept;
