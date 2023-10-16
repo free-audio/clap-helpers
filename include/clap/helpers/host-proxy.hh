@@ -11,7 +11,7 @@ namespace clap { namespace helpers {
    template <MisbehaviourHandler h, CheckingLevel l>
    class HostProxy {
    public:
-      HostProxy(const clap_host *host);
+      HostProxy(const clap_host &host);
 
       // not copyable, not moveable
       HostProxy(const HostProxy &) = delete;
@@ -21,7 +21,7 @@ namespace clap { namespace helpers {
 
       void init();
 
-      const clap_host *host() const noexcept { return _host; }
+      const clap_host *host() const noexcept { return &_host; }
 
       ///////////////
       // clap_host //
@@ -189,7 +189,7 @@ namespace clap { namespace helpers {
       void ensureMainThread(const char *method) const noexcept;
       void ensureAudioThread(const char *method) const noexcept;
 
-      const clap_host *const _host;
+      const clap_host &const _host;
 
       const clap_host_log *_hostLog = nullptr;
       const clap_host_thread_check *_hostThreadCheck = nullptr;
