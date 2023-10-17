@@ -141,8 +141,10 @@ namespace clap { namespace helpers {
       //------------------------------------//
       virtual bool implementsAudioPortsActivation() const noexcept { return false; }
       virtual bool audioPortsActivationCanActivateWhileProcessing() const noexcept { return false; }
-      virtual bool
-      audioPortsActivationSetActive(bool is_input, uint32_t port_index, bool is_active) noexcept {
+      virtual bool audioPortsActivationSetActive(bool is_input,
+                                                 uint32_t port_index,
+                                                 bool is_active,
+                                                 uint32_t sample_size) noexcept {
          return false;
       }
 
@@ -268,9 +270,8 @@ namespace clap { namespace helpers {
       virtual void resourceDirectorySetDirectory(const char *path, bool isShared) noexcept {}
       virtual void resourceDirectoryCollect(bool all) noexcept {}
       virtual uint32_t resourceDirectoryGetFilesCount() const noexcept { return 0; }
-      virtual int32_t resourceDirectoryGetFilePath(uint32_t index,
-                                                   char *path,
-                                                   uint32_t pathSize) const noexcept {
+      virtual int32_t
+      resourceDirectoryGetFilePath(uint32_t index, char *path, uint32_t pathSize) const noexcept {
          return -1;
       }
 
@@ -410,7 +411,8 @@ namespace clap { namespace helpers {
       static bool clapAudioPortsActivationSetActive(const clap_plugin_t *plugin,
                                                     bool is_input,
                                                     uint32_t port_index,
-                                                    bool is_active) noexcept;
+                                                    bool is_active,
+                                                    uint32_t sample_size) noexcept;
 
       // clap_plugin_params
       static uint32_t clapParamsCount(const clap_plugin *plugin) noexcept;
