@@ -450,7 +450,7 @@ namespace clap { namespace helpers {
           return true;
 
       //pluginMisbehaving("clap_plugin_render is partially implemented");
-      return false;     
+      return false;
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
@@ -486,14 +486,14 @@ namespace clap { namespace helpers {
    bool PluginProxy<h, l>::stateSave(const clap_ostream *stream) const noexcept {
       assert(canUseState());
       ensureMainThread("state.save");
-      return _pluginState->save(&_plugin);
+      return _pluginState->save(&_plugin, stream);
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
    bool PluginProxy<h, l>::stateLoad(const clap_istream *stream) const noexcept {
       assert(canUseState());
       ensureMainThread("state.load");
-      return _pluginState->load(&_plugin);
+      return _pluginState->load(&_plugin, stream);
    }
 
    //////////////////////
