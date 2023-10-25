@@ -146,7 +146,7 @@ namespace clap { namespace helpers {
    };
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   Plugin<h, l>::Plugin(const clap_plugin_descriptor *desc, const clap_host &host) : _host(host) {
+   Plugin<h, l>::Plugin(const clap_plugin_descriptor *desc, const clap_host &host) : _host(&host) {
       _plugin.plugin_data = this;
       _plugin.desc = desc;
       _plugin.init = Plugin<h, l>::clapInit;

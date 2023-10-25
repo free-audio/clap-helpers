@@ -8,7 +8,7 @@
 
 namespace clap { namespace helpers {
    template <MisbehaviourHandler h, CheckingLevel l>
-   HostProxy<h, l>::HostProxy(const ::clap_host &host) : _host(&host) {}
+   HostProxy<h, l>::HostProxy(const ::clap_host *host) : _host(host) {}
 
    template <MisbehaviourHandler h, CheckingLevel l>
    void HostProxy<h, l>::init() {

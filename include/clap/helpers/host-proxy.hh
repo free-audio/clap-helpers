@@ -11,7 +11,7 @@ namespace clap { namespace helpers {
    template <MisbehaviourHandler h, CheckingLevel l>
    class HostProxy {
    public:
-      HostProxy(const clap_host &host);
+      HostProxy(const clap_host *host);
 
       // not copyable, not moveable
       HostProxy(const HostProxy &) = delete;
