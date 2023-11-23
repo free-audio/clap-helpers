@@ -3,6 +3,12 @@
 
 #include "host.hh"
 
+#if defined(__cplusplus) && __cplusplus >= 202002L
+#   define CLAP_HELPERS_UNLIKELY [[unlikely]]
+#else
+#   define CLAP_HELPERS_UNLIKELY
+#endif
+
 namespace clap { namespace helpers {
 
    template <MisbehaviourHandler h, CheckingLevel l>
@@ -349,7 +355,7 @@ namespace clap { namespace helpers {
    template <MisbehaviourHandler h, CheckingLevel l>
    Host<h, l> &Host<h, l>::from(const clap_host *host) noexcept {
       if constexpr (l >= CheckingLevel::Minimal) {
-         if (!host) [[unlikely]] {
+         if (!host) CLAP_HELPERS_UNLIKELY {
             std::cerr << "Passed an null host pointer" << std::endl;
             std::terminate();
          }
@@ -357,7 +363,7 @@ namespace clap { namespace helpers {
 
       auto self = static_cast<Host *>(host->host_data);
       if constexpr (l >= CheckingLevel::Minimal) {
-         if (!self) [[unlikely]] {
+         if (!self) CLAP_HELPERS_UNLIKELY {
             std::cerr << "Passed an invalid host pointer because the host_data is null"
                       << std::endl;
             std::terminate();
