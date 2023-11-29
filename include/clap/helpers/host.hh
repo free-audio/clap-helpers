@@ -45,7 +45,7 @@ namespace clap { namespace helpers {
 
       // clap_host_latency
       virtual bool implementsLatency() const noexcept { return false; }
-      static void latencyChanged() noexcept {}
+      virtual void latencyChanged() noexcept {}
 
       // clap_host_log
       virtual bool implementsLog() const noexcept { return false; }
@@ -79,7 +79,7 @@ namespace clap { namespace helpers {
 
       // clap_host_tail
       virtual bool implementsTail() const noexcept { return false; }
-      static void tailChanged() noexcept {}
+      virtual void tailChanged() noexcept {}
 
       // clap_host_thread_check
       virtual bool threadCheckIsMainThread() noexcept = 0;
