@@ -13,6 +13,7 @@ namespace clap { namespace helpers {
 
       getExtension(_pluginAudioPorts, CLAP_EXT_AUDIO_PORTS);
       getExtension(_pluginGui, CLAP_EXT_GUI);
+      getExtension(_pluginLatency, CLAP_EXT_LATENCY);
       getExtension(_pluginMidiMappings, CLAP_EXT_MIDI_MAPPINGS);
       getExtension(_pluginNotePorts, CLAP_EXT_NOTE_PORTS);
       getExtension(_pluginParams, CLAP_EXT_PARAMS);
@@ -232,6 +233,28 @@ namespace clap { namespace helpers {
       assert(canUseGui());
       ensureMainThread("gui.hide");
       return _pluginGui->hide(&_plugin);
+   }
+
+   /////////////////////////
+   // clap_plugin_latency //
+   /////////////////////////
+   template <MisbehaviourHandler h, CheckingLevel l>
+   bool PluginProxy<h, l>::canUseLatency() const noexcept {
+      if (!_pluginLatency)
+         return false;
+
+      if (_pluginLatency->get)
+          return true;
+
+      //pluginMisbehaving("clap_plugin_latency is partially implemented");
+      return false;
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   uint32_t PluginProxy<h, l>::latencyGet() const noexcept {
+      assert(canUseLatency());
+      ensureMainThread("latency.get");
+      return _pluginLatency->get(&_plugin);
    }
 
    ///////////////////////////////
