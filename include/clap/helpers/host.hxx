@@ -261,7 +261,17 @@ namespace clap { namespace helpers {
    template <MisbehaviourHandler h, CheckingLevel l>
    void Host<h, l>::clapParamsRequestFlush(const clap_host_t *host) noexcept {
       auto &self = from(host);
-      //self.ensure[!audio-thread]("log.log");
+
+      if (l != CheckingLevel::None
+          && threadCheckIsAudioThread())
+      {
+         std::ostringstream msg;
+         msg << "Plugin called the method " << "params.request_flush"
+            << "() on wrong thread! It must not be called on audio thread!";
+         pluginMisbehaving(msg.str());
+         return;
+      }
+
       self.paramsRequestFlush();
    }
 
