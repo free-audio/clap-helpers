@@ -99,7 +99,7 @@ namespace clap { namespace helpers {
       // Thread Checking //
       /////////////////////
       void ensureMainThread(const char *method) const noexcept;
-      void ensureAudioThread(const char *method) const noexcept;
+      void ensureAudioThread(const char *method, bool expectedState = true) const noexcept;
 
       ///////////////
       // Utilities //
