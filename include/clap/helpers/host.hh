@@ -17,6 +17,12 @@ namespace clap { namespace helpers {
 
       const clap_host *clapHost() const { return &_host; }
 
+      ///////////////////////////
+      // Misbehaviour handling //
+      ///////////////////////////
+      void pluginMisbehaving(const char *msg) const noexcept;
+      void pluginMisbehaving(const std::string &msg) const noexcept { pluginMisbehaving(msg.c_str()); }
+
    protected:
       Host(const char *name, const char *vendor, const char *url, const char *version);
       virtual ~Host() = default;
@@ -82,12 +88,18 @@ namespace clap { namespace helpers {
       virtual void tailChanged() noexcept {}
 
       // clap_host_thread_check
-      virtual bool threadCheckIsMainThread() noexcept = 0;
-      virtual bool threadCheckIsAudioThread() noexcept = 0;
+      virtual bool threadCheckIsMainThread() const noexcept = 0;
+      virtual bool threadCheckIsAudioThread() const noexcept = 0;
 
       // clap_host_thread_pool
       virtual bool implementsThreadPool() const noexcept { return false; }
       virtual bool threadPoolRequestExec(uint32_t numTasks) noexcept { return false; }
+
+      /////////////////////
+      // Thread Checking //
+      /////////////////////
+      void ensureMainThread(const char *method) const noexcept;
+      void ensureAudioThread(const char *method, bool expectedState = true) const noexcept;
 
       ///////////////
       // Utilities //
