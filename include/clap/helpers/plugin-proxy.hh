@@ -4,12 +4,13 @@
 
 #include "checking-level.hh"
 #include "misbehaviour-handler.hh"
+#include "host.hh"
 
 namespace clap { namespace helpers {
    template <MisbehaviourHandler h, CheckingLevel l>
    class PluginProxy {
    public:
-      PluginProxy(const clap_plugin& plugin) : _plugin{plugin} {}
+      PluginProxy(const clap_plugin& plugin, const Host& host) : _plugin{plugin}, _host{host} {}
 
       /////////////////
       // clap_plugin //
@@ -149,6 +150,8 @@ namespace clap { namespace helpers {
    protected:
       void ensureMainThread(const char *method) const noexcept;
       void ensureAudioThread(const char *method) const noexcept;
+
+      const Host& _host;
 
       const clap_plugin& _plugin;
 

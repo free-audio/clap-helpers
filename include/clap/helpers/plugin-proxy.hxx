@@ -91,7 +91,7 @@ namespace clap { namespace helpers {
       if (_pluginAudioPorts->count && _pluginAudioPorts->get)
          return true;
 
-      //pluginMisbehaving("clap_plugin_audio_ports is partially implemented");
+      _host.pluginMisbehaving("clap_plugin_audio_ports is partially implemented");
       return false;
    }
 
@@ -126,7 +126,7 @@ namespace clap { namespace helpers {
           _pluginGui->suggest_title && _pluginGui->show && _pluginGui->hide)
          return true;
 
-      //pluginMisbehaving("clap_plugin_gui is partially implemented");
+      _host.pluginMisbehaving("clap_plugin_gui is partially implemented");
       return false;
    }
 
@@ -246,7 +246,7 @@ namespace clap { namespace helpers {
       if (_pluginLatency->get)
           return true;
 
-      //pluginMisbehaving("clap_plugin_latency is partially implemented");
+      _host.pluginMisbehaving("clap_plugin_latency is partially implemented");
       return false;
    }
 
@@ -268,7 +268,7 @@ namespace clap { namespace helpers {
       if (_pluginMidiMappings->count && _pluginMidiMappings->get)
          return true;
 
-      //pluginMisbehaving("clap_plugin_midi_mappings is partially implemented");
+      _host.pluginMisbehaving("clap_plugin_midi_mappings is partially implemented");
       return false;
    }
 
@@ -297,7 +297,7 @@ namespace clap { namespace helpers {
       if (_pluginNotePorts->count && _pluginNotePorts->get)
          return true;
 
-      //pluginMisbehaving("clap_plugin_note_ports is partially implemented");
+      _host.pluginMisbehaving("clap_plugin_note_ports is partially implemented");
       return false;
    }
 
@@ -333,7 +333,7 @@ namespace clap { namespace helpers {
           && _pluginParams->flush)
           return true;
 
-      //pluginMisbehaving("clap_plugin_params is partially implemented");
+      _host.pluginMisbehaving("clap_plugin_params is partially implemented");
       return false;
    }
 
@@ -396,7 +396,7 @@ namespace clap { namespace helpers {
       if (_pluginPosixFdSupport->on_fd)
           return true;
 
-      //pluginMisbehaving("clap_plugin_posix_fd_support is partially implemented");
+      _host.pluginMisbehaving("clap_plugin_posix_fd_support is partially implemented");
       return false;
    }
 
@@ -418,7 +418,7 @@ namespace clap { namespace helpers {
       if (_pluginPresetLoad->from_location)
           return true;
 
-      //pluginMisbehaving("clap_plugin_preset_load is partially implemented");
+      _host.pluginMisbehaving("clap_plugin_preset_load is partially implemented");
       return false;
    }
 
@@ -442,7 +442,7 @@ namespace clap { namespace helpers {
       if (_pluginRemoteControls->count && _pluginRemoteControls->get)
           return true;
 
-      //pluginMisbehaving("clap_plugin_remote_controls is partially implemented");
+      _host.pluginMisbehaving("clap_plugin_remote_controls is partially implemented");
       return false;
    }
 
@@ -472,7 +472,7 @@ namespace clap { namespace helpers {
       if (_pluginRender->has_hard_realtime_requirement && _pluginRender->set)
           return true;
 
-      //pluginMisbehaving("clap_plugin_render is partially implemented");
+      _host.pluginMisbehaving("clap_plugin_render is partially implemented");
       return false;
    }
 
@@ -501,7 +501,7 @@ namespace clap { namespace helpers {
       if (_pluginState->save && _pluginState->load)
           return true;
 
-      //pluginMisbehaving("clap_plugin_state is partially implemented");
+      _host.pluginMisbehaving("clap_plugin_state is partially implemented");
       return false;
    }
 
@@ -530,7 +530,7 @@ namespace clap { namespace helpers {
       if (_pluginTail->get)
           return true;
 
-      //pluginMisbehaving("clap_plugin_tail is partially implemented");
+      _host.pluginMisbehaving("clap_plugin_tail is partially implemented");
       return false;
    }
 
@@ -552,7 +552,7 @@ namespace clap { namespace helpers {
       if (_pluginThreadPool->exec)
           return true;
 
-      //pluginMisbehaving("clap_plugin_thread_pool is partially implemented");
+      _host.pluginMisbehaving("clap_plugin_thread_pool is partially implemented");
       return false;
    }
 
@@ -573,7 +573,7 @@ namespace clap { namespace helpers {
       if (_pluginTimerSupport->on_timer)
           return true;
 
-      //pluginMisbehaving("_pluginTimerSupport is partially implemented");
+      _host.pluginMisbehaving("_pluginTimerSupport is partially implemented");
       return false;
    }
 
