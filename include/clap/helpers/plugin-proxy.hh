@@ -54,6 +54,12 @@ namespace clap { namespace helpers {
       bool guiShow() const noexcept;
       bool guiHide() const noexcept;
 
+      /////////////////////////
+      // clap_plugin_latency //
+      /////////////////////////
+      bool canUseLatency() const noexcept;
+      uint32_t latencyGet() const noexcept;
+
       ///////////////////////////////
       // clap_plugin_midi_mappings //
       ///////////////////////////////
@@ -148,6 +154,7 @@ namespace clap { namespace helpers {
 
       const clap_plugin_audio_ports *_pluginAudioPorts = nullptr;
       const clap_plugin_gui *_pluginGui = nullptr;
+      const clap_plugin_latency *_pluginLatency = nullptr;
       const clap_plugin_midi_mappings *_pluginMidiMappings = nullptr;
       const clap_plugin_note_ports *_pluginNotePorts = nullptr;
       const clap_plugin_params *_pluginParams = nullptr;
