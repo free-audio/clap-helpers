@@ -58,21 +58,21 @@ namespace clap { namespace helpers {
    template <MisbehaviourHandler h, CheckingLevel l>
    bool PluginProxy<h, l>::activate(double sampleRate,
                               uint32_t minFramesCount,
-                              uint32_t maxFramesCount) const noexcept {
+                              uint32_t maxFramesCount) noexcept {
       ensureActivated("clap_plugin.activate", false);
       _isActive = _plugin.activate(&_plugin, sampleRate, minFramesCount, maxFramesCount);
       return _isActive;
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   void PluginProxy<h, l>::deactivate() const noexcept {
+   void PluginProxy<h, l>::deactivate() noexcept {
       ensureActivated("clap_plugin.deactivate", true);
       _plugin.deactivate(&_plugin);
       _isActive = false;
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   bool PluginProxy<h, l>::startProcessing() const noexcept {
+   bool PluginProxy<h, l>::startProcessing() noexcept {
       ensureActivated("clap_plugin.start_processing", true);
       ensureProcessing("clap_plugin.start_processing", false);
       _isProcessing = _plugin.start_processing(&_plugin);
@@ -80,7 +80,7 @@ namespace clap { namespace helpers {
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   void PluginProxy<h, l>::stopProcessing() const noexcept {
+   void PluginProxy<h, l>::stopProcessing() noexcept {
       ensureActivated("clap_plugin.stop_processing", true);
       ensureProcessing("clap_plugin.stop_processing", true);
       _plugin.stop_processing(&_plugin);
