@@ -1,4 +1,5 @@
 #include <cassert>
+#include <sstream>
 
 #include "plugin-proxy.hh"
 
@@ -584,12 +585,21 @@ namespace clap { namespace helpers {
       _pluginTimerSupport->on_timer(&_plugin, timerId);
    }
 
+   /////////////////////
+   // Thread Checking //
+   /////////////////////
    template <MisbehaviourHandler h, CheckingLevel l>
    void PluginProxy<h, l>::ensureMainThread(const char *method) const noexcept {
       if (l == CheckingLevel::None)
          return;
 
-      // TODO assert [main-thread], otherwise -> hostMisbehaving
+      if (_host.threadCheckIsMainThread())
+         return;
+
+      std::ostringstream msg;
+      msg << "Host called the method " << method
+          << "() on wrong thread! It must be called on main thread!";
+      _host.hostMisbehaving(msg.str());
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
@@ -597,6 +607,12 @@ namespace clap { namespace helpers {
       if (l == CheckingLevel::None)
          return;
 
-      // TODO assert [audio-thread], otherwise -> hostMisbehaving
+      if (_host.threadCheckIsAudioThread())
+         return;
+
+      std::ostringstream msg;
+      msg << "Host called the method " << method
+          << "() on wrong thread! It must be called on audio thread!";
+      _host.hostMisbehaving(msg.str());
    }
 }} // namespace clap::helpers

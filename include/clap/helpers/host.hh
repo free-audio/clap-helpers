@@ -22,6 +22,16 @@ namespace clap { namespace helpers {
       ///////////////////////////
       void pluginMisbehaving(const char *msg) const noexcept;
       void pluginMisbehaving(const std::string &msg) const noexcept { pluginMisbehaving(msg.c_str()); }
+      void hostMisbehaving(const char *msg) const noexcept;
+      void hostMisbehaving(const std::string &msg) const noexcept { hostMisbehaving(msg.c_str()); }
+
+      /////////////////////////
+      // Methods to override //
+      /////////////////////////
+
+      // clap_host_thread_check
+      virtual bool threadCheckIsMainThread() const noexcept = 0;
+      virtual bool threadCheckIsAudioThread() const noexcept = 0;
 
    protected:
       Host(const char *name, const char *vendor, const char *url, const char *version);
@@ -86,10 +96,6 @@ namespace clap { namespace helpers {
       // clap_host_tail
       virtual bool implementsTail() const noexcept { return false; }
       virtual void tailChanged() noexcept {}
-
-      // clap_host_thread_check
-      virtual bool threadCheckIsMainThread() const noexcept = 0;
-      virtual bool threadCheckIsAudioThread() const noexcept = 0;
 
       // clap_host_thread_pool
       virtual bool implementsThreadPool() const noexcept { return false; }

@@ -148,6 +148,9 @@ namespace clap { namespace helpers {
       void timerSupportOnTimer(clap_id timerId) const noexcept;
 
    protected:
+      /////////////////////
+      // Thread Checking //
+      /////////////////////
       void ensureMainThread(const char *method) const noexcept;
       void ensureAudioThread(const char *method) const noexcept;
 

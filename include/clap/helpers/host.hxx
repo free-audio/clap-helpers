@@ -108,6 +108,17 @@ namespace clap { namespace helpers {
          std::terminate();
    }
 
+   template <MisbehaviourHandler h, CheckingLevel l>
+   void Host<h, l>::hostMisbehaving(const char *msg) const noexcept {
+      if (implementsLog())
+         logLog(CLAP_LOG_HOST_MISBEHAVING, msg);
+      else
+         std::cerr << msg << std::endl;
+
+      if (h == MisbehaviourHandler::Terminate)
+         std::terminate();
+   }
+
    /////////////////////
    // CLAP Interfaces //
    /////////////////////
