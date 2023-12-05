@@ -20,10 +20,10 @@ namespace clap { namespace helpers {
       template <typename T>
       void getExtension(const T *&ptr, const char *id) const noexcept;
       void destroy() noexcept;
-      bool activate(double sampleRate, uint32_t minFramesCount, uint32_t maxFramesCount) const noexcept;
-      void deactivate() const noexcept;
-      bool startProcessing() const noexcept;
-      void stopProcessing() const noexcept;
+      bool activate(double sampleRate, uint32_t minFramesCount, uint32_t maxFramesCount) noexcept;
+      void deactivate() noexcept;
+      bool startProcessing() noexcept;
+      void stopProcessing() noexcept;
       void reset() const noexcept;
       clap_process_status process(const clap_process_t *process) const noexcept;
       void onMainThread() const noexcept;
