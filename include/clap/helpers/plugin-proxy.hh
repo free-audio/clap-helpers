@@ -153,6 +153,8 @@ namespace clap { namespace helpers {
       /////////////////////
       void ensureMainThread(const char *method) const noexcept;
       void ensureAudioThread(const char *method) const noexcept;
+      void ensureActivated(const char *method, bool expectedState) const noexcept;
+      void ensureProcessing(const char *method, bool expectedState) const noexcept;
 
       const Host& _host;
 
@@ -172,5 +174,9 @@ namespace clap { namespace helpers {
       const clap_plugin_tail *_pluginTail = nullptr;
       const clap_plugin_thread_pool *_pluginThreadPool = nullptr;
       const clap_plugin_timer_support *_pluginTimerSupport = nullptr;
+
+      // state
+      bool _isActive = false;
+      bool _isProcessing = false;
    };
 }} // namespace clap::helpers
