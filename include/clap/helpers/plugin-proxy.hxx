@@ -1,4 +1,5 @@
 #include <cassert>
+#include <sstream>
 
 #include "plugin-proxy.hh"
 
@@ -40,6 +41,7 @@ namespace clap { namespace helpers {
 
    template <MisbehaviourHandler h, CheckingLevel l>
    void PluginProxy<h, l>::destroy() noexcept {
+      ensureActivated("clap_plugin.destroy", false);
       _plugin.destroy(&_plugin);
 
       _pluginAudioPorts = nullptr;
@@ -57,23 +59,44 @@ namespace clap { namespace helpers {
    bool PluginProxy<h, l>::activate(double sampleRate,
                               uint32_t minFramesCount,
                               uint32_t maxFramesCount) const noexcept {
-      return _plugin.activate(&_plugin, sampleRate, minFramesCount, maxFramesCount);
+      ensureActivated("clap_plugin.activate", false);
+      _isActive = _plugin.activate(&_plugin, sampleRate, minFramesCount, maxFramesCount);
+      return _isActive;
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   void PluginProxy<h, l>::deactivate() const noexcept { _plugin.deactivate(&_plugin); }
+   void PluginProxy<h, l>::deactivate() const noexcept {
+      ensureActivated("clap_plugin.deactivate", true);
+      _plugin.deactivate(&_plugin);
+      _isActive = false;
+   }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   bool PluginProxy<h, l>::startProcessing() const noexcept { return _plugin.start_processing(&_plugin); }
+   bool PluginProxy<h, l>::startProcessing() const noexcept {
+      ensureActivated("clap_plugin.start_processing", true);
+      ensureProcessing("clap_plugin.start_processing", false);
+      _isProcessing = _plugin.start_processing(&_plugin);
+      return _isProcessing;
+   }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   void PluginProxy<h, l>::stopProcessing() const noexcept { _plugin.stop_processing(&_plugin); }
+   void PluginProxy<h, l>::stopProcessing() const noexcept {
+      ensureActivated("clap_plugin.stop_processing", true);
+      ensureProcessing("clap_plugin.stop_processing", true);
+      _plugin.stop_processing(&_plugin);
+      _isProcessing = false;
+   }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   void PluginProxy<h, l>::reset() const noexcept { _plugin.reset(&_plugin); }
+   void PluginProxy<h, l>::reset() const noexcept {
+      ensureActivated("clap_plugin.reset", true);
+      _plugin.reset(&_plugin);
+   }
 
    template <MisbehaviourHandler h, CheckingLevel l>
    clap_process_status PluginProxy<h, l>::process(const clap_process_t *process) const noexcept {
+      ensureActivated("clap_plugin.process", true);
+      ensureProcessing("clap_plugin.process", true);
       return _plugin.process(&_plugin, process);
    }
 
@@ -91,7 +114,7 @@ namespace clap { namespace helpers {
       if (_pluginAudioPorts->count && _pluginAudioPorts->get)
          return true;
 
-      //pluginMisbehaving("clap_plugin_audio_ports is partially implemented");
+      _host.pluginMisbehaving("clap_plugin_audio_ports is partially implemented");
       return false;
    }
 
@@ -99,6 +122,7 @@ namespace clap { namespace helpers {
    uint32_t PluginProxy<h, l>::audioPortsCount(bool isInput) const noexcept {
       assert(canUseAudioPorts());
       ensureMainThread("audio_ports.count");
+      ensureActivated("audio_ports.count", false);
       return _pluginAudioPorts->count(&_plugin, isInput);
    }
 
@@ -108,6 +132,7 @@ namespace clap { namespace helpers {
                                    clap_audio_port_info_t *info) const noexcept {
       assert(canUseAudioPorts());
       ensureMainThread("audio_ports.get");
+      ensureActivated("audio_ports.get", false);
       return _pluginAudioPorts->get(&_plugin, index, isInput, info);
    }
 
@@ -126,7 +151,7 @@ namespace clap { namespace helpers {
           _pluginGui->suggest_title && _pluginGui->show && _pluginGui->hide)
          return true;
 
-      //pluginMisbehaving("clap_plugin_gui is partially implemented");
+      _host.pluginMisbehaving("clap_plugin_gui is partially implemented");
       return false;
    }
 
@@ -246,7 +271,7 @@ namespace clap { namespace helpers {
       if (_pluginLatency->get)
           return true;
 
-      //pluginMisbehaving("clap_plugin_latency is partially implemented");
+      _host.pluginMisbehaving("clap_plugin_latency is partially implemented");
       return false;
    }
 
@@ -254,6 +279,7 @@ namespace clap { namespace helpers {
    uint32_t PluginProxy<h, l>::latencyGet() const noexcept {
       assert(canUseLatency());
       ensureMainThread("latency.get");
+      ensureActivated("latency.get", true);
       return _pluginLatency->get(&_plugin);
    }
 
@@ -268,7 +294,7 @@ namespace clap { namespace helpers {
       if (_pluginMidiMappings->count && _pluginMidiMappings->get)
          return true;
 
-      //pluginMisbehaving("clap_plugin_midi_mappings is partially implemented");
+      _host.pluginMisbehaving("clap_plugin_midi_mappings is partially implemented");
       return false;
    }
 
@@ -297,7 +323,7 @@ namespace clap { namespace helpers {
       if (_pluginNotePorts->count && _pluginNotePorts->get)
          return true;
 
-      //pluginMisbehaving("clap_plugin_note_ports is partially implemented");
+      _host.pluginMisbehaving("clap_plugin_note_ports is partially implemented");
       return false;
    }
 
@@ -305,6 +331,7 @@ namespace clap { namespace helpers {
    uint32_t PluginProxy<h, l>::notePortsCount(bool isInput) const noexcept {
       assert(canUseNotePorts());
       ensureMainThread("note_ports.count");
+      ensureActivated("note_ports.count", false);
       return _pluginNotePorts->count(&_plugin, isInput);
    }
 
@@ -314,6 +341,7 @@ namespace clap { namespace helpers {
                                         clap_note_port_info_t *info) const noexcept {
       assert(canUseNotePorts());
       ensureMainThread("note_ports.get");
+      ensureActivated("note_ports.get", false);
       return _pluginNotePorts->get(&_plugin, index, isInput, info);
    }
 
@@ -333,7 +361,7 @@ namespace clap { namespace helpers {
           && _pluginParams->flush)
           return true;
 
-      //pluginMisbehaving("clap_plugin_params is partially implemented");
+      _host.pluginMisbehaving("clap_plugin_params is partially implemented");
       return false;
    }
 
@@ -381,7 +409,10 @@ namespace clap { namespace helpers {
    void PluginProxy<h, l>::paramsFlush(const clap_input_events_t *in,
                                  const clap_output_events_t *out) const noexcept {
       assert(canUseParams());
-      // TODO assert [active ? audio-thread : main-thread]
+      if(_isActive)
+         ensureAudioThread("params.flush");
+      else
+         ensureMainThread("params.flush");
       _pluginParams->flush(&_plugin, in, out);
    }
 
@@ -396,7 +427,7 @@ namespace clap { namespace helpers {
       if (_pluginPosixFdSupport->on_fd)
           return true;
 
-      //pluginMisbehaving("clap_plugin_posix_fd_support is partially implemented");
+      _host.pluginMisbehaving("clap_plugin_posix_fd_support is partially implemented");
       return false;
    }
 
@@ -418,7 +449,7 @@ namespace clap { namespace helpers {
       if (_pluginPresetLoad->from_location)
           return true;
 
-      //pluginMisbehaving("clap_plugin_preset_load is partially implemented");
+      _host.pluginMisbehaving("clap_plugin_preset_load is partially implemented");
       return false;
    }
 
@@ -442,7 +473,7 @@ namespace clap { namespace helpers {
       if (_pluginRemoteControls->count && _pluginRemoteControls->get)
           return true;
 
-      //pluginMisbehaving("clap_plugin_remote_controls is partially implemented");
+      _host.pluginMisbehaving("clap_plugin_remote_controls is partially implemented");
       return false;
    }
 
@@ -472,7 +503,7 @@ namespace clap { namespace helpers {
       if (_pluginRender->has_hard_realtime_requirement && _pluginRender->set)
           return true;
 
-      //pluginMisbehaving("clap_plugin_render is partially implemented");
+      _host.pluginMisbehaving("clap_plugin_render is partially implemented");
       return false;
    }
 
@@ -501,7 +532,7 @@ namespace clap { namespace helpers {
       if (_pluginState->save && _pluginState->load)
           return true;
 
-      //pluginMisbehaving("clap_plugin_state is partially implemented");
+      _host.pluginMisbehaving("clap_plugin_state is partially implemented");
       return false;
    }
 
@@ -530,14 +561,14 @@ namespace clap { namespace helpers {
       if (_pluginTail->get)
           return true;
 
-      //pluginMisbehaving("clap_plugin_tail is partially implemented");
+      _host.pluginMisbehaving("clap_plugin_tail is partially implemented");
       return false;
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
    uint32_t PluginProxy<h, l>::tailGet() const noexcept {
       assert(canUseTail());
-      // TODO assert [main-thread, audio-thread]
+      // TODO ensure[main-thread, audio-thread]
       return _pluginTail->get(&_plugin);
    }
 
@@ -552,13 +583,15 @@ namespace clap { namespace helpers {
       if (_pluginThreadPool->exec)
           return true;
 
-      //pluginMisbehaving("clap_plugin_thread_pool is partially implemented");
+      _host.pluginMisbehaving("clap_plugin_thread_pool is partially implemented");
       return false;
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
    void PluginProxy<h, l>::threadPoolExec(uint32_t taskIndex) const noexcept {
       assert(canUseThreadPool());
+      ensureActivated("thread_pool.exec", true);
+      ensureProcessing("thread_pool.exec", true);
       _pluginThreadPool->exec(&_plugin, taskIndex);
    }
 
@@ -573,7 +606,7 @@ namespace clap { namespace helpers {
       if (_pluginTimerSupport->on_timer)
           return true;
 
-      //pluginMisbehaving("_pluginTimerSupport is partially implemented");
+      _host.pluginMisbehaving("_pluginTimerSupport is partially implemented");
       return false;
    }
 
@@ -584,12 +617,21 @@ namespace clap { namespace helpers {
       _pluginTimerSupport->on_timer(&_plugin, timerId);
    }
 
+   /////////////////////
+   // Thread Checking //
+   /////////////////////
    template <MisbehaviourHandler h, CheckingLevel l>
    void PluginProxy<h, l>::ensureMainThread(const char *method) const noexcept {
       if (l == CheckingLevel::None)
          return;
 
-      // TODO assert [main-thread], otherwise -> hostMisbehaving
+      if (_host.threadCheckIsMainThread())
+         return;
+
+      std::ostringstream msg;
+      msg << "Host called the method " << method
+          << "() on wrong thread! It must be called on main thread!";
+      _host.hostMisbehaving(msg.str());
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
@@ -597,6 +639,42 @@ namespace clap { namespace helpers {
       if (l == CheckingLevel::None)
          return;
 
-      // TODO assert [audio-thread], otherwise -> hostMisbehaving
+      if (_host.threadCheckIsAudioThread())
+         return;
+
+      std::ostringstream msg;
+      msg << "Host called the method " << method
+          << "() on wrong thread! It must be called on audio thread!";
+      _host.hostMisbehaving(msg.str());
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   void PluginProxy<h, l>::ensureActivated(const char *method, bool expectedState) const noexcept {
+      if (l == CheckingLevel::None)
+         return;
+
+      if (_isActive == expectedState)
+         return;
+
+      std::ostringstream msg;
+      msg << "Host called the method " << method
+          << "() while the plugin was " << (expectedState ? "deactivated" : "activated")
+          << "! It must be " << (expectedState ? "activated" : "deactivated") << "!" << std::endl;
+      _host.hostMisbehaving(msg.str());
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   void PluginProxy<h, l>::ensureProcessing(const char *method, bool expectedState) const noexcept {
+      if (l == CheckingLevel::None)
+         return;
+
+      if (_isProcessing == expectedState)
+         return;
+
+      std::ostringstream msg;
+      msg << "Host called the method " << method
+          << "() while the plugin was " << (expectedState ? "not " : "") << "processing! It must "
+          << (expectedState ? "" : "not ") << "be processing!" << std::endl;
+      _host.hostMisbehaving(msg.str());
    }
 }} // namespace clap::helpers

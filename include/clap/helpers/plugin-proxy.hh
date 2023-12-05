@@ -4,12 +4,13 @@
 
 #include "checking-level.hh"
 #include "misbehaviour-handler.hh"
+#include "host.hh"
 
 namespace clap { namespace helpers {
    template <MisbehaviourHandler h, CheckingLevel l>
    class PluginProxy {
    public:
-      PluginProxy(const clap_plugin& plugin) : _plugin{plugin} {}
+      PluginProxy(const clap_plugin& plugin, const Host& host) : _plugin{plugin}, _host{host} {}
 
       /////////////////
       // clap_plugin //
@@ -147,8 +148,15 @@ namespace clap { namespace helpers {
       void timerSupportOnTimer(clap_id timerId) const noexcept;
 
    protected:
+      /////////////////////
+      // Thread Checking //
+      /////////////////////
       void ensureMainThread(const char *method) const noexcept;
       void ensureAudioThread(const char *method) const noexcept;
+      void ensureActivated(const char *method, bool expectedState) const noexcept;
+      void ensureProcessing(const char *method, bool expectedState) const noexcept;
+
+      const Host& _host;
 
       const clap_plugin& _plugin;
 
@@ -166,5 +174,9 @@ namespace clap { namespace helpers {
       const clap_plugin_tail *_pluginTail = nullptr;
       const clap_plugin_thread_pool *_pluginThreadPool = nullptr;
       const clap_plugin_timer_support *_pluginTimerSupport = nullptr;
+
+      // state
+      bool _isActive = false;
+      bool _isProcessing = false;
    };
 }} // namespace clap::helpers
