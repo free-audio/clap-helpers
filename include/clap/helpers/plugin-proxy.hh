@@ -10,7 +10,7 @@ namespace clap { namespace helpers {
    template <MisbehaviourHandler h, CheckingLevel l>
    class PluginProxy {
    public:
-      PluginProxy(const clap_plugin& plugin, const Host& host) : _plugin{plugin}, _host{host} {}
+      PluginProxy(const clap_plugin& plugin, const Host<h, l>& host) : _plugin{plugin}, _host{host} {}
 
       /////////////////
       // clap_plugin //
@@ -156,7 +156,7 @@ namespace clap { namespace helpers {
       void ensureActivated(const char *method, bool expectedState) const noexcept;
       void ensureProcessing(const char *method, bool expectedState) const noexcept;
 
-      const Host& _host;
+      const Host<h, l>& _host;
 
       const clap_plugin& _plugin;
 
