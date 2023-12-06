@@ -122,7 +122,6 @@ namespace clap { namespace helpers {
    uint32_t PluginProxy<h, l>::audioPortsCount(bool isInput) const noexcept {
       assert(canUseAudioPorts());
       ensureMainThread("audio_ports.count");
-      ensureActivated("audio_ports.count", false);
       return _pluginAudioPorts->count(&_plugin, isInput);
    }
 
@@ -132,7 +131,6 @@ namespace clap { namespace helpers {
                                    clap_audio_port_info_t *info) const noexcept {
       assert(canUseAudioPorts());
       ensureMainThread("audio_ports.get");
-      ensureActivated("audio_ports.get", false);
       return _pluginAudioPorts->get(&_plugin, index, isInput, info);
    }
 
@@ -331,7 +329,6 @@ namespace clap { namespace helpers {
    uint32_t PluginProxy<h, l>::notePortsCount(bool isInput) const noexcept {
       assert(canUseNotePorts());
       ensureMainThread("note_ports.count");
-      ensureActivated("note_ports.count", false);
       return _pluginNotePorts->count(&_plugin, isInput);
    }
 
@@ -341,7 +338,6 @@ namespace clap { namespace helpers {
                                         clap_note_port_info_t *info) const noexcept {
       assert(canUseNotePorts());
       ensureMainThread("note_ports.get");
-      ensureActivated("note_ports.get", false);
       return _pluginNotePorts->get(&_plugin, index, isInput, info);
    }
 
