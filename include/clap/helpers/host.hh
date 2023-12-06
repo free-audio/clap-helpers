@@ -50,8 +50,8 @@ namespace clap { namespace helpers {
 
       // clap_host_audio_ports
       virtual bool implementsAudioPorts() const noexcept { return false; }
-      bool audioPortsIsRescanFlagSupported(uint32_t flag) noexcept { return false; }
-      void audioPortsRescan(uint32_t flags) noexcept {}
+      virtual bool audioPortsIsRescanFlagSupported(uint32_t flag) noexcept { return false; }
+      virtual void audioPortsRescan(uint32_t flags) noexcept {}
 
       // clap_host_gui
       virtual bool implementsGui() const noexcept { return false; }
