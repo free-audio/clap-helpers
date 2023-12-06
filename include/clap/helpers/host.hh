@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 #include <clap/clap.h>
 
 #include "checking-level.hh"
