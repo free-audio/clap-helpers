@@ -8,7 +8,7 @@
 #include <string_view>
 #include <vector>
 
-#include <clap/clap.h>
+#include <clap/all.h>
 
 #include "checking-level.hh"
 #include "host-proxy.hh"
