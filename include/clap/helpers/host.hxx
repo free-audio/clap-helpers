@@ -1,5 +1,6 @@
 #include <cstring>
 #include <iostream>
+#include <sstream>
 
 #include "host.hh"
 #include "macros.hh"
@@ -93,6 +94,31 @@ namespace clap { namespace helpers {
            clapRequestCallback,
         } {}
 
+   ///////////////////////////
+   // Misbehaviour handling //
+   ///////////////////////////
+   template <MisbehaviourHandler h, CheckingLevel l>
+   void Host<h, l>::pluginMisbehaving(const char *msg) const noexcept {
+      if (implementsLog())
+         logLog(CLAP_LOG_PLUGIN_MISBEHAVING, msg);
+      else
+         std::cerr << msg << std::endl;
+
+      if (h == MisbehaviourHandler::Terminate)
+         std::terminate();
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   void Host<h, l>::hostMisbehaving(const char *msg) const noexcept {
+      if (implementsLog())
+         logLog(CLAP_LOG_HOST_MISBEHAVING, msg);
+      else
+         std::cerr << msg << std::endl;
+
+      if (h == MisbehaviourHandler::Terminate)
+         std::terminate();
+   }
+
    /////////////////////
    // CLAP Interfaces //
    /////////////////////
@@ -156,12 +182,14 @@ namespace clap { namespace helpers {
    bool Host<h, l>::clapAudioPortsIsRescanFlagSupported(const clap_host_t *host,
                                                         uint32_t flag) noexcept {
       auto &self = from(host);
+      self.ensureMainThread("audio_ports.is_rescan_flag_supported");
       return self.audioPortsIsRescanFlagSupported(flag);
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
    void Host<h, l>::clapAudioPortsRescan(const clap_host_t *host, uint32_t flags) noexcept {
       auto &self = from(host);
+      self.ensureMainThread("audio_ports.rescan");
       self.audioPortsRescan(flags);
    }
 
@@ -206,6 +234,7 @@ namespace clap { namespace helpers {
    template <MisbehaviourHandler h, CheckingLevel l>
    void Host<h, l>::clapLatencyChanged(const clap_host_t *host) noexcept {
       auto &self = from(host);
+      self.ensureMainThread("latency.changed");
       self.latencyChanged();
    }
 
@@ -227,6 +256,7 @@ namespace clap { namespace helpers {
    void Host<h, l>::clapParamsRescan(const clap_host_t *host,
                                      clap_param_rescan_flags flags) noexcept {
       auto &self = from(host);
+      self.ensureMainThread("params.rescan");
       self.paramsRescan(flags);
    }
 
@@ -235,12 +265,14 @@ namespace clap { namespace helpers {
                                     clap_id param_id,
                                     clap_param_clear_flags flags) noexcept {
       auto &self = from(host);
+      self.ensureMainThread("params.clear");
       self.paramsClear(param_id, flags);
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
    void Host<h, l>::clapParamsRequestFlush(const clap_host_t *host) noexcept {
       auto &self = from(host);
+      self.ensureAudioThread("params.request_flush", false);
       self.paramsRequestFlush();
    }
 
@@ -252,6 +284,7 @@ namespace clap { namespace helpers {
                                                  int fd,
                                                  clap_posix_fd_flags_t flags) noexcept {
       auto &self = from(host);
+      self.ensureMainThread("posix_fd_support.register_fd");
       return self.posixFdSupportRegisterFd(fd, flags);
    }
 
@@ -260,12 +293,14 @@ namespace clap { namespace helpers {
                                                int fd,
                                                clap_posix_fd_flags_t flags) noexcept {
       auto &self = from(host);
+      self.ensureMainThread("posix_fd_support.modify_fd");
       return self.posixFdSupportModifyFd(fd, flags);
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
    bool Host<h, l>::clapPosixFdSupportUnregisterFd(const clap_host *host, int fd) noexcept {
       auto &self = from(host);
+      self.ensureMainThread("posix_fd_support.unregister_fd");
       return self.posixFdSupportUnregisterFd(fd);
    }
 
@@ -275,12 +310,14 @@ namespace clap { namespace helpers {
    template <MisbehaviourHandler h, CheckingLevel l>
    void Host<h, l>::clapRemoteControlsChanged(const clap_host *host) noexcept {
       auto &self = from(host);
+      self.ensureMainThread("remote_controls.changed");
       self.remoteControlsChanged();
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
    void Host<h, l>::clapRemoteControlsSuggestPage(const clap_host *host, clap_id page_id) noexcept {
       auto &self = from(host);
+      self.ensureMainThread("remote_controls.suggest_page");
       self.remoteControlsSuggestPage(page_id);
    }
 
@@ -290,6 +327,7 @@ namespace clap { namespace helpers {
    template <MisbehaviourHandler h, CheckingLevel l>
    void Host<h, l>::clapStateMarkDirty(const clap_host *host) noexcept {
       auto &self = from(host);
+      self.ensureMainThread("state.mark_dirty");
       self.stateMarkDirty();
    }
 
@@ -299,6 +337,7 @@ namespace clap { namespace helpers {
    template <MisbehaviourHandler h, CheckingLevel l>
    void Host<h, l>::clapTailChanged(const clap_host_t *host) noexcept {
       auto &self = from(host);
+      self.ensureAudioThread("tail.changed");
       self.tailChanged();
    }
 
@@ -310,6 +349,7 @@ namespace clap { namespace helpers {
                                                   uint32_t period_ms,
                                                   clap_id *timer_id) noexcept {
       auto &self = from(host);
+      self.ensureMainThread("timer_support.register_timer");
       return self.timerSupportRegisterTimer(period_ms, timer_id);
    }
 
@@ -317,6 +357,7 @@ namespace clap { namespace helpers {
    bool Host<h, l>::clapTimerSupportUnregisterTimer(const clap_host *host,
                                                     clap_id timer_id) noexcept {
       auto &self = from(host);
+      self.ensureMainThread("timer_support.unregister_timer");
       return self.timerSupportUnregisterTimer(timer_id);
    }
 
@@ -341,7 +382,39 @@ namespace clap { namespace helpers {
    template <MisbehaviourHandler h, CheckingLevel l>
    bool Host<h, l>::clapThreadPoolRequestExec(const clap_host *host, uint32_t num_tasks) noexcept {
       auto &self = from(host);
+      self.ensureAudioThread("thread_pool.request_exec");
       return self.threadPoolRequestExec(num_tasks);
+   }
+
+   /////////////////////
+   // Thread Checking //
+   /////////////////////
+   template <MisbehaviourHandler h, CheckingLevel l>
+   void Host<h, l>::ensureMainThread(const char *method) const noexcept {
+      if (l == CheckingLevel::None)
+         return;
+
+      if (threadCheckIsMainThread())
+         return;
+
+      std::ostringstream msg;
+      msg << "Plugin called the method " << method
+          << "() on wrong thread! It must be called on main thread!";
+      pluginMisbehaving(msg.str());
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   void Host<h, l>::ensureAudioThread(const char *method, bool expectedState) const noexcept {
+      if (l == CheckingLevel::None)
+         return;
+
+      if (threadCheckIsAudioThread() == expectedState)
+         return;
+
+      std::ostringstream msg;
+      msg << "Plugin called the method " << method << "() on wrong thread! It must "
+          << (expectedState ? "" : "not ") << "be called on audio thread!";
+      pluginMisbehaving(msg.str());
    }
 
    ///////////////

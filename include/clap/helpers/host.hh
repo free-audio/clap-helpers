@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 #include <clap/clap.h>
 
 #include "checking-level.hh"
@@ -17,6 +19,22 @@ namespace clap { namespace helpers {
 
       const clap_host *clapHost() const { return &_host; }
 
+      ///////////////////////////
+      // Misbehaviour handling //
+      ///////////////////////////
+      void pluginMisbehaving(const char *msg) const noexcept;
+      void pluginMisbehaving(const std::string &msg) const noexcept { pluginMisbehaving(msg.c_str()); }
+      void hostMisbehaving(const char *msg) const noexcept;
+      void hostMisbehaving(const std::string &msg) const noexcept { hostMisbehaving(msg.c_str()); }
+
+      /////////////////////////
+      // Methods to override //
+      /////////////////////////
+
+      // clap_host_thread_check
+      virtual bool threadCheckIsMainThread() const noexcept = 0;
+      virtual bool threadCheckIsAudioThread() const noexcept = 0;
+
    protected:
       Host(const char *name, const char *vendor, const char *url, const char *version);
       virtual ~Host() = default;
@@ -32,8 +50,8 @@ namespace clap { namespace helpers {
 
       // clap_host_audio_ports
       virtual bool implementsAudioPorts() const noexcept { return false; }
-      bool audioPortsIsRescanFlagSupported(uint32_t flag) noexcept { return false; }
-      void audioPortsRescan(uint32_t flags) noexcept {}
+      virtual bool audioPortsIsRescanFlagSupported(uint32_t flag) noexcept { return false; }
+      virtual void audioPortsRescan(uint32_t flags) noexcept {}
 
       // clap_host_gui
       virtual bool implementsGui() const noexcept { return false; }
@@ -81,13 +99,15 @@ namespace clap { namespace helpers {
       virtual bool implementsTail() const noexcept { return false; }
       virtual void tailChanged() noexcept {}
 
-      // clap_host_thread_check
-      virtual bool threadCheckIsMainThread() noexcept = 0;
-      virtual bool threadCheckIsAudioThread() noexcept = 0;
-
       // clap_host_thread_pool
       virtual bool implementsThreadPool() const noexcept { return false; }
       virtual bool threadPoolRequestExec(uint32_t numTasks) noexcept { return false; }
+
+      /////////////////////
+      // Thread Checking //
+      /////////////////////
+      void ensureMainThread(const char *method) const noexcept;
+      void ensureAudioThread(const char *method, bool expectedState = true) const noexcept;
 
       ///////////////
       // Utilities //

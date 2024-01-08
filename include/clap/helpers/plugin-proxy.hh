@@ -4,12 +4,13 @@
 
 #include "checking-level.hh"
 #include "misbehaviour-handler.hh"
+#include "host.hh"
 
 namespace clap { namespace helpers {
    template <MisbehaviourHandler h, CheckingLevel l>
    class PluginProxy {
    public:
-      PluginProxy(const clap_plugin& plugin) : _plugin{plugin} {}
+      PluginProxy(const clap_plugin& plugin, const Host<h, l>& host) : _plugin{plugin}, _host{host} {}
 
       /////////////////
       // clap_plugin //
@@ -19,10 +20,10 @@ namespace clap { namespace helpers {
       template <typename T>
       void getExtension(const T *&ptr, const char *id) const noexcept;
       void destroy() noexcept;
-      bool activate(double sampleRate, uint32_t minFramesCount, uint32_t maxFramesCount) const noexcept;
-      void deactivate() const noexcept;
-      bool startProcessing() const noexcept;
-      void stopProcessing() const noexcept;
+      bool activate(double sampleRate, uint32_t minFramesCount, uint32_t maxFramesCount) noexcept;
+      void deactivate() noexcept;
+      bool startProcessing() noexcept;
+      void stopProcessing() noexcept;
       void reset() const noexcept;
       clap_process_status process(const clap_process_t *process) const noexcept;
       void onMainThread() const noexcept;
@@ -53,6 +54,12 @@ namespace clap { namespace helpers {
       void guiSuggestTitle(const char *title) const noexcept;
       bool guiShow() const noexcept;
       bool guiHide() const noexcept;
+
+      /////////////////////////
+      // clap_plugin_latency //
+      /////////////////////////
+      bool canUseLatency() const noexcept;
+      uint32_t latencyGet() const noexcept;
 
       ///////////////////////////////
       // clap_plugin_midi_mappings //
@@ -141,13 +148,21 @@ namespace clap { namespace helpers {
       void timerSupportOnTimer(clap_id timerId) const noexcept;
 
    protected:
+      /////////////////////
+      // Thread Checking //
+      /////////////////////
       void ensureMainThread(const char *method) const noexcept;
       void ensureAudioThread(const char *method) const noexcept;
+      void ensureActivated(const char *method, bool expectedState) const noexcept;
+      void ensureProcessing(const char *method, bool expectedState) const noexcept;
+
+      const Host<h, l>& _host;
 
       const clap_plugin& _plugin;
 
       const clap_plugin_audio_ports *_pluginAudioPorts = nullptr;
       const clap_plugin_gui *_pluginGui = nullptr;
+      const clap_plugin_latency *_pluginLatency = nullptr;
       const clap_plugin_midi_mappings *_pluginMidiMappings = nullptr;
       const clap_plugin_note_ports *_pluginNotePorts = nullptr;
       const clap_plugin_params *_pluginParams = nullptr;
@@ -159,5 +174,9 @@ namespace clap { namespace helpers {
       const clap_plugin_tail *_pluginTail = nullptr;
       const clap_plugin_thread_pool *_pluginThreadPool = nullptr;
       const clap_plugin_timer_support *_pluginTimerSupport = nullptr;
+
+      // state
+      bool _isActive = false;
+      bool _isProcessing = false;
    };
 }} // namespace clap::helpers
