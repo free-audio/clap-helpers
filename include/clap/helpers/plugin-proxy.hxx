@@ -15,7 +15,6 @@ namespace clap { namespace helpers {
       getExtension(_pluginAudioPorts, CLAP_EXT_AUDIO_PORTS);
       getExtension(_pluginGui, CLAP_EXT_GUI);
       getExtension(_pluginLatency, CLAP_EXT_LATENCY);
-      getExtension(_pluginMidiMappings, CLAP_EXT_MIDI_MAPPINGS);
       getExtension(_pluginNotePorts, CLAP_EXT_NOTE_PORTS);
       getExtension(_pluginParams, CLAP_EXT_PARAMS);
       getExtension(_pluginPosixFdSupport, CLAP_EXT_POSIX_FD_SUPPORT);
@@ -279,35 +278,6 @@ namespace clap { namespace helpers {
       ensureMainThread("latency.get");
       ensureActivated("latency.get", true);
       return _pluginLatency->get(&_plugin);
-   }
-
-   ///////////////////////////////
-   // clap_plugin_midi_mappings //
-   ///////////////////////////////
-   template <MisbehaviourHandler h, CheckingLevel l>
-   bool PluginProxy<h, l>::canUseMidiMappings() const noexcept {
-      if (!_pluginMidiMappings)
-         return false;
-
-      if (_pluginMidiMappings->count && _pluginMidiMappings->get)
-         return true;
-
-      _host.pluginMisbehaving("clap_plugin_midi_mappings is partially implemented");
-      return false;
-   }
-
-   template <MisbehaviourHandler h, CheckingLevel l>
-   uint32_t PluginProxy<h, l>::midiMappingsCount() const noexcept {
-      assert(canUseMidiMappings());
-      ensureMainThread("midi_mappings.count");
-      return _pluginMidiMappings->count(&_plugin);
-   }
-
-   template <MisbehaviourHandler h, CheckingLevel l>
-   bool PluginProxy<h, l>::midiMappingsGet(uint32_t index, clap_midi_mapping_t *mapping) const noexcept {
-      assert(canUseMidiMappings());
-      ensureMainThread("midi_mappings.get");
-      return _pluginMidiMappings->get(&_plugin, index, mapping);
    }
 
    ///////////////////////////////
