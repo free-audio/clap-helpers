@@ -55,6 +55,7 @@ namespace clap { namespace helpers {
       virtual void reset() noexcept {}
       virtual void onMainThread() noexcept {}
       virtual const void *extension(const char *id) noexcept { return nullptr; }
+      virtual bool enableDraftExtensions() const noexcept { return false; }
 
       //---------------------//
       // clap_plugin_latency //

@@ -48,6 +48,8 @@ namespace clap { namespace helpers {
       virtual void requestProcess() noexcept = 0;
       virtual void requestCallback() noexcept = 0;
 
+      virtual bool enableDraftExtensions() const noexcept { return false; }
+
       // clap_host_audio_ports
       virtual bool implementsAudioPorts() const noexcept { return false; }
       virtual bool audioPortsIsRescanFlagSupported(uint32_t flag) noexcept { return false; }

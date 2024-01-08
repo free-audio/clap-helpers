@@ -480,8 +480,11 @@ namespace clap { namespace helpers {
          return &_pluginTail;
       if (!strcmp(id, CLAP_EXT_CONTEXT_MENU) && self.implementsContextMenu())
          return &_pluginContextMenu;
-      if (!strcmp(id, CLAP_EXT_RESOURCE_DIRECTORY) && self.implementsResourceDirectory())
-         return &_pluginResourceDirectory;
+
+      if (self.enableDraftExtensions()) {
+         if (!strcmp(id, CLAP_EXT_RESOURCE_DIRECTORY) && self.implementsResourceDirectory())
+            return &_pluginResourceDirectory;
+      }
 
       return self.extension(id);
    }

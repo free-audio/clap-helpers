@@ -154,6 +154,10 @@ namespace clap { namespace helpers {
          return &_hostThreadCheck;
       if (!strcmp(extension_id, CLAP_EXT_THREAD_POOL) && self.implementsThreadPool())
          return &_hostThreadPool;
+
+      if (self.enableDraftExtensions()) {
+         // put draft ext here
+      }
       return nullptr;
    }
 
