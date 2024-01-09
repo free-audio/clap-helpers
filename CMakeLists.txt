@@ -3,7 +3,7 @@ cmake_policy(SET CMP0100 NEW)  # handle .hh files
 project(CLAP_HELPERS C CXX)
 
 add_library(clap-helpers INTERFACE)
-target_include_directories(clap-helpers INTERFACE include)
+target_include_directories(clap-helpers SYSTEM INTERFACE include)
 target_link_libraries(clap-helpers INTERFACE clap)
 
 # CLAP_BUILD_TESTS is inherited from clap
@@ -32,3 +32,4 @@ if (${CLAP_BUILD_TESTS})
 endif()
 
 install(DIRECTORY include DESTINATION ".")
+install(FILES "cmake/clap-helpers-config.cmake" DESTINATION "./lib/cmake/clap-helpers")
