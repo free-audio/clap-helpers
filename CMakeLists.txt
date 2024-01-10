@@ -1,18 +1,52 @@
 cmake_minimum_required(VERSION 3.17)
 cmake_policy(SET CMP0100 NEW)  # handle .hh files
-project(CLAP_HELPERS C CXX)
+project(clap-helpers C CXX)
 
-add_library(clap-helpers INTERFACE)
-target_include_directories(clap-helpers SYSTEM INTERFACE include)
-target_link_libraries(clap-helpers INTERFACE clap)
+option(CLAP_HELPERS_BUILD_TESTS "Build tests for the CLAP Helper" FALSE)
+option(CLAP_HELPERS_ALWAYS_DOWNLOAD "Always download CPM versions even if target defined" FALSE)
 
-# CLAP_BUILD_TESTS is inherited from clap
-if (${CLAP_BUILD_TESTS})
-    enable_testing()
-    find_package(Catch2 3 QUIET)
+add_library(${PROJECT_NAME} INTERFACE)
+target_include_directories(${PROJECT_NAME} INTERFACE include)
 
-    if (Catch2_FOUND)
-        add_executable(clap-helpers-tests EXCLUDE_FROM_ALL
+if ((NOT TARGET clap) OR ${CLAP_HELPERS_ALWAYS_DOWNLOAD})
+    message(STATUS "${PROJECT_NAME}: Downloading CLAP using CPM")
+
+    message(STATUS "${PROJECT_NAME}: including CPM")
+    include(cmake/external/CPM.cmake)
+    CPMAddPackage(
+            NAME "clap"
+            GITHUB_REPOSITORY "free-audio/clap"
+            GIT_TAG "next"
+            EXCLUDE_FROM_ALL TRUE
+            DOWNLOAD_ONLY TRUE
+            SOURCE_DIR cpm/clap
+    )
+
+    add_subdirectory(${CMAKE_BINARY_DIR}/cpm/clap)
+endif()
+target_link_libraries(${PROJECT_NAME} INTERFACE clap)
+
+if (${CLAP_HELPERS_BUILD_TESTS})
+    if (NOT DEFINED CLAP_HELPERS_TESTS_CXX_STANDARD)
+        message(STATUS "${PROJECT_NAME}: defaulting to c++11")
+        set(CLAP_HELPERS_TESTS_CXX_STANDARD 11)
+    endif()
+
+    if ((NOT TARGET Catch2::Catch2WithMain) OR ${CLAP_HELPERS_ALWAYS_DOWNLOAD})
+        message(STATUS "${PROJECT_NAME}: Downloading Catch2")
+        include(cmake/external/CPM.cmake)
+        CPMAddPackage(
+                NAME "Catch2"
+                GITHUB_REPOSITORY "catchorg/Catch2"
+                GIT_TAG "v3.5.1"
+                EXCLUDE_FROM_ALL TRUE
+                DOWNLOAD_ONLY TRUE
+                SOURCE_DIR cpm/catch2
+        )
+        add_subdirectory(${CMAKE_BINARY_DIR}/cpm/catch2)
+    endif()
+
+    add_executable(${PROJECT_NAME}-tests EXCLUDE_FROM_ALL
             tests/hex-encoder.cc
             tests/plugin.cc
             tests/param-queue-tests.cc
@@ -20,15 +54,16 @@ if (${CLAP_BUILD_TESTS})
             tests/main.cc
             tests/preset-discovery-indexer.cc
             tests/preset-discovery-provider.cc
-            tests/preset-discovery-metadata-receiver.cc)
-        set_target_properties(clap-helpers-tests PROPERTIES CXX_STANDARD 11)
-        target_link_libraries(clap-helpers-tests clap-helpers clap Catch2::Catch2WithMain)
-        target_compile_definitions(clap-helpers-tests PUBLIC -DCATCH_CONFIG_PREFIX_ALL)
-        add_test(NAME test-clap-helpers COMMAND clap-helpers-tests)
-        add_dependencies(clap-tests clap-helpers-tests)
-    else()
-        message(STATUS "Catch2 >= 3 isn't found -> disable clap-helpers unit tests")
-    endif()
+            tests/preset-discovery-metadata-receiver.cc
+    )
+    set_target_properties(${PROJECT_NAME}-tests PROPERTIES CXX_STANDARD ${CLAP_HELPERS_TESTS_CXX_STANDARD})
+    target_link_libraries(${PROJECT_NAME}-tests ${PROJECT_NAME} Catch2::Catch2WithMain)
+    target_compile_definitions(${PROJECT_NAME}-tests PUBLIC -DCATCH_CONFIG_PREFIX_ALL)
+
+    add_custom_command(TARGET ${PROJECT_NAME}-tests POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E echo "Relocating $<TARGET_FILE:${PROJECT_NAME}-tests> to ${CMAKE_BINARY_DIR}"
+            COMMAND ${CMAKE_COMMAND} -E copy "$<TARGET_FILE:${PROJECT_NAME}-tests>" "${CMAKE_BINARY_DIR}"
+    )
 endif()
 
 install(DIRECTORY include DESTINATION ".")
