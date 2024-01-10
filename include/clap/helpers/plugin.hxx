@@ -440,7 +440,11 @@ namespace clap { namespace helpers {
 
       if (!strcmp(id, CLAP_EXT_STATE) && self.implementsState())
          return &_pluginState;
-      if ((!strcmp(id, CLAP_EXT_STATE_CONTEXT) || !strcmp(id, CLAP_EXT_STATE_CONTEXT_COMPAT)) &&
+      if ((!strcmp(id, CLAP_EXT_STATE_CONTEXT)
+#ifdef CLAP_EXT_STATE_CONTEXT_COMPAT
+           || !strcmp(id, CLAP_EXT_STATE_CONTEXT_COMPAT)
+#endif
+           ) &&
           self.implementsStateContext() && self.implementsState())
          return &_pluginStateContext;
       if ((!strcmp(id, CLAP_EXT_PRESET_LOAD) || !strcmp(id, CLAP_EXT_PRESET_LOAD_COMPAT)) &&

@@ -5,6 +5,7 @@
 #include <stdexcept>
 #include <vector>
 #include <functional>
+#include <algorithm>
 
 #include <clap/events.h>
 
