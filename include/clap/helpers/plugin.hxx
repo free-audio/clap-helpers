@@ -5,6 +5,7 @@
 #include <stdexcept>
 #include <utility>
 
+#include "host-proxy.hxx"
 #include "plugin.hh"
 
 namespace clap { namespace helpers {
