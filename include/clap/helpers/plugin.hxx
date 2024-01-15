@@ -440,28 +440,35 @@ namespace clap { namespace helpers {
 
       if (!strcmp(id, CLAP_EXT_STATE) && self.implementsState())
          return &_pluginState;
-      if (!strcmp(id, CLAP_EXT_STATE_CONTEXT) && self.implementsStateContext() &&
-          self.implementsState())
+      if ((!strcmp(id, CLAP_EXT_STATE_CONTEXT) || !strcmp(id, CLAP_EXT_STATE_CONTEXT_COMPAT)) &&
+          self.implementsStateContext() && self.implementsState())
          return &_pluginStateContext;
-      if (!strcmp(id, CLAP_EXT_PRESET_LOAD) && self.implementsPresetLoad())
+      if ((!strcmp(id, CLAP_EXT_PRESET_LOAD) || !strcmp(id, CLAP_EXT_PRESET_LOAD_COMPAT)) &&
+          self.implementsPresetLoad())
          return &_pluginPresetLoad;
       if (!strcmp(id, CLAP_EXT_RENDER) && self.implementsRender())
          return &_pluginRender;
-      if (!strcmp(id, CLAP_EXT_TRACK_INFO) && self.implementsTrackInfo())
+      if ((!strcmp(id, CLAP_EXT_TRACK_INFO) || !strcmp(id, CLAP_EXT_TRACK_INFO_COMPAT)) &&
+          self.implementsTrackInfo())
          return &_pluginTrackInfo;
       if (!strcmp(id, CLAP_EXT_LATENCY) && self.implementsLatency())
          return &_pluginLatency;
       if (!strcmp(id, CLAP_EXT_AUDIO_PORTS) && self.implementsAudioPorts())
          return &_pluginAudioPorts;
-      if (!strcmp(id, CLAP_EXT_AUDIO_PORTS_ACTIVATION) && self.implementsAudioPorts())
+      if ((!strcmp(id, CLAP_EXT_AUDIO_PORTS_ACTIVATION) ||
+           !strcmp(id, CLAP_EXT_AUDIO_PORTS_ACTIVATION_COMPAT)) &&
+          self.implementsAudioPorts())
          return &_pluginAudioPortsActivation;
       if (!strcmp(id, CLAP_EXT_AUDIO_PORTS_CONFIG) && self.implementsAudioPortsConfig())
          return &_pluginAudioPortsConfig;
       if (!strcmp(id, CLAP_EXT_PARAMS) && self.implementsParams())
          return &_pluginParams;
-      if (!strcmp(id, CLAP_EXT_PARAM_INDICATION) && self.implementsParamIndication())
+      if ((!strcmp(id, CLAP_EXT_PARAM_INDICATION) ||
+           !strcmp(id, CLAP_EXT_PARAM_INDICATION_COMPAT)) &&
+          self.implementsParamIndication())
          return &_pluginParamIndication;
-      if (!strcmp(id, CLAP_EXT_REMOTE_CONTROLS) && self.implementRemoteControls())
+      if ((!strcmp(id, CLAP_EXT_REMOTE_CONTROLS) || !strcmp(id, CLAP_EXT_REMOTE_CONTROLS_COMPAT)) &&
+          self.implementRemoteControls())
          return &_pluginRemoteControls;
       if (!strcmp(id, CLAP_EXT_NOTE_PORTS) && self.implementsNotePorts())
          return &_pluginNotePorts;
@@ -479,7 +486,8 @@ namespace clap { namespace helpers {
          return &_pluginVoiceInfo;
       if (!strcmp(id, CLAP_EXT_TAIL) && self.implementsTail())
          return &_pluginTail;
-      if (!strcmp(id, CLAP_EXT_CONTEXT_MENU) && self.implementsContextMenu())
+      if ((!strcmp(id, CLAP_EXT_CONTEXT_MENU) || !strcmp(id, CLAP_EXT_CONTEXT_MENU_COMPAT)) &&
+          self.implementsContextMenu())
          return &_pluginContextMenu;
 
       if (self.enableDraftExtensions()) {

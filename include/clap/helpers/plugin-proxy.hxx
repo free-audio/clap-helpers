@@ -19,7 +19,11 @@ namespace clap { namespace helpers {
       getExtension(_pluginParams, CLAP_EXT_PARAMS);
       getExtension(_pluginPosixFdSupport, CLAP_EXT_POSIX_FD_SUPPORT);
       getExtension(_pluginPresetLoad, CLAP_EXT_PRESET_LOAD);
+      if (!_pluginPresetLoad)
+         getExtension(_pluginPresetLoad, CLAP_EXT_PRESET_LOAD_COMPAT);
       getExtension(_pluginRemoteControls, CLAP_EXT_REMOTE_CONTROLS);
+      if (!_pluginRemoteControls)
+         getExtension(_pluginRemoteControls, CLAP_EXT_REMOTE_CONTROLS_COMPAT);
       getExtension(_pluginRender, CLAP_EXT_RENDER);
       getExtension(_pluginState, CLAP_EXT_STATE);
       getExtension(_pluginTail, CLAP_EXT_TAIL);

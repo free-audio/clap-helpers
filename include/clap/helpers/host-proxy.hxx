@@ -25,12 +25,20 @@ namespace clap { namespace helpers {
       getExtension(_hostGui, CLAP_EXT_GUI);
       getExtension(_hostParams, CLAP_EXT_PARAMS);
       getExtension(_hostTrackInfo, CLAP_EXT_TRACK_INFO);
+      if (!_hostTrackInfo)
+         getExtension(_hostTrackInfo, CLAP_EXT_TRACK_INFO_COMPAT);
       getExtension(_hostState, CLAP_EXT_STATE);
       getExtension(_hostNoteName, CLAP_EXT_NOTE_NAME);
       getExtension(_hostRemoteControls, CLAP_EXT_REMOTE_CONTROLS);
+      if (!_hostRemoteControls)
+         getExtension(_hostRemoteControls, CLAP_EXT_REMOTE_CONTROLS_COMPAT);
       getExtension(_hostVoiceInfo, CLAP_EXT_VOICE_INFO);
       getExtension(_hostContextMenu, CLAP_EXT_CONTEXT_MENU);
+      if (!_hostContextMenu)
+         getExtension(_hostContextMenu, CLAP_EXT_CONTEXT_MENU_COMPAT);
       getExtension(_hostPresetLoad, CLAP_EXT_PRESET_LOAD);
+      if (!_hostPresetLoad)
+         getExtension(_hostPresetLoad, CLAP_EXT_PRESET_LOAD);
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
