@@ -85,8 +85,8 @@ jobs:
 
       - name: Build project
         run: |
-          cmake -S . -B ./build ${{ matrix.cmakeargs }} -DCMAKE_BUILD_TYPE=Debug -DCLAP_HELPERS_TESTS_ONLY=TRUE
-          cmake --build ./build --config Debug
+          cmake -S . -B ./build ${{ matrix.cmakeargs }} -DCMAKE_BUILD_TYPE=Debug -DCLAP_HELPERS_BUILD_TESTS=TRUE
+          cmake --build ./build --config Debug clap-helpers-tests
 
       - name: Run Tests
         shell: bash
