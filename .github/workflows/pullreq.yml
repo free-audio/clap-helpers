@@ -1,0 +1,22 @@
+name: Pull Request Validation
+
+on:
+  pull_request:
+    branches:
+      - main
+      - next
+
+jobs:
+  build_and_run_tests:
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            name: Linux
+
+    steps:
+      - name: Echo
+        run: |
+          echo "Hello World"
