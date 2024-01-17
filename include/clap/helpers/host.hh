@@ -4,6 +4,8 @@
 
 #include <clap/clap.h>
 
+#include "version-check.hh"
+
 #include "checking-level.hh"
 #include "misbehaviour-handler.hh"
 

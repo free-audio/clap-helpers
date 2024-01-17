@@ -9,6 +9,8 @@
 
 #include <clap/all.h>
 
+#include "version-check.hh"
+
 #include "checking-level.hh"
 #include "host-proxy.hh"
 #include "misbehaviour-handler.hh"
