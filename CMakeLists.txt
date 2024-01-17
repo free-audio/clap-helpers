@@ -8,23 +8,25 @@ option(CLAP_HELPERS_DOWNLOAD_DEPENDENCIES "Resolve CLAP Targets with CPM if not 
 add_library(${PROJECT_NAME} INTERFACE)
 target_include_directories(${PROJECT_NAME} INTERFACE include)
 
-if ((NOT TARGET clap) AND ${CLAP_HELPERS_DOWNLOAD_DEPENDENCIES})
-    message(STATUS "${PROJECT_NAME}: Downloading CLAP using CPM")
+if (NOT TARGET clap)
+    if (${CLAP_HELPERS_DOWNLOAD_DEPENDENCIES})
+        message(STATUS "${PROJECT_NAME}: Downloading CLAP using CPM")
 
-    message(STATUS "${PROJECT_NAME}: including CPM")
-    include(cmake/external/CPM.cmake)
-    CPMAddPackage(
-            NAME "clap"
-            GITHUB_REPOSITORY "free-audio/clap"
-            GIT_TAG "next"
-            EXCLUDE_FROM_ALL TRUE
-            DOWNLOAD_ONLY TRUE
-            SOURCE_DIR cpm/clap
-    )
+        message(STATUS "${PROJECT_NAME}: including CPM")
+        include(cmake/external/CPM.cmake)
+        CPMAddPackage(
+                NAME "clap"
+                GITHUB_REPOSITORY "free-audio/clap"
+                GIT_TAG "next"
+                EXCLUDE_FROM_ALL TRUE
+                DOWNLOAD_ONLY TRUE
+                SOURCE_DIR cpm/clap
+        )
 
-    add_subdirectory(${CMAKE_BINARY_DIR}/cpm/clap)
-else()
-    message(FATAL_ERROR "${PROJECT_NAME}: 'clap' is not a target. Set CLAP_HELPERS_DOWNLOAD_DEPENDENCIES or include clap before clap-helpers")
+        add_subdirectory(${CMAKE_BINARY_DIR}/cpm/clap)
+    else()
+        message(FATAL_ERROR "${PROJECT_NAME}: 'clap' is not a target. Set CLAP_HELPERS_DOWNLOAD_DEPENDENCIES or include clap before clap-helpers")
+    endif()
 endif()
 target_link_libraries(${PROJECT_NAME} INTERFACE clap)
 
