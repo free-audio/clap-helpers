@@ -1,8 +1,0 @@
-//
-// Created by Paul Walker on 1/17/24.
-//
-
-#ifndef CLAP_HELPERS_VERSION_CHECK_H
-#define CLAP_HELPERS_VERSION_CHECK_H
-
-#endif // CLAP_HELPERS_VERSION_CHECK_H
