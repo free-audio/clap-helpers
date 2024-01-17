@@ -47,12 +47,12 @@ namespace {
 
       bool failed = false;
 
-      std::thread producer([&queue] {
+      std::thread producer([&queue, N] {
          for (uint32_t i = 0; i < N; ++i)
             queue.push(i);
       });
 
-      std::thread consumer([&queue, &failed] {
+      std::thread consumer([&queue, &failed, N] {
          uint32_t v = 0;
          for (uint32_t i = 0; i < N; ++i) {
             while (!queue.tryPop(v))
