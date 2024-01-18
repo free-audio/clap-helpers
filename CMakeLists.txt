@@ -55,6 +55,7 @@ if (${CLAP_HELPERS_BUILD_TESTS})
     add_executable(${PROJECT_NAME}-tests EXCLUDE_FROM_ALL
             tests/create-an-actual-plugin.cc
             tests/hex-encoder.cc
+            tests/host.cc
             tests/plugin.cc
             tests/param-queue-tests.cc
             tests/event-list-tests.cc
