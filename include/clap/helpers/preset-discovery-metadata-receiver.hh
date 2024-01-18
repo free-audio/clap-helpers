@@ -36,7 +36,7 @@ namespace clap { namespace helpers {
 
       virtual bool beginPreset(const char *name, const char *load_key) noexcept { return false; }
 
-      virtual void addPluginId(const clap_plugin_id_t *plugin_id) noexcept {}
+      virtual void addPluginId(const clap_universal_plugin_id *plugin_id) noexcept {}
 
       virtual void setCollectionId(const char *collection_id) noexcept {}
 
@@ -46,8 +46,8 @@ namespace clap { namespace helpers {
 
       virtual void setDescription(const char *description) noexcept {}
 
-      virtual void setTimestamps(clap_timestamp_t creation_time,
-                                 clap_timestamp_t modification_time) noexcept {}
+      virtual void setTimestamps(clap_timestamp creation_time,
+                                 clap_timestamp modification_time) noexcept {}
 
       virtual void addFeature(const char *feature) noexcept {}
 
@@ -77,7 +77,7 @@ namespace clap { namespace helpers {
 
       static void
       receiverAddPluginId(const struct clap_preset_discovery_metadata_receiver *receiver,
-                          const clap_plugin_id_t *plugin_id) noexcept;
+                          const clap_universal_plugin_id *plugin_id) noexcept;
 
       static void
       receiverSetCollectionId(const struct clap_preset_discovery_metadata_receiver *receiver,
@@ -95,8 +95,8 @@ namespace clap { namespace helpers {
 
       static void
       receiverSetTimestamps(const struct clap_preset_discovery_metadata_receiver *receiver,
-                            clap_timestamp_t creation_time,
-                            clap_timestamp_t modification_time) noexcept;
+                            clap_timestamp creation_time,
+                            clap_timestamp modification_time) noexcept;
 
       static void receiverAddFeature(const struct clap_preset_discovery_metadata_receiver *receiver,
                                      const char *feature) noexcept;
