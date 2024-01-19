@@ -53,6 +53,7 @@ if (${CLAP_HELPERS_BUILD_TESTS})
     endif()
 
     add_executable(${PROJECT_NAME}-tests EXCLUDE_FROM_ALL
+            tests/create-an-actual-host.cc
             tests/create-an-actual-plugin.cc
             tests/hex-encoder.cc
             tests/host.cc
