@@ -49,7 +49,7 @@ namespace clap { namespace helpers {
    template <MisbehaviourHandler h, CheckingLevel l>
    void PresetDiscoveryMetadataReceiver<h, l>::receiverAddPluginId(
       const struct clap_preset_discovery_metadata_receiver *receiver,
-      const clap_plugin_id_t *plugin_id) noexcept {
+      const clap_universal_plugin_id *plugin_id) noexcept {
       auto &self = from(receiver);
       return self.addPluginId(plugin_id);
    }
@@ -88,8 +88,8 @@ namespace clap { namespace helpers {
    template <MisbehaviourHandler h, CheckingLevel l>
    void PresetDiscoveryMetadataReceiver<h, l>::receiverSetTimestamps(
       const struct clap_preset_discovery_metadata_receiver *receiver,
-      clap_timestamp_t creation_time,
-      clap_timestamp_t modification_time) noexcept {
+      clap_timestamp creation_time,
+      clap_timestamp modification_time) noexcept {
       auto &self = from(receiver);
       return self.setTimestamps(creation_time, modification_time);
    }
