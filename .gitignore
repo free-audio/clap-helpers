@@ -1,4 +1,4 @@
-# Prerequisites
+﻿# Prerequisites
 *.d
 
 # Compiled Object files
@@ -31,9 +31,10 @@
 *.out
 *.app
 
-#vs
+# Visual Studio
 .vs
 out
+.vscode
 
 #clion
 .idea
