@@ -34,6 +34,8 @@ if (${CLAP_HELPERS_BUILD_TESTS})
     if (NOT DEFINED CLAP_HELPERS_TESTS_CXX_STANDARD)
         message(STATUS "${PROJECT_NAME}: defaulting to c++11")
         set(CLAP_HELPERS_TESTS_CXX_STANDARD 11)
+    else()
+        message(STATUS "${PROJECT_NAME}: Using CXX Standard ${CLAP_HELPERS_TESTS_CXX_STANDARD}")
     endif()
 
     if ((NOT TARGET Catch2::Catch2WithMain) AND ${CLAP_HELPERS_DOWNLOAD_DEPENDENCIES})
@@ -65,9 +67,17 @@ if (${CLAP_HELPERS_BUILD_TESTS})
             tests/preset-discovery-provider.cc
             tests/preset-discovery-metadata-receiver.cc
     )
+    set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD ${CLAP_HELPERS_TESTS_CXX_STANDARD})
     set_target_properties(${PROJECT_NAME}-tests PROPERTIES CXX_STANDARD ${CLAP_HELPERS_TESTS_CXX_STANDARD})
     target_link_libraries(${PROJECT_NAME}-tests ${PROJECT_NAME} Catch2::Catch2WithMain)
     target_compile_definitions(${PROJECT_NAME}-tests PUBLIC -DCATCH_CONFIG_PREFIX_ALL)
+
+    if(CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
+        target_compile_options(${PROJECT_NAME}-tests
+           PRIVATE
+           -Werror
+        )
+    endif()
 
     add_custom_command(TARGET ${PROJECT_NAME}-tests POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E echo "Relocating $<TARGET_FILE:${PROJECT_NAME}-tests> to ${CMAKE_BINARY_DIR}"

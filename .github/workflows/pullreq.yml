@@ -38,14 +38,14 @@ jobs:
             exe: .exe
 
           - os: ubuntu-latest
-            cmakeargs: -DCMAKE_CXX_COMPILER=g++-11 -DCMAKE_C_COMPILER=gcc-11
+            cmakeargs: -DCMAKE_CXX_COMPILER=g++-11 -DCMAKE_C_COMPILER=gcc-11 -DCLAP_HELPERS_TESTS_CXX_STANDARD=11
             install_ninja: false
-            name: Linux gcc11
+            name: Linux gcc11 C++ 11
 
           - os: ubuntu-latest
-            cmakeargs: -DCMAKE_CXX_COMPILER=g++-12 -DCMAKE_C_COMPILER=gcc-12
+            cmakeargs: -DCMAKE_CXX_COMPILER=g++-12 -DCMAKE_C_COMPILER=gcc-12 -DCLAP_HELPERS_TESTS_CXX+STANDARD=17
             install_ninja: false
-            name: Linux gcc12
+            name: Linux gcc12 C++ 17
 
           - os: ubuntu-latest
             cmakeargs: -DCLAP_HELPERS_TESTS_CXX_STANDARD=20 -DCMAKE_CXX_COMPILER=g++-12 -DCMAKE_C_COMPILER=gcc-12
@@ -58,24 +58,24 @@ jobs:
             name: Linux gcc12 C++23
 
           - os: macos-latest
-            cmakeargs: -GNinja
+            cmakeargs: -GNinja -DCLAP_HELPERS_TESTS_CXX_STANDARD=11
             install_ninja: true
-            name: MacOS Ninja
+            name: MacOS Ninja C++11
 
           - os: macos-latest
-            cmakeargs: -G"Xcode"
+            cmakeargs: -G"Xcode" -DCLAP_HELPERS_TESTS_CXX_STANDARD=14
             install_ninja: false
-            name: MacOS Xcode
+            name: MacOS Xcode C++14
+
+          - os: macos-latest
+            cmakeargs: -G"Unix Makefiles" -DCLAP_HELPERS_TESTS_CXX_STANDARD=17
+            install_ninja: false
+            name: MacOS Unix Makefiles C++17
 
           - os: macos-latest
             cmakeargs: -G"Ninja Multi-Config" -DCLAP_HELPERS_TESTS_CXX_STANDARD=20
             install_ninja: true
             name: MacOS Ninja Multi C++20
-
-          - os: macos-latest
-            cmakeargs: -G"Unix Makefiles"
-            install_ninja: false
-            name: MacOS Unix Makefiles
 
     steps:
       - name: Checkout code
