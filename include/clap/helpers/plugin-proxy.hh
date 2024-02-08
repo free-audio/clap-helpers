@@ -162,7 +162,7 @@ namespace clap { namespace helpers {
                        public PluginThreadPoolProxy<h, l>,
                        public PluginTimerSupportProxy<h, l> {
    public:
-      PluginProxy(const clap_plugin& plugin, const Host<h, l>& host) : _plugin{plugin}, _host{host} {}
+      PluginProxy(const clap_plugin& plugin, const Host<h, l>& host) : _host{host}, _plugin{plugin} {}
 
       /////////////////
       // clap_plugin //
