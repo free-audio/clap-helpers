@@ -48,7 +48,7 @@ namespace clap { namespace helpers {
 
       if (l >= CheckingLevel::Minimal) {
          if (self._isBeingDestroyed) {
-            std::cerr << "clap_preset_discovery_provider.init() was called twice" << std::endl;
+            std::cerr << "clap_preset_discovery_provider.destroy() was called twice" << std::endl;
             if (h == MisbehaviourHandler::Terminate)
                std::terminate();
             return;
