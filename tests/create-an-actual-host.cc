@@ -4,6 +4,8 @@
 
 #include "clap/helpers/host.hh"
 #include "clap/helpers/host.hxx"
+#include "clap/helpers/plugin-proxy.hh"
+#include "clap/helpers/plugin-proxy.hxx"
 
 #include <type_traits>
 
@@ -32,5 +34,16 @@ CATCH_TEST_CASE("Create an Actual Host")
    CATCH_SECTION("Test Host is Creatable")
    {
       CATCH_REQUIRE(std::is_constructible<test_host>::value);
+   }
+}
+
+using test_plugin_proxy = clap::helpers::PluginProxy<clap::helpers::MisbehaviourHandler::Terminate,
+                                                     clap::helpers::CheckingLevel::Maximal>;
+
+CATCH_TEST_CASE("Create an Actual Plugin Proxy")
+{
+   CATCH_SECTION("Test Plugin Proxy is Creatable")
+   {
+      CATCH_REQUIRE(std::is_constructible<test_plugin_proxy, const clap_plugin&, const test_host&>::value);
    }
 }
