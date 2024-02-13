@@ -550,6 +550,7 @@ namespace clap { namespace helpers {
       // state
       bool _wasInitialized = false;
       bool _isActive = false;
+      bool _isBeingActivated = false;
       bool _isProcessing = false;
       bool _isBeingDestroyed = false;
       double _sampleRate = 0;

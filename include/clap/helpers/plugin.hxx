@@ -319,12 +319,15 @@ namespace clap { namespace helpers {
       assert(!self._isActive);
       assert(self._sampleRate == 0);
 
+      self._isBeingActivated = true;
       if (!self.activate(sample_rate, minFrameCount, maxFrameCount)) {
+         self._isBeingActivated = false;
          assert(!self._isActive);
          assert(self._sampleRate == 0);
          return false;
       }
 
+      self._isBeingActivated = false;
       self._isActive = true;
       self._sampleRate = sample_rate;
       return true;
@@ -506,7 +509,7 @@ namespace clap { namespace helpers {
       self.ensureMainThread("clap_plugin_latency.get");
 
       if (l >= CheckingLevel::Minimal) {
-         if (!self._isActive)
+         if (!self._isActive && !self._isBeingActivated)
             self.hostMisbehaving("It is wrong to query the latency before the plugin is activated, "
                                  "because if the plugin dosen't know the sample rate, it can't "
                                  "know the number of samples of latency.");
