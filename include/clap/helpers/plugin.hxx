@@ -1,5 +1,6 @@
 #include <cassert>
 #include <cstring>
+#include <exception>
 #include <iostream>
 #include <sstream>
 #include <stdexcept>
