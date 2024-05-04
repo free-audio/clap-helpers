@@ -188,7 +188,7 @@ namespace clap { namespace helpers {
       ////////////////////
       // clap_host_undo //
       ////////////////////
-      bool canUseHostUndo() const noexcept;
+      bool canUseUndo() const noexcept;
       void undoBeginChange() const noexcept;
       void undoCancelChange() const noexcept;
       void undoChangeMade(const char *name,
