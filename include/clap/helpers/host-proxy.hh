@@ -198,7 +198,7 @@ namespace clap { namespace helpers {
                           size_t undo_delta_size) const noexcept;
       void undoUndo(const clap_host_t *host) const noexcept;
       void undoRedo(const clap_host_t *host) const noexcept;
-      void undoSetWantsContextInfo(const clap_host_t *host, bool wants_info) const noexcept;
+      void undoSetContextInfoSubscription(const clap_host_t *host, bool wants_info) const noexcept;
 
    protected:
       void ensureMainThread(const char *method) const noexcept;

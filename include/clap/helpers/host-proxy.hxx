@@ -692,7 +692,7 @@ namespace clap { namespace helpers {
          return false;
 
       if (_hostUndo->begin_change && _hostUndo->cancel_change && _hostUndo->change_made &&
-          _hostUndo->undo && _hostUndo->redo && _hostUndo->set_wants_context_info)
+          _hostUndo->undo && _hostUndo->redo && _hostUndo->set_context_info_subscription)
          return true;
 
       return false;
@@ -738,11 +738,11 @@ namespace clap { namespace helpers {
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   void HostProxy<h, l>::undoSetWantsContextInfo(const clap_host_t *host,
+   void HostProxy<h, l>::undoSetContextInfoSubscription(const clap_host_t *host,
                                                  bool wants_info) const noexcept {
       assert(canUseUndo());
-      ensureMainThread("undo.set_wants_context_info");
-      _hostUndo->set_wants_context_info(_host, wants_info);
+      ensureMainThread("undo.set_context_info_subscription");
+      _hostUndo->set_context_info_subscription(_host, wants_info);
    }
 
 }} // namespace clap::helpers
