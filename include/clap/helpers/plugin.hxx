@@ -148,6 +148,14 @@ namespace clap { namespace helpers {
    };
 
    template <MisbehaviourHandler h, CheckingLevel l>
+   const clap_plugin_undo Plugin<h, l>::_pluginUndo = {
+      clapUndoGetDeltaProperties,
+      clapUndoCanUseDeltaFormatVersion,
+      clapUndoApplyDelta,
+      clapUndoSetContextInfo,
+   };
+
+   template <MisbehaviourHandler h, CheckingLevel l>
    Plugin<h, l>::Plugin(const clap_plugin_descriptor *desc, const clap_host *host) : _host(host) {
       _plugin.plugin_data = this;
       _plugin.desc = desc;
@@ -496,6 +504,8 @@ namespace clap { namespace helpers {
       if (self.enableDraftExtensions()) {
          if (!strcmp(id, CLAP_EXT_RESOURCE_DIRECTORY) && self.implementsResourceDirectory())
             return &_pluginResourceDirectory;
+         if (!strcmp(id, CLAP_EXT_UNDO) && self.implementsUndo())
+            return &_pluginUndo;
       }
 
       return self.extension(id);
@@ -1643,6 +1653,46 @@ namespace clap { namespace helpers {
       auto &self = from(plugin);
       self.ensureMainThread("clap_plugin_resource_directory.get_file_path");
       return self.resourceDirectoryGetFilePath(index, path, path_size);
+   }
+
+   //------------------//
+   // clap_plugin_undo //
+   //------------------//
+   template <MisbehaviourHandler h, CheckingLevel l>
+   void
+   Plugin<h, l>::clapUndoGetDeltaProperties(const clap_plugin_t *plugin,
+                                            clap_undo_delta_properties_t *properties) noexcept {
+      auto &self = from(plugin);
+      self.ensureMainThread("clap_undo.get_delta_properties");
+      return self.undoGetDeltaProperties(properties);
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   bool Plugin<h, l>::clapUndoCanUseDeltaFormatVersion(const clap_plugin_t *plugin,
+                                                       clap_id format_version) noexcept {
+      auto &self = from(plugin);
+      self.ensureMainThread("clap_undo.can_use_delta_format_version");
+      return self.undoCanUseDeltaFormatVersion(format_version);
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   bool Plugin<h, l>::clapUndoApplyDelta(const clap_plugin_t *plugin,
+                                         clap_id format_version,
+                                         const void *delta,
+                                         size_t delta_size) noexcept {
+      auto &self = from(plugin);
+      self.ensureMainThread("clap_undo.apply_delta");
+      return self.undoApplyDelta(format_version, delta, delta_size);
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   void Plugin<h, l>::clapUndoSetContextInfo(const clap_plugin_t *plugin,
+                                             uint64_t flags,
+                                             const char *undo_name,
+                                             const char *redo_name) noexcept {
+      auto &self = from(plugin);
+      self.ensureMainThread("clap_undo.set_context_info");
+      return self.undoSetContextInfo(flags, undo_name, redo_name);
    }
 
    /////////////

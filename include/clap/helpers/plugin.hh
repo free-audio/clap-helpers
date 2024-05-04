@@ -283,6 +283,17 @@ namespace clap { namespace helpers {
       virtual bool implementsVoiceInfo() const noexcept { return false; }
       virtual bool voiceInfoGet(clap_voice_info *info) noexcept { return false; }
 
+      //------------------//
+      // clap_plugin_undo //
+      //------------------//
+      virtual bool implementsUndo() const noexcept { return false; }
+      virtual void undoGetDeltaProperties(clap_undo_delta_properties_t *properties) noexcept;
+      virtual bool undoCanUseDeltaFormatVersion(clap_id format_version) noexcept;
+      virtual bool
+      undoApplyDelta(clap_id format_version, const void *delta, size_t delta_size) noexcept;
+      virtual void
+      undoSetContextInfo(uint64_t flags, const char *undo_name, const char *redo_name) noexcept;
+
       /////////////
       // Logging //
       /////////////
@@ -523,6 +534,20 @@ namespace clap { namespace helpers {
                                                       char *path,
                                                       uint32_t path_size) noexcept;
 
+      // clap_plugin_undo
+      static void clapUndoGetDeltaProperties(const clap_plugin_t *plugin,
+                                             clap_undo_delta_properties_t *properties) noexcept;
+      static bool clapUndoCanUseDeltaFormatVersion(const clap_plugin_t *plugin,
+                                                   clap_id format_version) noexcept;
+      static bool clapUndoApplyDelta(const clap_plugin_t *plugin,
+                                     clap_id format_version,
+                                     const void *delta,
+                                     size_t delta_size) noexcept;
+      static void clapUndoSetContextInfo(const clap_plugin_t *plugin,
+                                         uint64_t flags,
+                                         const char *undo_name,
+                                         const char *redo_name) noexcept;
+
       // interfaces
       static const clap_plugin_audio_ports _pluginAudioPorts;
       static const clap_plugin_audio_ports_config _pluginAudioPortsConfig;
@@ -546,6 +571,7 @@ namespace clap { namespace helpers {
       static const clap_plugin_voice_info _pluginVoiceInfo;
       static const clap_plugin_context_menu _pluginContextMenu;
       static const clap_plugin_resource_directory _pluginResourceDirectory;
+      static const clap_plugin_undo _pluginUndo;
 
       // state
       bool _wasInitialized = false;
