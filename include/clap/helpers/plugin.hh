@@ -287,12 +287,12 @@ namespace clap { namespace helpers {
       // clap_plugin_undo //
       //------------------//
       virtual bool implementsUndo() const noexcept { return false; }
-      virtual void undoGetDeltaProperties(clap_undo_delta_properties_t *properties) noexcept;
-      virtual bool undoCanUseDeltaFormatVersion(clap_id format_version) noexcept;
+      virtual void undoGetDeltaProperties(clap_undo_delta_properties_t *properties) noexcept {}
+      virtual bool undoCanUseDeltaFormatVersion(clap_id format_version) noexcept { return false; }
       virtual bool
-      undoApplyDelta(clap_id format_version, const void *delta, size_t delta_size) noexcept;
+      undoApplyDelta(clap_id format_version, const void *delta, size_t delta_size) noexcept { return false; }
       virtual void
-      undoSetContextInfo(uint64_t flags, const char *undo_name, const char *redo_name) noexcept;
+      undoSetContextInfo(uint64_t flags, const char *undo_name, const char *redo_name) noexcept {}
 
       /////////////
       // Logging //
