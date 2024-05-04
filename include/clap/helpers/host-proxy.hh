@@ -185,6 +185,21 @@ namespace clap { namespace helpers {
       bool requestDirectory(bool isShared) const noexcept;
       void releaseDirectory(bool isShared) const noexcept;
 
+      ////////////////////
+      // clap_host_undo //
+      ////////////////////
+      bool canUseHostUndo() const noexcept;
+      void undoBeginChange() const noexcept;
+      void undoCancelChange() const noexcept;
+      void undoChangeMade(const char *name,
+                          const void *redo_delta,
+                          size_t redo_delta_size,
+                          const void *undo_delta,
+                          size_t undo_delta_size) const noexcept;
+      void undoUndo(const clap_host_t *host) const noexcept;
+      void undoRedo(const clap_host_t *host) const noexcept;
+      void undoSetWantsContextInfo(const clap_host_t *host, bool wants_info) const noexcept;
+
    protected:
       void ensureMainThread(const char *method) const noexcept;
       void ensureAudioThread(const char *method) const noexcept;
@@ -211,5 +226,6 @@ namespace clap { namespace helpers {
       const clap_host_tail *_hostTail = nullptr;
       const clap_host_context_menu *_hostContextMenu = nullptr;
       const clap_host_preset_load *_hostPresetLoad = nullptr;
+      const clap_host_undo *_hostUndo = nullptr;
    };
 }} // namespace clap::helpers
