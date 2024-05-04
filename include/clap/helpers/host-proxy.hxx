@@ -687,7 +687,7 @@ namespace clap { namespace helpers {
    // clap_host_undo //
    ////////////////////
    template <MisbehaviourHandler h, CheckingLevel l>
-   bool HostProxy<h, l>::canUseHostUndo() const noexcept {
+   bool HostProxy<h, l>::canUseUndo() const noexcept {
       if (!_hostUndo)
          return false;
 
