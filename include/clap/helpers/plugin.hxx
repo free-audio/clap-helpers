@@ -62,6 +62,13 @@ namespace clap { namespace helpers {
    };
 
    template <MisbehaviourHandler h, CheckingLevel l>
+   const clap_plugin_configurable_audio_ports Plugin<h, l>::_pluginConfigurableAudioPorts = {
+      clapConfigurableAudioPortsCanApplyConfiguration,
+      clapConfigurableAudioPortsApplyActivation,
+   };
+
+
+   template <MisbehaviourHandler h, CheckingLevel l>
    const clap_plugin_params Plugin<h, l>::_pluginParams = {
       clapParamsCount,
       clapParamsInfo,
@@ -472,6 +479,8 @@ namespace clap { namespace helpers {
          return &_pluginAudioPortsActivation;
       if (!strcmp(id, CLAP_EXT_AUDIO_PORTS_CONFIG) && self.implementsAudioPortsConfig())
          return &_pluginAudioPortsConfig;
+      if (!strcmp(id, CLAP_EXT_CONFIGURABLE_AUDIO_PORTS) && self.implementsConfigurableAudioPorts())
+         return &_pluginConfigurableAudioPorts;
       if (!strcmp(id, CLAP_EXT_PARAMS) && self.implementsParams())
          return &_pluginParams;
       if ((!strcmp(id, CLAP_EXT_PARAM_INDICATION) ||
@@ -789,6 +798,69 @@ namespace clap { namespace helpers {
       self.ensureMainThread("clap_plugin_params.count");
 
       return self.paramsCount();
+   }
+
+   //--------------------------------------//
+   // clap_plugin_configurable_audio_ports //
+   //--------------------------------------//
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   bool Plugin<h, l>::clapConfigurableAudioPortsCanApplyConfiguration(
+      const clap_plugin_t *plugin,
+      const clap_audio_port_configuration_request *requests,
+      uint32_t request_count) noexcept {
+      auto &self = from(plugin);
+      auto methodName = "clap_plugin_configurable_audio_ports.can_apply_configuration";
+      self.ensureMainThread(methodName);
+      self.ensureIsInactive(methodName);
+      self.ensureClapAudioPortConfigurationRequestIsValid(requests, request_count);
+
+      return self.configurableAudioPortsCanApplyConfiguration(requests, request_count);
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   bool Plugin<h, l>::clapConfigurableAudioPortsApplyActivation(
+      const clap_plugin_t *plugin,
+      const clap_audio_port_configuration_request *requests,
+      uint32_t request_count) noexcept {
+      auto &self = from(plugin);
+      auto methodName = "clap_plugin_configurable_audio_ports.apply_configuration";
+      self.ensureMainThread(methodName);
+      self.ensureIsInactive(methodName);
+      self.ensureClapAudioPortConfigurationRequestIsValid(requests, request_count);
+
+      if (l >= CheckingLevel::Minimal &&
+          !self.configurableAudioPortsCanApplyConfiguration(requests, request_count)) {
+         self.hostMisbehaving(
+            "Host requested a configuration that the plugin did not accept. Check with "
+            "clap_plugin_configurable_audio_ports.can_apply_configuration before applying a "
+            "configuration!");
+      }
+
+      return self.configurableAudioPortsApplyConfiguration(requests, request_count);
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   void Plugin<h, l>::ensureClapAudioPortConfigurationRequestIsValid(
+      const clap_audio_port_configuration_request *requests,
+      uint32_t request_count) {
+      if (l == CheckingLevel::None)
+         return;
+
+      for (int i = 0; i < request_count; ++i) {
+         if (!requests[i].port_type)
+            continue;
+
+         if (strcmp(requests[i].port_type, CLAP_PORT_MONO) == 0 && requests[i].channel_count != 1) {
+            hostMisbehaving("Host requested a mono port type with a channel count other than one.");
+         } else if (strcmp(requests[i].port_type, CLAP_PORT_STEREO) == 0 && requests[i].channel_count != 2) {
+            hostMisbehaving("Host requested a stereo port type with a channel count other than two.");
+         } else if (strcmp(requests[i].port_type, CLAP_PORT_SURROUND) == 0 && requests[i].channel_count < 3) {
+            hostMisbehaving("Host requested a surround port type with insufficient channel count.");
+         } else if (strcmp(requests[i].port_type, CLAP_PORT_AMBISONIC) == 0 && requests[i].channel_count < 4) {
+            hostMisbehaving("Host requested an ambisonic port type with insufficient channel count.");
+         }
+      }
    }
 
    //--------------------//
@@ -1790,6 +1862,22 @@ namespace clap { namespace helpers {
       std::ostringstream msg;
       msg << "Host called the method " << method
           << "() on wrong thread! It must be called on audio thread!";
+      hostMisbehaving(msg.str());
+   }
+
+   ////////////////////
+   // General Checks //
+   ////////////////////
+   template <MisbehaviourHandler h, CheckingLevel l>
+   void Plugin<h, l>::ensureIsInactive(const char *methodName) const noexcept {
+      if (l == CheckingLevel::None)
+         return;
+
+      if (!isActive())
+         return;
+
+      std::ostringstream msg;
+      msg << "it is illegal to call " << methodName << "() while the plugin is active!";
       hostMisbehaving(msg.str());
    }
 
