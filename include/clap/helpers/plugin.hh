@@ -150,6 +150,22 @@ namespace clap { namespace helpers {
          return false;
       }
 
+      //--------------------------------------//
+      // clap_plugin_configurable_audio_ports //
+      //--------------------------------------//
+      virtual bool implementsConfigurableAudioPorts() const noexcept { return false; }
+      virtual bool configurableAudioPortsCanApplyConfiguration(const clap_audio_port_configuration_request *requests,
+                                                               uint32_t request_count) const noexcept {
+         return false;
+      }
+      virtual bool configurableAudioPortsApplyConfiguration(const clap_audio_port_configuration_request *requests,
+                                                            uint32_t request_count) noexcept {
+         return false;
+      }
+      void ensureClapAudioPortConfigurationRequestIsValid(
+         const clap_audio_port_configuration_request *requests,
+         uint32_t request_count);
+
       //--------------------//
       // clap_plugin_params //
       //--------------------//
@@ -315,6 +331,11 @@ namespace clap { namespace helpers {
       void ensureAudioThread(const char *method) const noexcept;
       void ensureParamThread(const char *method) const noexcept;
 
+      ////////////////////
+      // General Checks //
+      ////////////////////
+      void ensureIsInactive(const char *methodName) const noexcept;
+
       ///////////////
       // Utilities //
       ///////////////
@@ -426,6 +447,14 @@ namespace clap { namespace helpers {
                                                     uint32_t port_index,
                                                     bool is_active,
                                                     uint32_t sample_size) noexcept;
+
+      // clap_plugin_configurable_audio_ports
+      static bool clapConfigurableAudioPortsCanApplyConfiguration(const clap_plugin_t *plugin, 
+                                                                  const clap_audio_port_configuration_request *requests, 
+                                                                  uint32_t request_count) noexcept;
+      static bool clapConfigurableAudioPortsApplyActivation(const clap_plugin_t *plugin, 
+                                                            const clap_audio_port_configuration_request *requests, 
+                                                            uint32_t request_count) noexcept;
 
       // clap_plugin_params
       static uint32_t clapParamsCount(const clap_plugin *plugin) noexcept;
@@ -552,6 +581,7 @@ namespace clap { namespace helpers {
       static const clap_plugin_audio_ports _pluginAudioPorts;
       static const clap_plugin_audio_ports_config _pluginAudioPortsConfig;
       static const clap_plugin_audio_ports_activation _pluginAudioPortsActivation;
+      static const clap_plugin_configurable_audio_ports _pluginConfigurableAudioPorts;
       static const clap_plugin_gui _pluginGui;
       static const clap_plugin_latency _pluginLatency;
       static const clap_plugin_note_name _pluginNoteName;
