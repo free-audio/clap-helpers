@@ -826,20 +826,24 @@ namespace clap { namespace helpers {
       auto methodName = "clap_plugin_configurable_audio_ports.apply_configuration";
       self.ensureMainThread(methodName);
       self.ensureIsInactive(methodName);
-      if (l >= CheckingLevel::Minimal &&
-          !self.configurableAudioPortsCanApplyConfiguration(requests, request_count)) {
-         self.hostMisbehaving(
-            "Host requested a configuration that the plugin did not accept. Check with "
-            "clap_plugin_configurable_audio_ports.can_apply_configuration before applying a "
-            "configuration!");
+
+      bool canApplyConfiguration;
+      if (l >= CheckingLevel::Minimal) {
+         canApplyConfiguration =
+            self.configurableAudioPortsCanApplyConfiguration(requests, request_count);
       }
 
-      return self.configurableAudioPortsApplyConfiguration(requests, request_count);
-   }
+      bool applyConfigurationSuccess =
+         self.configurableAudioPortsApplyConfiguration(requests, request_count);
 
-
-
+      if (l >= CheckingLevel::Minimal && canApplyConfiguration != applyConfigurationSuccess) {
+         self._host.pluginMisbehaving(
+            "Plugin's functions clap_plugin_configurable_audio_ports.can_apply_configuration and "
+            "clap_plugin_configurable_audio_ports.apply_configuration returned different values "
+            "for the same configuration.");
       }
+
+      return applyConfigurationSuccess;
    }
 
    //--------------------//
