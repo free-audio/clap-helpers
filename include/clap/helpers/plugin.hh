@@ -332,6 +332,7 @@ namespace clap { namespace helpers {
       // General Checks //
       ////////////////////
       void ensureIsInactive(const char *methodName) const noexcept;
+      void ensureIsActive(const char *methodName) const noexcept;
 
       ///////////////
       // Utilities //
