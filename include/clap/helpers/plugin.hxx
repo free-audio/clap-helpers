@@ -813,7 +813,6 @@ namespace clap { namespace helpers {
       auto methodName = "clap_plugin_configurable_audio_ports.can_apply_configuration";
       self.ensureMainThread(methodName);
       self.ensureIsInactive(methodName);
-      self.ensureClapAudioPortConfigurationRequestIsValid(requests, request_count);
 
       return self.configurableAudioPortsCanApplyConfiguration(requests, request_count);
    }
@@ -827,8 +826,6 @@ namespace clap { namespace helpers {
       auto methodName = "clap_plugin_configurable_audio_ports.apply_configuration";
       self.ensureMainThread(methodName);
       self.ensureIsInactive(methodName);
-      self.ensureClapAudioPortConfigurationRequestIsValid(requests, request_count);
-
       if (l >= CheckingLevel::Minimal &&
           !self.configurableAudioPortsCanApplyConfiguration(requests, request_count)) {
          self.hostMisbehaving(
@@ -840,26 +837,8 @@ namespace clap { namespace helpers {
       return self.configurableAudioPortsApplyConfiguration(requests, request_count);
    }
 
-   template <MisbehaviourHandler h, CheckingLevel l>
-   void Plugin<h, l>::ensureClapAudioPortConfigurationRequestIsValid(
-      const clap_audio_port_configuration_request *requests,
-      uint32_t request_count) {
-      if (l == CheckingLevel::None)
-         return;
 
-      for (int i = 0; i < request_count; ++i) {
-         if (!requests[i].port_type)
-            continue;
 
-         if (strcmp(requests[i].port_type, CLAP_PORT_MONO) == 0 && requests[i].channel_count != 1) {
-            hostMisbehaving("Host requested a mono port type with a channel count other than one.");
-         } else if (strcmp(requests[i].port_type, CLAP_PORT_STEREO) == 0 && requests[i].channel_count != 2) {
-            hostMisbehaving("Host requested a stereo port type with a channel count other than two.");
-         } else if (strcmp(requests[i].port_type, CLAP_PORT_SURROUND) == 0 && requests[i].channel_count < 3) {
-            hostMisbehaving("Host requested a surround port type with insufficient channel count.");
-         } else if (strcmp(requests[i].port_type, CLAP_PORT_AMBISONIC) == 0 && requests[i].channel_count < 4) {
-            hostMisbehaving("Host requested an ambisonic port type with insufficient channel count.");
-         }
       }
    }
 

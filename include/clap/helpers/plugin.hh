@@ -162,9 +162,6 @@ namespace clap { namespace helpers {
                                                             uint32_t request_count) noexcept {
          return false;
       }
-      void ensureClapAudioPortConfigurationRequestIsValid(
-         const clap_audio_port_configuration_request *requests,
-         uint32_t request_count);
 
       //--------------------//
       // clap_plugin_params //
