@@ -1860,6 +1860,19 @@ namespace clap { namespace helpers {
       hostMisbehaving(msg.str());
    }
 
+   template <MisbehaviourHandler h, CheckingLevel l>
+   void Plugin<h, l>::ensureIsActive(const char *methodName) const noexcept {
+      if (l == CheckingLevel::None)
+         return;
+
+      if (isActive())
+         return;
+
+      std::ostringstream msg;
+      msg << "it is illegal to call " << methodName << "() while the plugin is not active!";
+      hostMisbehaving(msg.str());
+   }
+
    ///////////////
    // Utilities //
    ///////////////
