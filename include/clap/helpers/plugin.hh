@@ -449,9 +449,9 @@ namespace clap { namespace helpers {
       static bool clapConfigurableAudioPortsCanApplyConfiguration(const clap_plugin_t *plugin, 
                                                                   const clap_audio_port_configuration_request *requests, 
                                                                   uint32_t request_count) noexcept;
-      static bool clapConfigurableAudioPortsApplyActivation(const clap_plugin_t *plugin, 
-                                                            const clap_audio_port_configuration_request *requests, 
-                                                            uint32_t request_count) noexcept;
+      static bool clapConfigurableAudioPortsApplyConfiguration(const clap_plugin_t *plugin, 
+                                                               const clap_audio_port_configuration_request *requests, 
+                                                               uint32_t request_count) noexcept;
 
       // clap_plugin_params
       static uint32_t clapParamsCount(const clap_plugin *plugin) noexcept;

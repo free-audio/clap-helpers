@@ -64,7 +64,7 @@ namespace clap { namespace helpers {
    template <MisbehaviourHandler h, CheckingLevel l>
    const clap_plugin_configurable_audio_ports Plugin<h, l>::_pluginConfigurableAudioPorts = {
       clapConfigurableAudioPortsCanApplyConfiguration,
-      clapConfigurableAudioPortsApplyActivation,
+      clapConfigurableAudioPortsApplyConfiguration,
    };
 
 
@@ -818,7 +818,7 @@ namespace clap { namespace helpers {
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   bool Plugin<h, l>::clapConfigurableAudioPortsApplyActivation(
+   bool Plugin<h, l>::clapConfigurableAudioPortsApplyConfiguration(
       const clap_plugin_t *plugin,
       const clap_audio_port_configuration_request *requests,
       uint32_t request_count) noexcept {
