@@ -62,6 +62,13 @@ namespace clap { namespace helpers {
    };
 
    template <MisbehaviourHandler h, CheckingLevel l>
+   const clap_plugin_configurable_audio_ports Plugin<h, l>::_pluginConfigurableAudioPorts = {
+      clapConfigurableAudioPortsCanApplyConfiguration,
+      clapConfigurableAudioPortsApplyConfiguration,
+   };
+
+
+   template <MisbehaviourHandler h, CheckingLevel l>
    const clap_plugin_params Plugin<h, l>::_pluginParams = {
       clapParamsCount,
       clapParamsInfo,
@@ -472,6 +479,8 @@ namespace clap { namespace helpers {
          return &_pluginAudioPortsActivation;
       if (!strcmp(id, CLAP_EXT_AUDIO_PORTS_CONFIG) && self.implementsAudioPortsConfig())
          return &_pluginAudioPortsConfig;
+      if (!strcmp(id, CLAP_EXT_CONFIGURABLE_AUDIO_PORTS) && self.implementsConfigurableAudioPorts())
+         return &_pluginConfigurableAudioPorts;
       if (!strcmp(id, CLAP_EXT_PARAMS) && self.implementsParams())
          return &_pluginParams;
       if ((!strcmp(id, CLAP_EXT_PARAM_INDICATION) ||
@@ -789,6 +798,52 @@ namespace clap { namespace helpers {
       self.ensureMainThread("clap_plugin_params.count");
 
       return self.paramsCount();
+   }
+
+   //--------------------------------------//
+   // clap_plugin_configurable_audio_ports //
+   //--------------------------------------//
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   bool Plugin<h, l>::clapConfigurableAudioPortsCanApplyConfiguration(
+      const clap_plugin_t *plugin,
+      const clap_audio_port_configuration_request *requests,
+      uint32_t request_count) noexcept {
+      auto &self = from(plugin);
+      auto methodName = "clap_plugin_configurable_audio_ports.can_apply_configuration";
+      self.ensureMainThread(methodName);
+      self.ensureIsInactive(methodName);
+
+      return self.configurableAudioPortsCanApplyConfiguration(requests, request_count);
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   bool Plugin<h, l>::clapConfigurableAudioPortsApplyConfiguration(
+      const clap_plugin_t *plugin,
+      const clap_audio_port_configuration_request *requests,
+      uint32_t request_count) noexcept {
+      auto &self = from(plugin);
+      auto methodName = "clap_plugin_configurable_audio_ports.apply_configuration";
+      self.ensureMainThread(methodName);
+      self.ensureIsInactive(methodName);
+
+      bool canApplyConfiguration;
+      if (l >= CheckingLevel::Minimal) {
+         canApplyConfiguration =
+            self.configurableAudioPortsCanApplyConfiguration(requests, request_count);
+      }
+
+      bool applyConfigurationSuccess =
+         self.configurableAudioPortsApplyConfiguration(requests, request_count);
+
+      if (l >= CheckingLevel::Minimal && canApplyConfiguration != applyConfigurationSuccess) {
+         self._host.pluginMisbehaving(
+            "Plugin's functions clap_plugin_configurable_audio_ports.can_apply_configuration and "
+            "clap_plugin_configurable_audio_ports.apply_configuration returned different values "
+            "for the same configuration.");
+      }
+
+      return applyConfigurationSuccess;
    }
 
    //--------------------//
@@ -1790,6 +1845,35 @@ namespace clap { namespace helpers {
       std::ostringstream msg;
       msg << "Host called the method " << method
           << "() on wrong thread! It must be called on audio thread!";
+      hostMisbehaving(msg.str());
+   }
+
+   ////////////////////
+   // General Checks //
+   ////////////////////
+   template <MisbehaviourHandler h, CheckingLevel l>
+   void Plugin<h, l>::ensureIsInactive(const char *methodName) const noexcept {
+      if (l == CheckingLevel::None)
+         return;
+
+      if (!isActive())
+         return;
+
+      std::ostringstream msg;
+      msg << "it is illegal to call " << methodName << "() while the plugin is active!";
+      hostMisbehaving(msg.str());
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   void Plugin<h, l>::ensureIsActive(const char *methodName) const noexcept {
+      if (l == CheckingLevel::None)
+         return;
+
+      if (isActive())
+         return;
+
+      std::ostringstream msg;
+      msg << "it is illegal to call " << methodName << "() while the plugin is not active!";
       hostMisbehaving(msg.str());
    }
 
