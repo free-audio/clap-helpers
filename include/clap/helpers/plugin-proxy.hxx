@@ -154,14 +154,14 @@ namespace clap { namespace helpers {
    bool PluginProxy<h, l>::configurableAudioPortsCanApplyConfiguration(clap_audio_port_configuration_request *requests, uint32_t requests_count) const noexcept {
       if(!_pluginConfigurableAudioPorts) return false;
       ensureMainThread("clap_plugin_configurable_audio_ports.can_apply_configuration");
-      return _pluginConfigurableAudioPorts->can_apply_configuration(requests, requests_count);
+      return _pluginConfigurableAudioPorts->can_apply_configuration(&_plugin, requests, requests_count);
    }
 
    template<MisbehaviourHandler h, CheckingLevel l>
    bool PluginProxy<h, l>::configurableAudioPortsApplyConfiguration(clap_audio_port_configuration_request *requests, uint32_t requests_count) const noexcept {
       if(!_pluginConfigurableAudioPorts) return false;
       ensureMainThread("clap_plugin_configurable_audio_ports.apply_configuration");
-      return _pluginConfigurableAudioPorts->apply_configuration(requests, requests_count);
+      return _pluginConfigurableAudioPorts->apply_configuration(&_plugin, requests, requests_count);
    }
 
 
