@@ -35,6 +35,13 @@ namespace clap { namespace helpers {
       uint32_t audioPortsCount(bool isInput) const noexcept;
       bool audioPortsGet(uint32_t index, bool isInput, clap_audio_port_info_t *info) const noexcept;
 
+      /////////////////////////////
+      // clap_plugin_configurable_audio_ports //
+      /////////////////////////////
+      bool canUseConfigurableAudioPorts() const noexcept;
+      bool configurableAudioPortsCanApplyConfiguration(clap_audio_port_configuration_request* requests, uint32_t requests_count) const noexcept;
+      bool configurableAudioPortsApplyConfiguration(clap_audio_port_configuration_request* requests, uint32_t requests_count) const noexcept;
+
       /////////////////////
       // clap_plugin_gui //
       /////////////////////
@@ -154,6 +161,7 @@ namespace clap { namespace helpers {
       const clap_plugin& _plugin;
 
       const clap_plugin_audio_ports *_pluginAudioPorts = nullptr;
+      const clap_plugin_configurable_audio_ports *_pluginConfigurableAudioPorts = nullptr;
       const clap_plugin_gui *_pluginGui = nullptr;
       const clap_plugin_latency *_pluginLatency = nullptr;
       const clap_plugin_note_ports *_pluginNotePorts = nullptr;

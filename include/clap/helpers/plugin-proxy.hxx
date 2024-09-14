@@ -13,6 +13,7 @@ namespace clap { namespace helpers {
          return false;
 
       getExtension(_pluginAudioPorts, CLAP_EXT_AUDIO_PORTS);
+      getExtension(_pluginConfigurableAudioPorts, CLAP_EXT_CONFIGURABLE_AUDIO_PORTS);
       getExtension(_pluginGui, CLAP_EXT_GUI);
       getExtension(_pluginLatency, CLAP_EXT_LATENCY);
       getExtension(_pluginNotePorts, CLAP_EXT_NOTE_PORTS);
@@ -48,6 +49,7 @@ namespace clap { namespace helpers {
       _plugin.destroy(&_plugin);
 
       _pluginAudioPorts = nullptr;
+      _pluginConfigurableAudioPorts = nullptr;
       _pluginGui = nullptr;
       _pluginParams = nullptr;
       _pluginPosixFdSupport = nullptr;
@@ -136,6 +138,33 @@ namespace clap { namespace helpers {
       ensureMainThread("audio_ports.get");
       return _pluginAudioPorts->get(&_plugin, index, isInput, info);
    }
+
+   /////////////////////////////
+   // clap_plugin_configurable_audio_ports //
+   /////////////////////////////
+   template<MisbehaviourHandler h, CheckingLevel l>
+   bool PluginProxy<h, l>::canUseConfigurableAudioPorts() const noexcept {
+      if(!_pluginConfigurableAudioPorts) {
+         return false;
+      }
+      return true;
+   }
+
+   template<MisbehaviourHandler h, CheckingLevel l>
+   bool PluginProxy<h, l>::configurableAudioPortsCanApplyConfiguration(clap_audio_port_configuration_request *requests, uint32_t requests_count) const noexcept {
+      if(!_pluginConfigurableAudioPorts) return false;
+      ensureMainThread("clap_plugin_configurable_audio_ports.can_apply_configuration");
+      return _pluginConfigurableAudioPorts->can_apply_configuration(requests, requests_count);
+   }
+
+   template<MisbehaviourHandler h, CheckingLevel l>
+   bool PluginProxy<h, l>::configurableAudioPortsApplyConfiguration(clap_audio_port_configuration_request *requests, uint32_t requests_count) const noexcept {
+      if(!_pluginConfigurableAudioPorts) return false;
+      ensureMainThread("clap_plugin_configurable_audio_ports.apply_configuration");
+      return _pluginConfigurableAudioPorts->apply_configuration(requests, requests_count);
+   }
+
+
 
    /////////////////////
    // clap_plugin_gui //
