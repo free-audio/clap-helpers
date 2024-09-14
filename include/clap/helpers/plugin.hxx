@@ -61,6 +61,12 @@ namespace clap { namespace helpers {
       clapAudioPortsActivationSetActive,
    };
 
+   template<MisbehaviourHandler h, CheckingLevel l>
+   const clap_plugin_configurable_audio_ports Plugin<h, l>::_pluginConfigurableAudioPorts = {
+      clapConfigurableAudioPortsCanApplyConfiguration,
+      clapConfigurableAudioPortsApplyConfiguration
+   };
+
    template <MisbehaviourHandler h, CheckingLevel l>
    const clap_plugin_params Plugin<h, l>::_pluginParams = {
       clapParamsCount,
@@ -472,6 +478,8 @@ namespace clap { namespace helpers {
          return &_pluginAudioPortsActivation;
       if (!strcmp(id, CLAP_EXT_AUDIO_PORTS_CONFIG) && self.implementsAudioPortsConfig())
          return &_pluginAudioPortsConfig;
+      if(!strcmp(id, CLAP_EXT_CONFIGURABLE_AUDIO_PORTS) && self.implementsConfigurableAudioPorts())
+         return &_pluginConfigurableAudioPorts;
       if (!strcmp(id, CLAP_EXT_PARAMS) && self.implementsParams())
          return &_pluginParams;
       if ((!strcmp(id, CLAP_EXT_PARAM_INDICATION) ||
@@ -781,6 +789,36 @@ namespace clap { namespace helpers {
       }
 
       return self.audioPortsActivationSetActive(is_input, port_index, is_active, sample_size);
+   }
+
+   template<MisbehaviourHandler h, CheckingLevel l>
+   bool Plugin<h, l>::clapConfigurableAudioPortsCanApplyConfiguration(const clap_plugin_t *plugin, const clap_audio_port_configuration_request *requests, uint32_t requests_count) noexcept {
+      auto& self = from(plugin);
+      self.ensureMainThread("clap_plugin_configurable_audio_ports.can_apply_configuration");
+      if(l >= CheckingLevel::Minimal) {
+         if(self.isActive()) {
+            self.hostMisbehaving(
+               "it is illegal to call clap_plugin_configurable_audio_ports.can_apply_configuration "
+               "if the plugin is active"
+               );
+         }
+      }
+      return self.configurableAudioPortsCanApplyConfiguration(requests, requests_count);
+   }
+
+   template<MisbehaviourHandler h, CheckingLevel l>
+   bool Plugin<h, l>::clapConfigurableAudioPortsApplyConfiguration(const clap_plugin_t *plugin, const clap_audio_port_configuration_request *requests, uint32_t requests_count) noexcept {
+      auto& self = from(plugin);
+      self.ensureMainThread("clap_plugin_configurable_audio_ports.apply_configuration");
+      if(l >= CheckingLevel::Minimal) {
+         if(self.isActive()) {
+            self.hostMisbehaving(
+               "it is illegal to call clap_plugin_configurable_audio_ports.apply_configuration "
+               "if the plugin is active"
+            );
+         }
+      }
+      return self.configurableAudioPortsApplyConfiguration(requests, requests_count);
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>

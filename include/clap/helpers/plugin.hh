@@ -150,6 +150,18 @@ namespace clap { namespace helpers {
          return false;
       }
 
+      //------------------------------------//
+      // clap_configurable_audio_ports //
+      //------------------------------------//
+      virtual bool implementsConfigurableAudioPorts() const noexcept { return false; };
+      virtual bool configurableAudioPortsCanApplyConfiguration(const clap_audio_port_configuration_request* requests,
+                                                               uint32_t requests_count) noexcept {
+         return false;
+      }
+      virtual bool configurableAudioPortsApplyConfiguration(const clap_audio_port_configuration_request* requests,
+                                                            uint32_t requests_count) noexcept {
+         return false;
+      }
       //--------------------//
       // clap_plugin_params //
       //--------------------//
@@ -427,6 +439,14 @@ namespace clap { namespace helpers {
                                                     bool is_active,
                                                     uint32_t sample_size) noexcept;
 
+      static bool clapConfigurableAudioPortsCanApplyConfiguration(const clap_plugin_t* plugin,
+                                                                  const clap_audio_port_configuration_request* requests,
+                                                                  uint32_t requests_count) noexcept;
+
+      static bool clapConfigurableAudioPortsApplyConfiguration(const clap_plugin_t* plugin,
+                                                               const clap_audio_port_configuration_request* requests,
+                                                               uint32_t requests_count) noexcept;
+
       // clap_plugin_params
       static uint32_t clapParamsCount(const clap_plugin *plugin) noexcept;
       static bool clapParamsInfo(const clap_plugin *plugin,
@@ -552,6 +572,7 @@ namespace clap { namespace helpers {
       static const clap_plugin_audio_ports _pluginAudioPorts;
       static const clap_plugin_audio_ports_config _pluginAudioPortsConfig;
       static const clap_plugin_audio_ports_activation _pluginAudioPortsActivation;
+      static const clap_plugin_configurable_audio_ports _pluginConfigurableAudioPorts;
       static const clap_plugin_gui _pluginGui;
       static const clap_plugin_latency _pluginLatency;
       static const clap_plugin_note_name _pluginNoteName;
