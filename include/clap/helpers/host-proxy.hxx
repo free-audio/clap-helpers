@@ -474,7 +474,8 @@ namespace clap { namespace helpers {
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   bool HostProxy<h, l>::posixFdSupportRegister(int fd, clap_posix_fd_flags_t flags) const noexcept {
+   bool HostProxy<h, l>::posixFdSupportRegister(int fd,
+                                                clap_posix_fd_flags_t flags) const noexcept {
       assert(canUsePosixFdSupport());
       ensureMainThread("posix_fd_support.register");
       return _hostPosixFdSupport->register_fd(_host, fd, flags);
@@ -692,7 +693,7 @@ namespace clap { namespace helpers {
          return false;
 
       if (_hostUndo->begin_change && _hostUndo->cancel_change && _hostUndo->change_made &&
-          _hostUndo->undo && _hostUndo->redo && _hostUndo->set_context_info_subscription)
+          _hostUndo->request_undo && _hostUndo->request_redo && _hostUndo->set_wants_context_updates)
          return true;
 
       return false;
@@ -714,35 +715,33 @@ namespace clap { namespace helpers {
 
    template <MisbehaviourHandler h, CheckingLevel l>
    void HostProxy<h, l>::undoChangeMade(const char *name,
-                                        const void *redo_delta,
-                                        size_t redo_delta_size,
-                                        const void *undo_delta,
-                                        size_t undo_delta_size) const noexcept {
+                                        const void *delta,
+                                        size_t delta_size,
+                                        bool delta_can_undo) const noexcept {
       assert(canUseUndo());
       ensureMainThread("undo.change_made");
-      _hostUndo->change_made(_host, name, redo_delta, redo_delta_size, undo_delta, undo_delta_size);
+      _hostUndo->change_made(_host, name, delta, delta_size, delta_can_undo);
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   void HostProxy<h, l>::undoUndo(const clap_host_t *host) const noexcept {
+   void HostProxy<h, l>::undoRequestUndo() const noexcept {
       assert(canUseUndo());
       ensureMainThread("undo.undo");
-      _hostUndo->undo(_host);
+      _hostUndo->request_undo(_host);
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   void HostProxy<h, l>::undoRedo(const clap_host_t *host) const noexcept {
+   void HostProxy<h, l>::undoRequestRedo() const noexcept {
       assert(canUseUndo());
       ensureMainThread("undo.redo");
-      _hostUndo->redo(_host);
+      _hostUndo->request_redo(_host);
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   void HostProxy<h, l>::undoSetContextInfoSubscription(const clap_host_t *host,
-                                                 bool wants_info) const noexcept {
+   void HostProxy<h, l>::undoSetWantsContextUpdates(bool is_subscribed) const noexcept {
       assert(canUseUndo());
       ensureMainThread("undo.set_context_info_subscription");
-      _hostUndo->set_context_info_subscription(_host, wants_info);
+      _hostUndo->set_wants_context_updates(_host, is_subscribed);
    }
 
 }} // namespace clap::helpers

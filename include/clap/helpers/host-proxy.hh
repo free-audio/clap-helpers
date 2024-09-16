@@ -192,13 +192,12 @@ namespace clap { namespace helpers {
       void undoBeginChange() const noexcept;
       void undoCancelChange() const noexcept;
       void undoChangeMade(const char *name,
-                          const void *redo_delta,
-                          size_t redo_delta_size,
-                          const void *undo_delta,
-                          size_t undo_delta_size) const noexcept;
-      void undoUndo(const clap_host_t *host) const noexcept;
-      void undoRedo(const clap_host_t *host) const noexcept;
-      void undoSetContextInfoSubscription(const clap_host_t *host, bool wants_info) const noexcept;
+                          const void *delta,
+                          size_t delta_size,
+                          bool delta_can_undo) const noexcept;
+      void undoRequestUndo() const noexcept;
+      void undoRequestRedo() const noexcept;
+      void undoSetWantsContextUpdates(bool is_subscribed) const noexcept;
 
    protected:
       void ensureMainThread(const char *method) const noexcept;

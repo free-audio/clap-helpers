@@ -154,12 +154,13 @@ namespace clap { namespace helpers {
       // clap_plugin_configurable_audio_ports //
       //--------------------------------------//
       virtual bool implementsConfigurableAudioPorts() const noexcept { return false; }
-      virtual bool configurableAudioPortsCanApplyConfiguration(const clap_audio_port_configuration_request *requests,
-                                                               uint32_t request_count) const noexcept {
+      virtual bool configurableAudioPortsCanApplyConfiguration(
+         const clap_audio_port_configuration_request *requests,
+         uint32_t request_count) const noexcept {
          return false;
       }
-      virtual bool configurableAudioPortsApplyConfiguration(const clap_audio_port_configuration_request *requests,
-                                                            uint32_t request_count) noexcept {
+      virtual bool configurableAudioPortsApplyConfiguration(
+         const clap_audio_port_configuration_request *requests, uint32_t request_count) noexcept {
          return false;
       }
 
@@ -299,13 +300,28 @@ namespace clap { namespace helpers {
       //------------------//
       // clap_plugin_undo //
       //------------------//
-      virtual bool implementsUndo() const noexcept { return false; }
-      virtual void undoGetDeltaProperties(clap_undo_delta_properties_t *properties) noexcept {}
-      virtual bool undoCanUseDeltaFormatVersion(clap_id format_version) noexcept { return false; }
+      virtual bool implementsUndoDelta() const noexcept { return false; }
+      virtual void undoDeltaGetDeltaProperties(clap_undo_delta_properties_t *properties) noexcept {}
+      virtual bool undoDeltaCanUseDeltaFormatVersion(clap_id format_version) noexcept {
+         return false;
+      }
       virtual bool
-      undoApplyDelta(clap_id format_version, const void *delta, size_t delta_size) noexcept { return false; }
-      virtual void
-      undoSetContextInfo(uint64_t flags, const char *undo_name, const char *redo_name) noexcept {}
+      undoDeltaUndo(clap_id format_version, const void *delta, size_t delta_size) noexcept {
+         return false;
+      }
+      virtual bool
+      undoDeltaRedo(clap_id format_version, const void *delta, size_t delta_size) noexcept {
+         return false;
+      }
+
+      //--------------------------//
+      // clap_plugin_undo_context //
+      //--------------------------//
+      virtual bool implementsUndoContext() const noexcept { return false; }
+      virtual void undoContextSetCanUndo(bool can_undo) noexcept {}
+      virtual void undoContextSetCanRedo(bool can_redo) noexcept {}
+      virtual void undoContextSetUndoName(const char *name) noexcept {}
+      virtual void undoContextSetRedoName(const char *name) noexcept {}
 
       /////////////
       // Logging //
@@ -447,12 +463,14 @@ namespace clap { namespace helpers {
                                                     uint32_t sample_size) noexcept;
 
       // clap_plugin_configurable_audio_ports
-      static bool clapConfigurableAudioPortsCanApplyConfiguration(const clap_plugin_t *plugin, 
-                                                                  const clap_audio_port_configuration_request *requests, 
-                                                                  uint32_t request_count) noexcept;
-      static bool clapConfigurableAudioPortsApplyConfiguration(const clap_plugin_t *plugin, 
-                                                               const clap_audio_port_configuration_request *requests, 
-                                                               uint32_t request_count) noexcept;
+      static bool clapConfigurableAudioPortsCanApplyConfiguration(
+         const clap_plugin_t *plugin,
+         const clap_audio_port_configuration_request *requests,
+         uint32_t request_count) noexcept;
+      static bool clapConfigurableAudioPortsApplyConfiguration(
+         const clap_plugin_t *plugin,
+         const clap_audio_port_configuration_request *requests,
+         uint32_t request_count) noexcept;
 
       // clap_plugin_params
       static uint32_t clapParamsCount(const clap_plugin *plugin) noexcept;
@@ -561,19 +579,28 @@ namespace clap { namespace helpers {
                                                       char *path,
                                                       uint32_t path_size) noexcept;
 
-      // clap_plugin_undo
-      static void clapUndoGetDeltaProperties(const clap_plugin_t *plugin,
-                                             clap_undo_delta_properties_t *properties) noexcept;
-      static bool clapUndoCanUseDeltaFormatVersion(const clap_plugin_t *plugin,
-                                                   clap_id format_version) noexcept;
-      static bool clapUndoApplyDelta(const clap_plugin_t *plugin,
-                                     clap_id format_version,
-                                     const void *delta,
-                                     size_t delta_size) noexcept;
-      static void clapUndoSetContextInfo(const clap_plugin_t *plugin,
-                                         uint64_t flags,
-                                         const char *undo_name,
-                                         const char *redo_name) noexcept;
+      // clap_plugin_undo_delta
+      static void
+      clapUndoDeltaGetDeltaProperties(const clap_plugin_t *plugin,
+                                      clap_undo_delta_properties_t *properties) noexcept;
+      static bool clapUndoDeltaCanUseDeltaFormatVersion(const clap_plugin_t *plugin,
+                                                        clap_id format_version) noexcept;
+      static bool clapUndoDeltaUndo(const clap_plugin_t *plugin,
+                                    clap_id format_version,
+                                    const void *delta,
+                                    size_t delta_size) noexcept;
+      static bool clapUndoDeltaRedo(const clap_plugin_t *plugin,
+                                    clap_id format_version,
+                                    const void *delta,
+                                    size_t delta_size) noexcept;
+
+      // clap_plugin_undo_context
+      static void clapUndoContextSetCanUndo(const clap_plugin_t *plugin, bool can_undo) noexcept;
+      static void clapUndoContextSetCanRedo(const clap_plugin_t *plugin, bool can_redo) noexcept;
+      static void clapUndoContextSetUndoName(const clap_plugin_t *plugin,
+                                             const char *name) noexcept;
+      static void clapUndoContextSetRedoName(const clap_plugin_t *plugin,
+                                             const char *name) noexcept;
 
       // interfaces
       static const clap_plugin_audio_ports _pluginAudioPorts;
@@ -599,7 +626,8 @@ namespace clap { namespace helpers {
       static const clap_plugin_voice_info _pluginVoiceInfo;
       static const clap_plugin_context_menu _pluginContextMenu;
       static const clap_plugin_resource_directory _pluginResourceDirectory;
-      static const clap_plugin_undo _pluginUndo;
+      static const clap_plugin_undo_delta _pluginUndoDelta;
+      static const clap_plugin_undo_context _pluginUndoContext;
 
       // state
       bool _wasInitialized = false;
