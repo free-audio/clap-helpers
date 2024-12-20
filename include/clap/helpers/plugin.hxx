@@ -171,6 +171,11 @@ namespace clap { namespace helpers {
    };
 
    template <MisbehaviourHandler h, CheckingLevel l>
+   const clap_plugin_location Plugin<h, l>::_pluginLocation = {
+      clapLocationSetLocation,
+   };
+
+   template <MisbehaviourHandler h, CheckingLevel l>
    Plugin<h, l>::Plugin(const clap_plugin_descriptor *desc, const clap_host *host) : _host(host) {
       _plugin.plugin_data = this;
       _plugin.desc = desc;
@@ -526,6 +531,8 @@ namespace clap { namespace helpers {
             return &_pluginUndoDelta;
          if (!strcmp(id, CLAP_EXT_UNDO_CONTEXT) && self.implementsUndoContext())
             return &_pluginUndoContext;
+         if (!strcmp(id, CLAP_EXT_LOCATION) && self.implementsLocation())
+            return &_pluginLocation;
       }
 
       return self.extension(id);
@@ -1790,6 +1797,34 @@ namespace clap { namespace helpers {
       auto &self = from(plugin);
       self.ensureMainThread("clap_undo_context.set_redo_name");
       self.undoContextSetRedoName(name);
+   }
+
+   //------------------//
+   // clap_plugin_undo //
+   //------------------//
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   void Plugin<h, l>::clapLocationSetLocation(const clap_plugin_t *plugin,
+                                              const clap_plugin_location_element_t *path,
+                                              uint32_t num_elements) noexcept {
+      auto &self = from(plugin);
+      self.ensureMainThread("clap_location.set_location");
+
+      if (l >= CheckingLevel::Minimal) {
+         if (!path) {
+            self.hostMisbehaving(
+               "clap_plugin_location.set_location() was called without a null path!");
+            return;
+         }
+
+         if (num_elements == 0) {
+            self.hostMisbehaving(
+               "clap_plugin_location.set_location() was called without any path elements!");
+            return;
+         }
+      }
+
+      self.locationSetLocation(path, num_elements);
    }
 
    /////////////
