@@ -3,19 +3,20 @@
 #include <clap/clap.h>
 
 #include "checking-level.hh"
-#include "misbehaviour-handler.hh"
 #include "host.hh"
+#include "misbehaviour-handler.hh"
 
 namespace clap { namespace helpers {
    template <MisbehaviourHandler h, CheckingLevel l>
    class PluginProxy {
    public:
-      PluginProxy(const clap_plugin& plugin, const Host<h, l>& host) : _host{host}, _plugin{plugin} {}
+      PluginProxy(const clap_plugin &plugin, const Host<h, l> &host)
+         : _host{host}, _plugin{plugin} {}
 
       /////////////////
       // clap_plugin //
       /////////////////
-      const clap_plugin* clapPlugin() const { return &_plugin; }
+      const clap_plugin *clapPlugin() const { return &_plugin; }
       bool init() noexcept;
       template <typename T>
       void getExtension(const T *&ptr, const char *id) const noexcept;
@@ -66,9 +67,7 @@ namespace clap { namespace helpers {
       ////////////////////////////
       bool canUseNotePorts() const noexcept;
       uint32_t notePortsCount(bool is_input) const noexcept;
-      bool notePortsGet(uint32_t               index,
-                        bool                   is_input,
-                        clap_note_port_info_t *info) const noexcept;
+      bool notePortsGet(uint32_t index, bool is_input, clap_note_port_info_t *info) const noexcept;
 
       ////////////////////////
       // clap_plugin_params //
@@ -84,7 +83,8 @@ namespace clap { namespace helpers {
       bool paramsTextToValue(clap_id paramId,
                              const char *paramValueText,
                              double *outValue) const noexcept;
-      void paramsFlush(const clap_input_events_t *in, const clap_output_events_t *out) const noexcept;
+      void paramsFlush(const clap_input_events_t *in,
+                       const clap_output_events_t *out) const noexcept;
 
       //////////////////////////////////
       // clap_plugin_posix_fd_support //
@@ -98,15 +98,14 @@ namespace clap { namespace helpers {
       bool canUsePresetLoad() const noexcept;
       bool presetLoadFromLocation(uint32_t locationKind,
                                   const char *location,
-                                  const char *loadKey)  const noexcept;
+                                  const char *loadKey) const noexcept;
 
       /////////////////////////////////
       // clap_plugin_remote_controls //
       /////////////////////////////////
       bool canUseRemoteControls() const noexcept;
       uint32_t remoteControlsCount() const noexcept;
-      bool remoteControlsGet(uint32_t                     pageIndex,
-                             clap_remote_controls_page_t *page) const noexcept;
+      bool remoteControlsGet(uint32_t pageIndex, clap_remote_controls_page_t *page) const noexcept;
 
       ////////////////////////
       // clap_plugin_render //
@@ -140,6 +139,13 @@ namespace clap { namespace helpers {
       bool canUseTimerSupport() const noexcept;
       void timerSupportOnTimer(clap_id timerId) const noexcept;
 
+      //////////////////////////
+      // clap_plugin_location //
+      //////////////////////////
+      bool canUseLocation() const noexcept;
+      void locationSetLocation(const clap_plugin_location_element_t *path,
+                               uint32_t num_elements) const noexcept;
+
    protected:
       /////////////////////
       // Thread Checking //
@@ -149,9 +155,9 @@ namespace clap { namespace helpers {
       void ensureActivated(const char *method, bool expectedState) const noexcept;
       void ensureProcessing(const char *method, bool expectedState) const noexcept;
 
-      const Host<h, l>& _host;
+      const Host<h, l> &_host;
 
-      const clap_plugin& _plugin;
+      const clap_plugin &_plugin;
 
       const clap_plugin_audio_ports *_pluginAudioPorts = nullptr;
       const clap_plugin_gui *_pluginGui = nullptr;
@@ -166,6 +172,7 @@ namespace clap { namespace helpers {
       const clap_plugin_tail *_pluginTail = nullptr;
       const clap_plugin_thread_pool *_pluginThreadPool = nullptr;
       const clap_plugin_timer_support *_pluginTimerSupport = nullptr;
+      const clap_plugin_location *_pluginLocation = nullptr;
 
       // state
       bool _isActive = false;
