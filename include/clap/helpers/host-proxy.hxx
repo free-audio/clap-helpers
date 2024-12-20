@@ -41,6 +41,7 @@ namespace clap { namespace helpers {
       if (!_hostPresetLoad)
          getExtension(_hostPresetLoad, CLAP_EXT_PRESET_LOAD);
       getExtension(_hostUndo, CLAP_EXT_UNDO);
+      getExtension(_hostScratchMemory, CLAP_EXT_SCRATCH_MEMORY);
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
@@ -693,7 +694,8 @@ namespace clap { namespace helpers {
          return false;
 
       if (_hostUndo->begin_change && _hostUndo->cancel_change && _hostUndo->change_made &&
-          _hostUndo->request_undo && _hostUndo->request_redo && _hostUndo->set_wants_context_updates)
+          _hostUndo->request_undo && _hostUndo->request_redo &&
+          _hostUndo->set_wants_context_updates)
          return true;
 
       return false;
@@ -742,6 +744,36 @@ namespace clap { namespace helpers {
       assert(canUseUndo());
       ensureMainThread("undo.set_context_info_subscription");
       _hostUndo->set_wants_context_updates(_host, is_subscribed);
+   }
+
+   //////////////////////////////
+   // clap_host_scratch_memory //
+   //////////////////////////////
+   template <MisbehaviourHandler h, CheckingLevel l>
+   bool HostProxy<h, l>::canUseScratchMemory() const noexcept {
+      if (!_hostScratchMemory)
+         return false;
+
+      if (_hostScratchMemory->reserve && _hostScratchMemory->access)
+         return true;
+
+      hostMisbehaving("clap_host_scratch_memory is partially implemented!");
+      return false;
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   bool HostProxy<h, l>::scratchMemoryReserve(uint32_t scratch_size_bytes,
+                                              uint32_t max_concurrency_hint) const noexcept {
+      assert(canUseScratchMemory());
+      ensureMainThread("scratch_memory.reserve");
+      return _hostScratchMemory->reserve(_host, scratch_size_bytes, max_concurrency_hint);
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   void *HostProxy<h, l>::scratchMemoryAccess() const noexcept {
+      assert(canUseScratchMemory());
+      ensureAudioThread("scratch_memory.access");
+      return _hostScratchMemory->access(_host);
    }
 
 }} // namespace clap::helpers
