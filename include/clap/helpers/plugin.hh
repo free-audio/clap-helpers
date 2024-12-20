@@ -323,6 +323,13 @@ namespace clap { namespace helpers {
       virtual void undoContextSetUndoName(const char *name) noexcept {}
       virtual void undoContextSetRedoName(const char *name) noexcept {}
 
+      //----------------------//
+      // clap_plugin_location //
+      //----------------------//
+      virtual bool implementsLocation() const noexcept { return false; }
+      virtual void locationSetLocation(const clap_plugin_location_element_t *path,
+                                       uint32_t num_elements) noexcept {}
+
       /////////////
       // Logging //
       /////////////
@@ -602,6 +609,11 @@ namespace clap { namespace helpers {
       static void clapUndoContextSetRedoName(const clap_plugin_t *plugin,
                                              const char *name) noexcept;
 
+      // clap_plugin_location
+      static void clapLocationSetLocation(const clap_plugin_t *plugin,
+                                          const clap_plugin_location_element_t *path,
+                                          uint32_t num_elements) noexcept;
+
       // interfaces
       static const clap_plugin_audio_ports _pluginAudioPorts;
       static const clap_plugin_audio_ports_config _pluginAudioPortsConfig;
@@ -628,6 +640,7 @@ namespace clap { namespace helpers {
       static const clap_plugin_resource_directory _pluginResourceDirectory;
       static const clap_plugin_undo_delta _pluginUndoDelta;
       static const clap_plugin_undo_context _pluginUndoContext;
+      static const clap_plugin_location _pluginLocation;
 
       // state
       bool _wasInitialized = false;
