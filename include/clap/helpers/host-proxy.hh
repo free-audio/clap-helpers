@@ -199,6 +199,14 @@ namespace clap { namespace helpers {
       void undoRequestRedo() const noexcept;
       void undoSetWantsContextUpdates(bool is_subscribed) const noexcept;
 
+      //////////////////////////////
+      // clap_host_scratch_memory //
+      //////////////////////////////
+      bool canUseScratchMemory() const noexcept;
+      bool scratchMemoryReserve(uint32_t scratch_size_bytes,
+                                uint32_t max_concurrency_hint) const noexcept;
+      void *scratchMemoryAccess() const noexcept;
+
    protected:
       void ensureMainThread(const char *method) const noexcept;
       void ensureAudioThread(const char *method) const noexcept;
@@ -226,5 +234,6 @@ namespace clap { namespace helpers {
       const clap_host_context_menu *_hostContextMenu = nullptr;
       const clap_host_preset_load *_hostPresetLoad = nullptr;
       const clap_host_undo *_hostUndo = nullptr;
+      const clap_host_scratch_memory *_hostScratchMemory = nullptr;
    };
 }} // namespace clap::helpers
