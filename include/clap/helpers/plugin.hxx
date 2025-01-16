@@ -484,7 +484,7 @@ namespace clap { namespace helpers {
          return &_pluginAudioPorts;
       if ((!strcmp(id, CLAP_EXT_AUDIO_PORTS_ACTIVATION) ||
            !strcmp(id, CLAP_EXT_AUDIO_PORTS_ACTIVATION_COMPAT)) &&
-          self.implementsAudioPorts())
+          self.implementsAudioPortsActivation())
          return &_pluginAudioPortsActivation;
       if (!strcmp(id, CLAP_EXT_AUDIO_PORTS_CONFIG) && self.implementsAudioPortsConfig())
          return &_pluginAudioPortsConfig;
