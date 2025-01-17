@@ -542,7 +542,7 @@ namespace clap { namespace helpers {
       if (l >= CheckingLevel::Minimal) {
          if (!self._isActive && !self._isBeingActivated)
             self.hostMisbehaving("It is wrong to query the latency before the plugin is activated, "
-                                 "because if the plugin dosen't know the sample rate, it can't "
+                                 "because if the plugin doesn't know the sample rate, it can't "
                                  "know the number of samples of latency.");
       }
 
@@ -559,7 +559,7 @@ namespace clap { namespace helpers {
       if (l >= CheckingLevel::Minimal) {
          if (!self._isActive)
             self.hostMisbehaving("It is wrong to query the tail before the plugin is activated, "
-                                 "because if the plugin dosen't know the sample rate, it can't "
+                                 "because if the plugin doesn't know the sample rate, it can't "
                                  "know the tail length in samples.");
       }
 
@@ -762,12 +762,14 @@ namespace clap { namespace helpers {
    bool Plugin<h, l>::clapAudioPortsSetConfig(const clap_plugin *plugin,
                                               clap_id config_id) noexcept {
       auto &self = from(plugin);
-      self.ensureMainThread("clap_plugin_audio_ports.get_config");
+      self.ensureMainThread("clap_plugin_audio_ports.set_config");
 
       if (l >= CheckingLevel::Minimal) {
-         if (self.isActive())
+         if (self.isActive()) {
             self.hostMisbehaving(
                "it is illegal to call clap_audio_ports.set_config if the plugin is active");
+	    return false;
+	}
       }
 
       return self.audioPortsSetConfig(config_id);
@@ -797,6 +799,7 @@ namespace clap { namespace helpers {
                "it is illegal to call clap_audio_ports_activation.set_active() if the plugin is "
                "active if "
                "clap_plugin_audio_ports_activation.can_activate_while_processing() returns false");
+	    return false;
          }
       }
 
