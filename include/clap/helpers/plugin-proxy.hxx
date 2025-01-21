@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cassert>
+#include <cmath>
 #include <sstream>
 
 #include "plugin-proxy.hh"
