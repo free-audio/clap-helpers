@@ -330,12 +330,20 @@ namespace clap { namespace helpers {
       virtual void locationSetLocation(const clap_plugin_location_element_t *path,
                                        uint32_t num_elements) noexcept {}
 
+      //--------------------------------------//
+      // clap_plugin_gain_adjustment_metering //
+      //--------------------------------------//
+      virtual bool implementsGainAdjustmentMetering() const noexcept { return false; }
+      virtual double gainAdjustmentMeteringGet() noexcept { return 0; }
+
       /////////////
       // Logging //
       /////////////
       void log(clap_log_severity severity, const char *msg) const noexcept;
       void hostMisbehaving(const char *msg) const noexcept;
       void hostMisbehaving(const std::string &msg) const noexcept { hostMisbehaving(msg.c_str()); }
+      void pluginMisbehaving(const char *msg) const noexcept;
+      void pluginMisbehaving(const std::string &msg) const noexcept { pluginMisbehaving(msg.c_str()); }
 
       // Receives a copy of all the logging messages sent to the host.
       // This is useful to have the messages in both the host's logs and the plugin's logs.
@@ -614,6 +622,9 @@ namespace clap { namespace helpers {
                                           const clap_plugin_location_element_t *path,
                                           uint32_t num_elements) noexcept;
 
+      // clap_plugin_gain_adjustment_metering
+      static double clapGainAdjustmentMeteringGet(const clap_plugin_t *plugin) noexcept;
+
       // interfaces
       static const clap_plugin_audio_ports _pluginAudioPorts;
       static const clap_plugin_audio_ports_config _pluginAudioPortsConfig;
@@ -641,6 +652,7 @@ namespace clap { namespace helpers {
       static const clap_plugin_undo_delta _pluginUndoDelta;
       static const clap_plugin_undo_context _pluginUndoContext;
       static const clap_plugin_location _pluginLocation;
+      static const clap_plugin_gain_adjustment_metering _pluginGainAdjustmentMetering;
 
       // state
       bool _wasInitialized = false;
