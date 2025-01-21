@@ -32,6 +32,7 @@ namespace clap { namespace helpers {
       getExtension(_pluginThreadPool, CLAP_EXT_THREAD_POOL);
       getExtension(_pluginTimerSupport, CLAP_EXT_TIMER_SUPPORT);
       getExtension(_pluginLocation, CLAP_EXT_LOCATION);
+      getExtension(_pluginGainAdjustmentMetering, CLAP_EXT_GAIN_ADJUSTMENT_METERING);
       return true;
    }
 
@@ -610,6 +611,35 @@ namespace clap { namespace helpers {
       assert(canUseLocation());
       ensureMainThread("clap_plugin_location.set_location");
       _pluginLocation->set_location(&_plugin, path, num_elements);
+   }
+
+   ///////////////////////////////////
+   // clap_gain_adjustment_metering //
+   ///////////////////////////////////
+   template <MisbehaviourHandler h, CheckingLevel l>
+   bool PluginProxy<h, l>::canUseGainAdjustmentMetering() const noexcept {
+      if (!_pluginGainAdjustmentMetering)
+         return false;
+
+      if (_pluginGainAdjustmentMetering->get)
+         return true;
+
+      _host.pluginMisbehaving("clap_gain_adjustment_metering is partially implemented");
+      return false;
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   double PluginProxy<h, l>::gainAdjustmentMeteringGet() const noexcept {
+      assert(canUseGainAdjustmentMetering());
+      ensureAudioThread("clap_gain_adjustment_metering.get");
+      const double gain = _pluginGainAdjustmentMetering->get(&_plugin);
+      if (l >= CheckingLevel::Minimal) {
+         if (std::isnan(gain)) {
+            _host.pluginMisbehaving("clap_gain_adjustment_metering.get() did return NaN");
+            return 0;
+         }
+      }
+      return gain;
    }
 
    /////////////////////

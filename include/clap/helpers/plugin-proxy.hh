@@ -146,6 +146,12 @@ namespace clap { namespace helpers {
       void locationSetLocation(const clap_plugin_location_element_t *path,
                                uint32_t num_elements) const noexcept;
 
+      ///////////////////////////////////
+      // clap_gain_adjustment_metering //
+      ///////////////////////////////////
+      bool canUseGainAdjustmentMetering() const noexcept;
+      double gainAdjustmentMeteringGet() const noexcept;
+
    protected:
       /////////////////////
       // Thread Checking //
@@ -173,6 +179,7 @@ namespace clap { namespace helpers {
       const clap_plugin_thread_pool *_pluginThreadPool = nullptr;
       const clap_plugin_timer_support *_pluginTimerSupport = nullptr;
       const clap_plugin_location *_pluginLocation = nullptr;
+      const clap_plugin_gain_adjustment_metering *_pluginGainAdjustmentMetering = nullptr;
 
       // state
       bool _isActive = false;
