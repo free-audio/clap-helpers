@@ -2,7 +2,6 @@
  * Actually use plugin.hh / plugin.hxx to create a plugin. Assert that it is constructable
  */
 
-#include "clap/helpers/plugin.hh"
 #include "clap/helpers/plugin.hxx"
 
 #include <type_traits>
