@@ -9,10 +9,11 @@
 
 #include <catch2/catch_all.hpp>
 
-struct test_plugin : clap::helpers::Plugin<clap::helpers::MisbehaviourHandler::Terminate,
-                                           clap::helpers::CheckingLevel::Maximal>
+using test_plugin_glue = clap::helpers::Plugin<clap::helpers::MisbehaviourHandler::Terminate,
+                                               clap::helpers::CheckingLevel::Maximal>;
+struct test_plugin : test_plugin_glue
 {
-   const clap_plugin_descriptor *getDescription()
+   static const clap_plugin_descriptor *getDescription()
    {
       static const char *features[] = {CLAP_PLUGIN_FEATURE_INSTRUMENT,
                                        CLAP_PLUGIN_FEATURE_SYNTHESIZER, nullptr};
@@ -29,8 +30,7 @@ struct test_plugin : clap::helpers::Plugin<clap::helpers::MisbehaviourHandler::T
       return &desc;
    }
 
-   test_plugin(const clap_host *host) : clap::helpers::Plugin<clap::helpers::MisbehaviourHandler::Terminate,
-                                                              clap::helpers::CheckingLevel::Maximal>(getDescription(), host) {}
+   test_plugin(const clap_host *host) : test_plugin_glue(getDescription(), host) {}
 };
 
 CATCH_TEST_CASE("Create an Actual Plugin")
