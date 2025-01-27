@@ -4,6 +4,7 @@
 #include <cstring>
 #include <iostream>
 #include <sstream>
+#include <algorithm>
 
 #include "macros.hh"
 #include "plugin-factory.hh"
