@@ -61,12 +61,14 @@ if (${CLAP_HELPERS_BUILD_TESTS})
             tests/hex-encoder.cc
             tests/host.cc
             tests/plugin.cc
+            tests/plugin-factory.cc
             tests/param-queue-tests.cc
             tests/event-list-tests.cc
             tests/main.cc
             tests/preset-discovery-indexer.cc
             tests/preset-discovery-provider.cc
             tests/preset-discovery-metadata-receiver.cc
+            tests/use-plugin-factory.cc
     )
     set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD ${CLAP_HELPERS_TESTS_CXX_STANDARD})
     set_target_properties(${PROJECT_NAME}-tests PROPERTIES CXX_STANDARD ${CLAP_HELPERS_TESTS_CXX_STANDARD})

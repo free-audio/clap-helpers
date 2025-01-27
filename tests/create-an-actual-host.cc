@@ -11,15 +11,15 @@
 
 #include <catch2/catch_all.hpp>
 
-struct test_host : clap::helpers::Host<clap::helpers::MisbehaviourHandler::Terminate,
-                                       clap::helpers::CheckingLevel::Maximal>
+using test_host_glue = clap::helpers::Host<clap::helpers::MisbehaviourHandler::Terminate,
+                                           clap::helpers::CheckingLevel::Maximal>;
+
+struct test_host : test_host_glue
 {
-   test_host() : clap::helpers::Host<clap::helpers::MisbehaviourHandler::Terminate,
-                                     clap::helpers::CheckingLevel::Maximal>(
-                                       "Test Case Host",
-                                       "Free Audio",
-                                       "http://cleveraudio.org",
-                                       "1.0.0") {}
+   test_host() : test_host_glue("Test Case Host",
+                                "Free Audio",
+                                "http://cleveraudio.org",
+                                "1.0.0") {}
 
    bool threadCheckIsMainThread() const noexcept override { return true; };
    bool threadCheckIsAudioThread() const noexcept override { return false; };
