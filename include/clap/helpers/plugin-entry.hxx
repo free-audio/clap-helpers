@@ -26,6 +26,14 @@ namespace clap { namespace helpers {
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
+   template <typename T, typename ValidImpl>
+   const T &PluginEntry<h, l>::getInstance() noexcept {
+      assert(_instance &&
+             "make sure to call this only between plugin_entry.init and plugin_entry.deinit");
+      return *static_cast<const T *>(_instance.get());
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
    int32_t PluginEntry<h, l>::getPluginIndexForPluginId(const char *pluginId) const noexcept {
       const auto count = pluginFactoryGetPluginCount();
       for (uint32_t i = 0; i < count; ++i) {

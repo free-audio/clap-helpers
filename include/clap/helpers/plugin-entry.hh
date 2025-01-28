@@ -41,6 +41,11 @@ namespace clap { namespace helpers {
       virtual void deinit() noexcept {}
       virtual const void *getFactory(const char *factoryId) const noexcept { return nullptr; };
       virtual bool enableDraftFactories() const noexcept { return false; }
+      // needed for adding custom factories to a class derived from PluginEntry
+      template <typename T,
+                typename = typename std::enable_if<std::is_base_of<PluginEntry, T>::value &&
+                                                   std::is_default_constructible<T>::value>::type>
+      static const T &getInstance() noexcept;
 
       // clap_plugin_factory
       virtual bool implementsPluginFactory() const noexcept { return false; }
