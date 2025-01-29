@@ -62,12 +62,12 @@ namespace clap { namespace helpers {
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   void PluginEntry<h, l>::deletePluginEntry(PluginEntry<h, l> *pluginEntry) noexcept {
+   void PluginEntry<h, l>::PluginEntry::Deleter::operator()(PluginEntry<h, l> *pluginEntry) const noexcept {
       delete pluginEntry;
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   typename PluginEntry<h, l>::InstancePtr PluginEntry<h, l>::_instance{nullptr, deletePluginEntry};
+   typename PluginEntry<h, l>::InstancePtr PluginEntry<h, l>::_instance{};
 
    template <MisbehaviourHandler h, CheckingLevel l>
    void PluginEntry<h, l>::hostMisbehaving(const char *msg) noexcept {
@@ -126,7 +126,7 @@ namespace clap { namespace helpers {
          _initCounter = 0;
          return false;
       }
-      _instance = InstancePtr(static_cast<PluginEntry *>(impl), deletePluginEntry);
+      _instance.reset(static_cast<PluginEntry *>(impl));
       return true;
    }
 

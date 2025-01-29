@@ -68,8 +68,10 @@ namespace clap { namespace helpers {
 
    private:
       // custom deleter so the virtual destructor does not have to be public
-      static void deletePluginEntry(PluginEntry<h, l> *) noexcept;
-      using InstancePtr = std::unique_ptr<PluginEntry<h, l>, void (*)(PluginEntry<h, l> *)>;
+      struct Deleter {
+            void operator()(PluginEntry<h, l> *pluginEntry) const noexcept;
+      };
+      using InstancePtr = std::unique_ptr<PluginEntry<h, l>, Deleter>;
       static InstancePtr _instance;
 
       /////////////
