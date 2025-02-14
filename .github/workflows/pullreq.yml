@@ -98,7 +98,7 @@ jobs:
         uses: seanmiddleditch/gha-setup-ninja@master
 
       - name: Configure project (next)
-        if: github.ref != 'refs/heads/next'
+        if: github.ref == 'refs/heads/next'
         run: |
           cmake -S . -B ./build ${{ matrix.cmakeargs }} -DCMAKE_BUILD_TYPE=Debug -DCLAP_HELPERS_DOWNLOAD_DEPENDENCIES=TRUE -DCLAP_HELPERS_BUILD_TESTS=TRUE -DCLAP_HELPERS_DOWNLOAD_CLAP_BRANCH_IS_NEXT=TRUE
 
