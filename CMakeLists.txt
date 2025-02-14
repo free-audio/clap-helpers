@@ -12,7 +12,7 @@ target_include_directories(${PROJECT_NAME} INTERFACE include)
 
 if (NOT TARGET clap)
     if (${CLAP_HELPERS_DOWNLOAD_DEPENDENCIES})
-        if (${CLAP_HELPERS_DOWNLOQD_CLAP_BRANCH_IS_NEXT})
+        if (${CLAP_HELPERS_DOWNLOAD_CLAP_BRANCH_IS_NEXT})
            set(cpmbranch "next")
         else()
            set(cpmbranch "main")
