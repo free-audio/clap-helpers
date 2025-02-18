@@ -650,12 +650,6 @@ namespace clap { namespace helpers {
                                                   char *y_name,
                                                   uint32_t name_capacity) noexcept;
 
-      static constexpr clap_plugin_mini_curve_display _pluginMiniCurveDisplay = {
-         clapMiniCurveDisplayRender,
-         clapMiniCurveDisplaySetObserved,
-         clapMiniCurveDisplayGetAxisName,
-      };
-
       // interfaces
       static const clap_plugin_audio_ports _pluginAudioPorts;
       static const clap_plugin_audio_ports_config _pluginAudioPortsConfig;
@@ -684,6 +678,7 @@ namespace clap { namespace helpers {
       static const clap_plugin_undo_context _pluginUndoContext;
       static const clap_plugin_project_location _pluginProjectLocation;
       static const clap_plugin_gain_adjustment_metering _pluginGainAdjustmentMetering;
+      static const clap_plugin_mini_curve_display _pluginMiniCurveDisplay;
 
       // state
       bool _wasInitialized = false;

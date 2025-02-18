@@ -182,6 +182,13 @@ namespace clap { namespace helpers {
    };
 
    template <MisbehaviourHandler h, CheckingLevel l>
+   const clap_plugin_mini_curve_display Plugin<h, l>::_pluginMiniCurveDisplay = {
+      clapMiniCurveDisplayRender,
+      clapMiniCurveDisplaySetObserved,
+      clapMiniCurveDisplayGetAxisName,
+   };
+
+   template <MisbehaviourHandler h, CheckingLevel l>
    Plugin<h, l>::Plugin(const clap_plugin_descriptor *desc, const clap_host *host) : _host(host) {
       _plugin.plugin_data = this;
       _plugin.desc = desc;
