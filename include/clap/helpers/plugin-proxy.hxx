@@ -32,8 +32,9 @@ namespace clap { namespace helpers {
       getExtension(_pluginTail, CLAP_EXT_TAIL);
       getExtension(_pluginThreadPool, CLAP_EXT_THREAD_POOL);
       getExtension(_pluginTimerSupport, CLAP_EXT_TIMER_SUPPORT);
-      getExtension(_pluginLocation, CLAP_EXT_LOCATION);
+      getExtension(_pluginProjectLocation, CLAP_EXT_PROJECT_LOCATION);
       getExtension(_pluginGainAdjustmentMetering, CLAP_EXT_GAIN_ADJUSTMENT_METERING);
+      getExtension(_pluginMiniCurveDisplay, CLAP_EXT_MINI_CURVE_DISPLAY);
       return true;
    }
 
@@ -596,13 +597,13 @@ namespace clap { namespace helpers {
    //////////////////////////
    template <MisbehaviourHandler h, CheckingLevel l>
    bool PluginProxy<h, l>::canUseLocation() const noexcept {
-      if (!_pluginLocation)
+      if (!_pluginProjectLocation)
          return false;
 
-      if (_pluginLocation->set_location)
+      if (_pluginProjectLocation->set)
          return true;
 
-      _host.pluginMisbehaving("clap_plugin_location is partially implemented");
+      _host.pluginMisbehaving("clap_plugin_project_location is partially implemented");
       return false;
    }
 
@@ -610,8 +611,8 @@ namespace clap { namespace helpers {
    void PluginProxy<h, l>::locationSetLocation(const clap_plugin_location_element_t *path,
                                                uint32_t num_elements) const noexcept {
       assert(canUseLocation());
-      ensureMainThread("clap_plugin_location.set_location");
-      _pluginLocation->set_location(&_plugin, path, num_elements);
+      ensureMainThread("clap_plugin_project_location.set");
+      _pluginProjectLocation->set(&_plugin, path, num_elements);
    }
 
    ///////////////////////////////////
