@@ -335,6 +335,19 @@ namespace clap { namespace helpers {
       virtual bool implementsGainAdjustmentMetering() const noexcept { return false; }
       virtual double gainAdjustmentMeteringGet() noexcept { return 0; }
 
+      //--------------------------------//
+      // clap_plugin_mini_curve_display //
+      //--------------------------------//
+      virtual bool implementsMiniCurveDisplay() const noexcept { return false; }
+      virtual bool miniCurveDisplayRender(uint16_t *data, uint32_t data_size) noexcept {
+         return false;
+      }
+      virtual void miniCurveDisplaySetObserved(bool is_observed) noexcept {}
+      virtual bool
+      miniCurveDisplayGetAxisName(char *x_name, char *y_name, uint32_t name_capacity) noexcept {
+         return false;
+      }
+
       /////////////
       // Logging //
       /////////////
@@ -625,6 +638,23 @@ namespace clap { namespace helpers {
 
       // clap_plugin_gain_adjustment_metering
       static double clapGainAdjustmentMeteringGet(const clap_plugin_t *plugin) noexcept;
+
+      // clap_plugin_mini_curve_display
+      static bool clapMiniCurveDisplayRender(const clap_plugin_t *plugin,
+                                             uint16_t *data,
+                                             uint32_t data_size) noexcept;
+      static void clapMiniCurveDisplaySetObserved(const clap_plugin_t *plugin,
+                                                  bool is_observed) noexcept;
+      static bool clapMiniCurveDisplayGetAxisName(const clap_plugin_t *plugin,
+                                                  char *x_name,
+                                                  char *y_name,
+                                                  uint32_t name_capacity) noexcept;
+
+      static constexpr clap_plugin_mini_curve_display _pluginMiniCurveDisplay = {
+         clapMiniCurveDisplayRender,
+         clapMiniCurveDisplaySetObserved,
+         clapMiniCurveDisplayGetAxisName,
+      };
 
       // interfaces
       static const clap_plugin_audio_ports _pluginAudioPorts;

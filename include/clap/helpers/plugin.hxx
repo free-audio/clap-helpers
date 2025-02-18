@@ -542,6 +542,8 @@ namespace clap { namespace helpers {
          if (!strcmp(id, CLAP_EXT_GAIN_ADJUSTMENT_METERING) &&
              self.implementsGainAdjustmentMetering())
             return &_pluginGainAdjustmentMetering;
+         if (!strcmp(id, CLAP_EXT_MINI_CURVE_DISPLAY) && self.implementsMiniCurveDisplay())
+            return &_pluginMiniCurveDisplay;
       }
 
       return self.extension(id);
@@ -1817,8 +1819,8 @@ namespace clap { namespace helpers {
 
    template <MisbehaviourHandler h, CheckingLevel l>
    void Plugin<h, l>::clapProjectLocationSet(const clap_plugin_t *plugin,
-                                              const clap_project_location_element_t *path,
-                                              uint32_t num_elements) noexcept {
+                                             const clap_project_location_element_t *path,
+                                             uint32_t num_elements) noexcept {
       auto &self = from(plugin);
       self.ensureMainThread("clap_plugin_location.set_location");
 
@@ -1855,6 +1857,61 @@ namespace clap { namespace helpers {
          }
       }
       return gain;
+   }
+
+   //--------------------------------//
+   // clap_plugin_mini_curve_display //
+   //--------------------------------//
+   template <MisbehaviourHandler h, CheckingLevel l>
+   bool Plugin<h, l>::clapMiniCurveDisplayRender(const clap_plugin_t *plugin,
+                                                 uint16_t *data,
+                                                 uint32_t data_size) noexcept {
+      auto &self = from(plugin);
+      self.ensureMainThread("clap_plugin_mini_curve_display.render");
+
+      if (l >= CheckingLevel::Minimal) {
+         if (!data) {
+            self.hostMisbehaving(
+               "clap_plugin_mini_curve_display.render() called with null data pointer!!!");
+            return false;
+         }
+
+         if (data_size == 0) {
+            self.hostMisbehaving("clap_plugin_mini_curve_display.render() called an empty data "
+                                 "array, meaningless...");
+            return false;
+         }
+      }
+
+      return self.miniCurveDisplayRender(data, data_size);
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   void Plugin<h, l>::clapMiniCurveDisplaySetObserved(const clap_plugin_t *plugin,
+                                                      bool is_observed) noexcept {
+      auto &self = from(plugin);
+      self.ensureMainThread("clap_plugin_mini_curve_display.set_observed");
+
+      self.miniCurveDisplaySetObserved(is_observed);
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   bool Plugin<h, l>::clapMiniCurveDisplayGetAxisName(const clap_plugin_t *plugin,
+                                                      char *x_name,
+                                                      char *y_name,
+                                                      uint32_t name_capacity) noexcept {
+      auto &self = from(plugin);
+      self.ensureMainThread("clap_plugin_mini_curve_display.get_axis_name");
+
+      if (l >= CheckingLevel::Minimal) {
+         if (!x_name || !y_name) {
+            self.hostMisbehaving(
+               "clap_plugin_mini_curve_display.get_axis_name() called with null name pointer(s)");
+            return false;
+         }
+      }
+
+      return self.miniCurveDisplayGetAxisName(x_name, y_name, name_capacity);
    }
 
    /////////////
