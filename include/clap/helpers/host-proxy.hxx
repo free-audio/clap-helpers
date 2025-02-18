@@ -42,6 +42,7 @@ namespace clap { namespace helpers {
          getExtension(_hostPresetLoad, CLAP_EXT_PRESET_LOAD);
       getExtension(_hostUndo, CLAP_EXT_UNDO);
       getExtension(_hostScratchMemory, CLAP_EXT_SCRATCH_MEMORY);
+      getExtension(_hostMiniCurveDisplay, CLAP_EXT_MINI_CURVE_DISPLAY);
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
@@ -774,6 +775,35 @@ namespace clap { namespace helpers {
       assert(canUseScratchMemory());
       ensureAudioThread("scratch_memory.access");
       return _hostScratchMemory->access(_host);
+   }
+
+   //////////////////////////////////
+   // clap_host_mini_curve_display //
+   //////////////////////////////////
+   template <MisbehaviourHandler h, CheckingLevel l>
+   bool HostProxy<h, l>::canUseMiniCurveDisplay() const noexcept {
+      if (!_hostMiniCurveDisplay)
+         return false;
+
+      if (_hostMiniCurveDisplay->set_dynamic && _hostMiniCurveDisplay->changed)
+         return true;
+
+      hostMisbehaving("clap_host_mini_curve_display is partially implemented!");
+      return false;
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   void HostProxy<h, l>::miniCurveDisplaySetDynamic(bool is_dynamic) const noexcept {
+      assert(canUseMiniCurveDisplay());
+      ensureMainThread("mini_curve_display.set_dynamic");
+      _hostMiniCurveDisplay->set_dynamic(_host, is_dynamic);
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   void HostProxy<h, l>::miniCurveDisplayChanged(uint32_t flags) const noexcept {
+      assert(canUseMiniCurveDisplay());
+      ensureMainThread("mini_curve_display.set_dynamic");
+      _hostMiniCurveDisplay->changed(_host, flags);
    }
 
 }} // namespace clap::helpers

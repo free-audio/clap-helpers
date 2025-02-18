@@ -207,6 +207,13 @@ namespace clap { namespace helpers {
                                 uint32_t max_concurrency_hint) const noexcept;
       void *scratchMemoryAccess() const noexcept;
 
+      //////////////////////////////////
+      // clap_host_mini_curve_display //
+      //////////////////////////////////
+      bool canUseMiniCurveDisplay() const noexcept;
+      void miniCurveDisplaySetDynamic(bool is_dynamic) const noexcept;
+      void miniCurveDisplayChanged(uint32_t flags) const noexcept;
+
    protected:
       void ensureMainThread(const char *method) const noexcept;
       void ensureAudioThread(const char *method) const noexcept;
@@ -235,5 +242,6 @@ namespace clap { namespace helpers {
       const clap_host_preset_load *_hostPresetLoad = nullptr;
       const clap_host_undo *_hostUndo = nullptr;
       const clap_host_scratch_memory *_hostScratchMemory = nullptr;
+      const clap_host_mini_curve_display *_hostMiniCurveDisplay = nullptr;
    };
 }} // namespace clap::helpers
