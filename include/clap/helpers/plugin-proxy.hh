@@ -143,7 +143,7 @@ namespace clap { namespace helpers {
       // clap_plugin_location //
       //////////////////////////
       bool canUseLocation() const noexcept;
-      void locationSetLocation(const clap_plugin_location_element_t *path,
+      void projectLocationSet(const clap_project_location_element_t *path,
                                uint32_t num_elements) const noexcept;
 
       ///////////////////////////////////
