@@ -97,9 +97,18 @@ jobs:
         if: ${{ matrix.install_ninja }}
         uses: seanmiddleditch/gha-setup-ninja@master
 
-      - name: Build project
+      - name: Configure project (next)
+        if: github.ref == 'refs/heads/next'
+        run: |
+          cmake -S . -B ./build ${{ matrix.cmakeargs }} -DCMAKE_BUILD_TYPE=Debug -DCLAP_HELPERS_DOWNLOAD_DEPENDENCIES=TRUE -DCLAP_HELPERS_BUILD_TESTS=TRUE -DCLAP_HELPERS_DOWNLOAD_CLAP_BRANCH_IS_NEXT=TRUE
+
+      - name: Configure project (not next)
+        if: github.ref != 'refs/heads/next'
         run: |
           cmake -S . -B ./build ${{ matrix.cmakeargs }} -DCMAKE_BUILD_TYPE=Debug -DCLAP_HELPERS_DOWNLOAD_DEPENDENCIES=TRUE -DCLAP_HELPERS_BUILD_TESTS=TRUE
+
+      - name: Build Project
+        run: |
           cmake --build ./build --config Debug --target clap-helpers-tests --parallel
 
       - name: Run Tests
