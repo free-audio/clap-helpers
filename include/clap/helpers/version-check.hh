@@ -13,9 +13,9 @@
 #include "clap/version.h"
 
 #if CLAP_VERSION_LT(1,2,4)
-static_assert(false, "Clap version must be at least 1.2.4")
+   static_assert(false, "Clap version must be at least 1.2.4");
 #endif
 
 #if CLAP_VERSION_GE(2,0,0)
-   static_assert(false, "Clap version must be at most 1.x")
+   static_assert(false, "Clap version must be at most 1.x");
 #endif
