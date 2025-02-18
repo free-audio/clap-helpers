@@ -172,8 +172,8 @@ namespace clap { namespace helpers {
    };
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   const clap_plugin_location Plugin<h, l>::_pluginLocation = {
-      clapLocationSetLocation,
+   const clap_plugin_project_location Plugin<h, l>::_pluginProjectLocation = {
+      clapProjectLocationSet,
    };
 
    template <MisbehaviourHandler h, CheckingLevel l>
@@ -537,8 +537,8 @@ namespace clap { namespace helpers {
             return &_pluginUndoDelta;
          if (!strcmp(id, CLAP_EXT_UNDO_CONTEXT) && self.implementsUndoContext())
             return &_pluginUndoContext;
-         if (!strcmp(id, CLAP_EXT_LOCATION) && self.implementsLocation())
-            return &_pluginLocation;
+         if (!strcmp(id, CLAP_EXT_PROJECT_LOCATION) && self.implementsProjectLocation())
+            return &_pluginProjectLocation;
          if (!strcmp(id, CLAP_EXT_GAIN_ADJUSTMENT_METERING) &&
              self.implementsGainAdjustmentMetering())
             return &_pluginGainAdjustmentMetering;
@@ -1816,8 +1816,8 @@ namespace clap { namespace helpers {
    //------------------//
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   void Plugin<h, l>::clapLocationSetLocation(const clap_plugin_t *plugin,
-                                              const clap_plugin_location_element_t *path,
+   void Plugin<h, l>::clapProjectLocationSet(const clap_plugin_t *plugin,
+                                              const clap_project_location_element_t *path,
                                               uint32_t num_elements) noexcept {
       auto &self = from(plugin);
       self.ensureMainThread("clap_plugin_location.set_location");
@@ -1836,7 +1836,7 @@ namespace clap { namespace helpers {
          }
       }
 
-      self.locationSetLocation(path, num_elements);
+      self.projectLocationSet(path, num_elements);
    }
 
    //--------------------------------------//

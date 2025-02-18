@@ -608,7 +608,7 @@ namespace clap { namespace helpers {
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   void PluginProxy<h, l>::locationSetLocation(const clap_plugin_location_element_t *path,
+   void PluginProxy<h, l>::projectLocationSet(const clap_project_location_element_t *path,
                                                uint32_t num_elements) const noexcept {
       assert(canUseLocation());
       ensureMainThread("clap_plugin_project_location.set");
