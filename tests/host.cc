@@ -1,5 +1,4 @@
 #include <clap/helpers/plugin-proxy.hxx>
-#include <clap/helpers/host.hh>
 #include <clap/helpers/host.hxx>
 
 #include <catch2/catch_all.hpp>
