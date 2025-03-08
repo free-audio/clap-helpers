@@ -1872,26 +1872,26 @@ namespace clap { namespace helpers {
    //--------------------------------//
    template <MisbehaviourHandler h, CheckingLevel l>
    uint32_t Plugin<h, l>::clapMiniCurveDisplayRender(const clap_plugin_t *plugin,
-                                                     clap_mini_display_curve_data_t *data,
-                                                     uint32_t data_size) noexcept {
+                                                     clap_mini_display_curve_data_t *curves,
+                                                     uint32_t curves_size) noexcept {
       auto &self = from(plugin);
       self.ensureMainThread("clap_plugin_mini_curve_display.render");
 
       if (l >= CheckingLevel::Minimal) {
-         if (!data) {
+         if (!curves) {
             self.hostMisbehaving(
                "clap_plugin_mini_curve_display.render() called with null data pointer!!!");
             return false;
          }
 
-         if (data_size == 0) {
+         if (curves_size == 0) {
             self.hostMisbehaving("clap_plugin_mini_curve_display.render() called an empty data "
                                  "array, meaningless...");
             return false;
          }
       }
 
-      return self.miniCurveDisplayRender(data, data_size);
+      return self.miniCurveDisplayRender(curves, curves_size);
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
