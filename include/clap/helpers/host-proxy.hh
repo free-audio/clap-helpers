@@ -213,6 +213,7 @@ namespace clap { namespace helpers {
       bool canUseMiniCurveDisplay() const noexcept;
       void miniCurveDisplaySetDynamic(bool is_dynamic) const noexcept;
       void miniCurveDisplayChanged(uint32_t flags) const noexcept;
+      bool miniCurveDisplayGetHints(uint32_t kind, clap_mini_display_curve_hints_t *hints) const noexcept;
 
    protected:
       void ensureMainThread(const char *method) const noexcept;

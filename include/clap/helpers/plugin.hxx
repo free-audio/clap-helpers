@@ -183,6 +183,7 @@ namespace clap { namespace helpers {
 
    template <MisbehaviourHandler h, CheckingLevel l>
    const clap_plugin_mini_curve_display Plugin<h, l>::_pluginMiniCurveDisplay = {
+      clapMiniCurveDisplayGetCurveCount,
       clapMiniCurveDisplayRender,
       clapMiniCurveDisplaySetObserved,
       clapMiniCurveDisplayGetAxisName,
@@ -1870,9 +1871,9 @@ namespace clap { namespace helpers {
    // clap_plugin_mini_curve_display //
    //--------------------------------//
    template <MisbehaviourHandler h, CheckingLevel l>
-   bool Plugin<h, l>::clapMiniCurveDisplayRender(const clap_plugin_t *plugin,
-                                                 uint16_t *data,
-                                                 uint32_t data_size) noexcept {
+   uint32_t Plugin<h, l>::clapMiniCurveDisplayRender(const clap_plugin_t *plugin,
+                                                     clap_mini_display_curve_data_t *data,
+                                                     uint32_t data_size) noexcept {
       auto &self = from(plugin);
       self.ensureMainThread("clap_plugin_mini_curve_display.render");
 
@@ -1903,7 +1904,16 @@ namespace clap { namespace helpers {
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
+   uint32_t Plugin<h, l>::clapMiniCurveDisplayGetCurveCount(const clap_plugin_t *plugin) noexcept {
+      auto &self = from(plugin);
+      self.ensureMainThread("clap_plugin_mini_curve_display.get_curve_count");
+
+      return self.miniCurveDisplayGetCurveCount();
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
    bool Plugin<h, l>::clapMiniCurveDisplayGetAxisName(const clap_plugin_t *plugin,
+                                                      uint32_t curve_index,
                                                       char *x_name,
                                                       char *y_name,
                                                       uint32_t name_capacity) noexcept {
@@ -1916,9 +1926,18 @@ namespace clap { namespace helpers {
                "clap_plugin_mini_curve_display.get_axis_name() called with null name pointer(s)");
             return false;
          }
+
+         const auto curve_count = self.miniCurveDisplayGetCurveCount();
+         if (curve_index >= curve_count) {
+            std::ostringstream os;
+            os << "clap_plugin_mini_curve_display.get_axis_name() called with curve_index = "
+               << curve_index << ", while the curve count is " << curve_count;
+            self.hostMisbehaving(os.str());
+            return false;
+         }
       }
 
-      return self.miniCurveDisplayGetAxisName(x_name, y_name, name_capacity);
+      return self.miniCurveDisplayGetAxisName(curve_index, x_name, y_name, name_capacity);
    }
 
    /////////////

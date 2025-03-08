@@ -806,4 +806,18 @@ namespace clap { namespace helpers {
       _hostMiniCurveDisplay->changed(_host, flags);
    }
 
+   template <MisbehaviourHandler h, CheckingLevel l>
+   bool HostProxy<h, l>::miniCurveDisplayGetHints(
+      uint32_t kind, clap_mini_display_curve_hints_t *hints) const noexcept {
+      assert(canUseMiniCurveDisplay());
+      ensureMainThread("mini_curve_display_get_hints");
+
+      if (!hints) {
+         pluginMisbehaving("mini_curve_display_get_hints() called with a null hints pointer");
+         return false;
+      }
+
+      return _hostMiniCurveDisplay->get_hints(_host, kind, hints);
+   }
+
 }} // namespace clap::helpers
