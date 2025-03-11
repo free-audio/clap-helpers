@@ -339,12 +339,16 @@ namespace clap { namespace helpers {
       // clap_plugin_mini_curve_display //
       //--------------------------------//
       virtual bool implementsMiniCurveDisplay() const noexcept { return false; }
-      virtual bool miniCurveDisplayRender(uint16_t *data, uint32_t data_size) noexcept {
-         return false;
+      virtual uint32_t miniCurveDisplayGetCurveCount() const noexcept { return 0; }
+      virtual uint32_t miniCurveDisplayRender(clap_mini_curve_display_curve_data_t *curves,
+                                              uint32_t curves_size) noexcept {
+         return 0;
       }
       virtual void miniCurveDisplaySetObserved(bool is_observed) noexcept {}
-      virtual bool
-      miniCurveDisplayGetAxisName(char *x_name, char *y_name, uint32_t name_capacity) noexcept {
+      virtual bool miniCurveDisplayGetAxisName(uint32_t curve_index,
+                                               char *x_name,
+                                               char *y_name,
+                                               uint32_t name_capacity) noexcept {
          return false;
       }
 
@@ -640,12 +644,14 @@ namespace clap { namespace helpers {
       static double clapGainAdjustmentMeteringGet(const clap_plugin_t *plugin) noexcept;
 
       // clap_plugin_mini_curve_display
-      static bool clapMiniCurveDisplayRender(const clap_plugin_t *plugin,
-                                             uint16_t *data,
-                                             uint32_t data_size) noexcept;
+      static uint32_t clapMiniCurveDisplayGetCurveCount(const clap_plugin_t *plugin) noexcept;
+      static uint32_t clapMiniCurveDisplayRender(const clap_plugin_t *plugin,
+                                                 clap_mini_curve_display_curve_data_t *curves,
+                                                 uint32_t curves_size) noexcept;
       static void clapMiniCurveDisplaySetObserved(const clap_plugin_t *plugin,
                                                   bool is_observed) noexcept;
       static bool clapMiniCurveDisplayGetAxisName(const clap_plugin_t *plugin,
+                                                  uint32_t curve_index,
                                                   char *x_name,
                                                   char *y_name,
                                                   uint32_t name_capacity) noexcept;
