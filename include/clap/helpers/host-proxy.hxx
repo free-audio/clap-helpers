@@ -808,7 +808,7 @@ namespace clap { namespace helpers {
 
    template <MisbehaviourHandler h, CheckingLevel l>
    bool HostProxy<h, l>::miniCurveDisplayGetHints(
-      uint32_t kind, clap_mini_display_curve_hints_t *hints) const noexcept {
+      uint32_t kind, clap_mini_curve_display_curve_hints_t *hints) const noexcept {
       assert(canUseMiniCurveDisplay());
       ensureMainThread("mini_curve_display_get_hints");
 

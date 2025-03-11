@@ -1872,7 +1872,7 @@ namespace clap { namespace helpers {
    //--------------------------------//
    template <MisbehaviourHandler h, CheckingLevel l>
    uint32_t Plugin<h, l>::clapMiniCurveDisplayRender(const clap_plugin_t *plugin,
-                                                     clap_mini_display_curve_data_t *curves,
+                                                     clap_mini_curve_display_curve_data_t *curves,
                                                      uint32_t curves_size) noexcept {
       auto &self = from(plugin);
       self.ensureMainThread("clap_plugin_mini_curve_display.render");

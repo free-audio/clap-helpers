@@ -340,7 +340,7 @@ namespace clap { namespace helpers {
       //--------------------------------//
       virtual bool implementsMiniCurveDisplay() const noexcept { return false; }
       virtual uint32_t miniCurveDisplayGetCurveCount() const noexcept { return 0; }
-      virtual uint32_t miniCurveDisplayRender(clap_mini_display_curve_data_t *curves,
+      virtual uint32_t miniCurveDisplayRender(clap_mini_curve_display_curve_data_t *curves,
                                               uint32_t curves_size) noexcept {
          return 0;
       }
@@ -646,7 +646,7 @@ namespace clap { namespace helpers {
       // clap_plugin_mini_curve_display
       static uint32_t clapMiniCurveDisplayGetCurveCount(const clap_plugin_t *plugin) noexcept;
       static uint32_t clapMiniCurveDisplayRender(const clap_plugin_t *plugin,
-                                                 clap_mini_display_curve_data_t *curves,
+                                                 clap_mini_curve_display_curve_data_t *curves,
                                                  uint32_t curves_size) noexcept;
       static void clapMiniCurveDisplaySetObserved(const clap_plugin_t *plugin,
                                                   bool is_observed) noexcept;
