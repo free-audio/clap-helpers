@@ -484,6 +484,8 @@ namespace clap { namespace helpers {
       auto &self = from(plugin);
       self.ensureInitialized("extension");
 
+      if (auto ext = self.extension(id))
+         return ext;
       if (!strcmp(id, CLAP_EXT_STATE) && self.implementsState())
          return &_pluginState;
       if (!strcmp(id, CLAP_EXT_STATE_CONTEXT) && self.implementsStateContext() &&
@@ -554,7 +556,7 @@ namespace clap { namespace helpers {
             return &_pluginMiniCurveDisplay;
       }
 
-      return self.extension(id);
+      return nullptr;
    }
 
    //-------------------//
