@@ -162,7 +162,8 @@ namespace clap { namespace helpers {
       if (self.enableDraftExtensions()) {
          // put draft ext here
       }
-      return nullptr;
+
+      return self.getExtension(extension_id);
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>

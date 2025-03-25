@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <string_view>
 
 #include <clap/all.h>
 
@@ -51,6 +52,7 @@ namespace clap { namespace helpers {
       virtual void requestCallback() noexcept = 0;
 
       virtual bool enableDraftExtensions() const noexcept { return false; }
+      virtual const void* getExtension(const char* extensionId) const noexcept { return nullptr; }
 
       // clap_host_audio_ports
       virtual bool implementsAudioPorts() const noexcept { return false; }
