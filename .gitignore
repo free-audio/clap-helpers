@@ -46,3 +46,6 @@ ignore/
 build/
 out/
 .DS_Store
+
+# Meson
+.meson-subproject*

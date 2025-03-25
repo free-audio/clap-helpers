@@ -132,6 +132,8 @@ namespace clap { namespace helpers {
    const void *Host<h, l>::clapGetExtension(const clap_host_t *host,
                                             const char *extension_id) noexcept {
       auto &self = from(host);
+      if (auto ext = self.getExtension(extension_id))
+         return ext;
       if (!std::strcmp(extension_id, CLAP_EXT_AUDIO_PORTS) && self.implementsAudioPorts())
          return &_hostAudioPorts;
       if (!std::strcmp(extension_id, CLAP_EXT_GUI) && self.implementsGui())
@@ -162,6 +164,7 @@ namespace clap { namespace helpers {
       if (self.enableDraftExtensions()) {
          // put draft ext here
       }
+
       return nullptr;
    }
 
