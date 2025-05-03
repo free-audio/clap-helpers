@@ -1,5 +1,9 @@
 cmake_minimum_required(VERSION 3.17)
 cmake_policy(SET CMP0100 NEW)  # handle .hh files
+
+# resolve cmake v3.31 warning expecting install policy CMP0177 to be set
+cmake_policy(SET CMP0177 NEW)
+
 project(clap-helpers C CXX)
 
 option(CLAP_HELPERS_BUILD_TESTS "Build tests for the CLAP Helper" FALSE)
