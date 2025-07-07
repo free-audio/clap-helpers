@@ -70,6 +70,12 @@ namespace clap { namespace helpers {
    };
 
    template <MisbehaviourHandler h, CheckingLevel l>
+   const clap_plugin_surround_t Plugin<h, l>::_pluginSurroundConfig = {
+      clapSurroundIsChannelMaskSupported,
+      clapSurroundGetChannelMap,
+   };
+
+   template <MisbehaviourHandler h, CheckingLevel l>
    const clap_plugin_params Plugin<h, l>::_pluginParams = {
       clapParamsCount,
       clapParamsInfo,
@@ -509,6 +515,8 @@ namespace clap { namespace helpers {
          return &_pluginAudioPortsActivation;
       if (!strcmp(id, CLAP_EXT_AUDIO_PORTS_CONFIG) && self.implementsAudioPortsConfig())
          return &_pluginAudioPortsConfig;
+      if (!strcmp(id, CLAP_EXT_SURROUND) && self.implementsSurround())
+         return &_pluginSurroundConfig;
       if (!strcmp(id, CLAP_EXT_CONFIGURABLE_AUDIO_PORTS) && self.implementsConfigurableAudioPorts())
          return &_pluginConfigurableAudioPorts;
       if (!strcmp(id, CLAP_EXT_PARAMS) && self.implementsParams())
@@ -886,6 +894,44 @@ namespace clap { namespace helpers {
       }
 
       return applyConfigurationSuccess;
+   }
+
+   //----------------------//
+   // clap_plugin_surround //
+   //----------------------//
+   template <MisbehaviourHandler h, CheckingLevel l>
+   bool Plugin<h, l>::clapSurroundIsChannelMaskSupported(const clap_plugin_t *plugin,
+                                                         uint64_t channel_mask) noexcept {
+      auto &self = from(plugin);
+      auto methodName = "clap_plugin_surround.is_channel_mask_supported";
+      self.ensureMainThread(methodName);
+      self.ensureIsInactive(methodName);
+
+      return self.isChannelMaskSupported(channel_mask);
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   uint32_t Plugin<h, l>::clapSurroundGetChannelMap(const clap_plugin_t *plugin,
+                                                    bool is_input,
+                                                    uint32_t port_index,
+                                                    uint8_t *channel_map,
+                                                    uint32_t channel_map_capacity) noexcept {
+      auto &self = from(plugin);
+      auto methodName = "clap_plugin_surround.get_channel_map";
+      self.ensureMainThread(methodName);
+      self.ensureIsInactive(methodName);
+
+      const uint32_t channel_count =
+         self.getChannelMap(is_input, port_index, channel_map, channel_map_capacity);
+
+      if (l >= CheckingLevel::Minimal && channel_count > channel_map_capacity) {
+         self._host.pluginMisbehaving(
+            "Plugin's functions clap_plugin_surround.get_channel_map cannot return a channel "
+            "count greater than channel_map_capacity.");
+         return channel_map_capacity;
+      }
+
+      return channel_count;
    }
 
    //--------------------//

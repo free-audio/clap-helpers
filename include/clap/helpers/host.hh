@@ -108,6 +108,10 @@ namespace clap { namespace helpers {
       virtual bool implementsThreadPool() const noexcept { return false; }
       virtual bool threadPoolRequestExec(uint32_t numTasks) noexcept { return false; }
 
+      // clap_host_surround
+      virtual bool implementsSurround() const noexcept { return false; }
+      virtual void surroundChanged() noexcept {}
+
       /////////////////////
       // Thread Checking //
       /////////////////////
@@ -187,6 +191,9 @@ namespace clap { namespace helpers {
       // clap_host_thread_pool
       static bool clapThreadPoolRequestExec(const clap_host *host, uint32_t num_tasks) noexcept;
 
+      // clap_host_surround
+      static void clapSurroundChanged(const clap_host_t *host) noexcept;
+
       // interfaces
       static const clap_host_audio_ports _hostAudioPorts;
       static const clap_host_gui _hostGui;
@@ -200,5 +207,6 @@ namespace clap { namespace helpers {
       static const clap_host_tail _hostTail;
       static const clap_host_thread_check _hostThreadCheck;
       static const clap_host_thread_pool _hostThreadPool;
+      static const clap_host_surround _hostSurround;
    };
 }} // namespace clap::helpers
