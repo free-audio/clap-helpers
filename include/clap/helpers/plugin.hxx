@@ -905,7 +905,6 @@ namespace clap { namespace helpers {
       auto &self = from(plugin);
       auto methodName = "clap_plugin_surround.is_channel_mask_supported";
       self.ensureMainThread(methodName);
-      self.ensureIsInactive(methodName);
 
       return self.isChannelMaskSupported(channel_mask);
    }
