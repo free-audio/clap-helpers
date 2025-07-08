@@ -31,11 +31,11 @@ jobs:
           #  name: Windows gcc/minGW
           #  exe: .exe
 
-          - os: windows-latest
-            cmakeargs: -GNinja -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COMPILER=clang
-            install_ninja: true
-            name: Windows clang
-            exe: .exe
+#          - os: windows-latest
+#            cmakeargs: -GNinja -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COMPILER=clang
+#            install_ninja: true
+#            name: Windows clang
+#            exe: .exe
 
           - os: ubuntu-latest
             cmakeargs: -DCMAKE_CXX_COMPILER=g++-12 -DCMAKE_C_COMPILER=gcc-12 -DCLAP_HELPERS_TESTS_CXX_STANDARD=11

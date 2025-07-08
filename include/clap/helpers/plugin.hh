@@ -163,6 +163,18 @@ namespace clap { namespace helpers {
          return false;
       }
 
+      //----------------------//
+      // clap_plugin_surround //
+      //----------------------//
+      virtual bool implementsSurround() const noexcept { return false; }
+      virtual bool isChannelMaskSupported(uint64_t channel_mask) const noexcept { return false; }
+      virtual uint32_t getChannelMap(bool is_input,
+                                     uint32_t port_index,
+                                     uint8_t *channel_map,
+                                     uint32_t channel_map_capacity) const noexcept {
+         return 0;
+      }
+
       //--------------------//
       // clap_plugin_params //
       //--------------------//
@@ -505,6 +517,15 @@ namespace clap { namespace helpers {
          const clap_audio_port_configuration_request *requests,
          uint32_t request_count) noexcept;
 
+      // clap_plugin_surround
+      static bool clapSurroundIsChannelMaskSupported(const clap_plugin_t *plugin,
+                                                     uint64_t channel_mask) noexcept;
+      static uint32_t clapSurroundGetChannelMap(const clap_plugin_t *plugin,
+                                                bool is_input,
+                                                uint32_t port_index,
+                                                uint8_t *channel_map,
+                                                uint32_t channel_map_capacity) noexcept;
+
       // clap_plugin_params
       static uint32_t clapParamsCount(const clap_plugin *plugin) noexcept;
       static bool clapParamsInfo(const clap_plugin *plugin,
@@ -661,6 +682,7 @@ namespace clap { namespace helpers {
       static const clap_plugin_audio_ports_config _pluginAudioPortsConfig;
       static const clap_plugin_audio_ports_activation _pluginAudioPortsActivation;
       static const clap_plugin_configurable_audio_ports _pluginConfigurableAudioPorts;
+      static const clap_plugin_surround_t _pluginSurroundConfig;
       static const clap_plugin_gui _pluginGui;
       static const clap_plugin_latency _pluginLatency;
       static const clap_plugin_note_name _pluginNoteName;
