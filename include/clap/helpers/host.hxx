@@ -82,6 +82,11 @@ namespace clap { namespace helpers {
    };
 
    template <MisbehaviourHandler h, CheckingLevel l>
+   const clap_host_surround Host<h, l>::_hostSurround = {
+      clapSurroundChanged,
+   };
+
+   template <MisbehaviourHandler h, CheckingLevel l>
    Host<h, l>::Host(const char *name, const char *vendor, const char *url, const char *version)
       : _host{
            CLAP_VERSION,
@@ -160,6 +165,8 @@ namespace clap { namespace helpers {
          return &_hostThreadCheck;
       if (!strcmp(extension_id, CLAP_EXT_THREAD_POOL) && self.implementsThreadPool())
          return &_hostThreadPool;
+      if (!std::strcmp(extension_id, CLAP_EXT_SURROUND) && self.implementsSurround())
+         return &_hostSurround;
 
       if (self.enableDraftExtensions()) {
          // put draft ext here
@@ -395,6 +402,16 @@ namespace clap { namespace helpers {
       auto &self = from(host);
       self.ensureAudioThread("thread_pool.request_exec");
       return self.threadPoolRequestExec(num_tasks);
+   }
+
+   //--------------------//
+   // clap_host_surround //
+   //--------------------//
+   template <MisbehaviourHandler h, CheckingLevel l>
+   void Host<h, l>::clapSurroundChanged(const clap_host *host) noexcept {
+      auto &self = from(host);
+      self.ensureMainThread("surround.changed");
+      self.surroundChanged();
    }
 
    /////////////////////
