@@ -919,7 +919,6 @@ namespace clap { namespace helpers {
       auto &self = from(plugin);
       auto methodName = "clap_plugin_surround.get_channel_map";
       self.ensureMainThread(methodName);
-      self.ensureIsInactive(methodName);
 
       const uint32_t channel_count =
          self.getChannelMap(is_input, port_index, channel_map, channel_map_capacity);
