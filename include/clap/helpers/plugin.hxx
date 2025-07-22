@@ -14,69 +14,69 @@
 namespace clap { namespace helpers {
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   const clap_plugin_render Plugin<h, l>::_pluginRender = {
+   const clap_plugin_render PluginBase<h, l>::_pluginRender = {
       clapRenderHasHardRealtimeRequirement,
       clapRenderSetMode,
    };
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   const clap_plugin_thread_pool Plugin<h, l>::_pluginThreadPool = {
+   const clap_plugin_thread_pool PluginBase<h, l>::_pluginThreadPool = {
       clapThreadPoolExec,
    };
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   const clap_plugin_state Plugin<h, l>::_pluginState = {
+   const clap_plugin_state PluginBase<h, l>::_pluginState = {
       clapStateSave,
       clapStateLoad,
    };
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   const clap_plugin_state_context Plugin<h, l>::_pluginStateContext = {
+   const clap_plugin_state_context PluginBase<h, l>::_pluginStateContext = {
       clapStateContextSave,
       clapStateContextLoad,
    };
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   const clap_plugin_preset_load Plugin<h, l>::_pluginPresetLoad = {
+   const clap_plugin_preset_load PluginBase<h, l>::_pluginPresetLoad = {
       clapPresetLoadFromLocation,
    };
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   const clap_plugin_track_info Plugin<h, l>::_pluginTrackInfo = {
+   const clap_plugin_track_info PluginBase<h, l>::_pluginTrackInfo = {
       clapTrackInfoChanged,
    };
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   const clap_plugin_audio_ports Plugin<h, l>::_pluginAudioPorts = {clapAudioPortsCount,
-                                                                    clapAudioPortsInfo};
+   const clap_plugin_audio_ports PluginBase<h, l>::_pluginAudioPorts = {clapAudioPortsCount,
+                                                                        clapAudioPortsInfo};
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   const clap_plugin_audio_ports_config Plugin<h, l>::_pluginAudioPortsConfig = {
+   const clap_plugin_audio_ports_config PluginBase<h, l>::_pluginAudioPortsConfig = {
       clapAudioPortsConfigCount,
       clapAudioPortsGetConfig,
       clapAudioPortsSetConfig,
    };
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   const clap_plugin_audio_ports_activation Plugin<h, l>::_pluginAudioPortsActivation = {
+   const clap_plugin_audio_ports_activation PluginBase<h, l>::_pluginAudioPortsActivation = {
       clapAudioPortsActivationCanActivateWhileProcessing,
       clapAudioPortsActivationSetActive,
    };
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   const clap_plugin_configurable_audio_ports Plugin<h, l>::_pluginConfigurableAudioPorts = {
+   const clap_plugin_configurable_audio_ports PluginBase<h, l>::_pluginConfigurableAudioPorts = {
       clapConfigurableAudioPortsCanApplyConfiguration,
       clapConfigurableAudioPortsApplyConfiguration,
    };
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   const clap_plugin_surround_t Plugin<h, l>::_pluginSurroundConfig = {
+   const clap_plugin_surround_t PluginBase<h, l>::_pluginSurroundConfig = {
       clapSurroundIsChannelMaskSupported,
       clapSurroundGetChannelMap,
    };
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   const clap_plugin_params Plugin<h, l>::_pluginParams = {
+   const clap_plugin_params PluginBase<h, l>::_pluginParams = {
       clapParamsCount,
       clapParamsInfo,
       clapParamsValue,
@@ -86,40 +86,40 @@ namespace clap { namespace helpers {
    };
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   const clap_plugin_param_indication Plugin<h, l>::_pluginParamIndication = {
+   const clap_plugin_param_indication PluginBase<h, l>::_pluginParamIndication = {
       clapParamIndicationSetMapping,
       clapParamIndicationSetAutomation,
    };
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   const clap_plugin_remote_controls Plugin<h, l>::_pluginRemoteControls = {
+   const clap_plugin_remote_controls PluginBase<h, l>::_pluginRemoteControls = {
       clapRemoteControlsPageCount, clapRemoteControlsPageGet};
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   const clap_plugin_latency Plugin<h, l>::_pluginLatency = {
+   const clap_plugin_latency PluginBase<h, l>::_pluginLatency = {
       clapLatencyGet,
    };
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   const clap_plugin_note_ports Plugin<h, l>::_pluginNotePorts = {clapNotePortsCount,
-                                                                  clapNotePortsInfo};
+   const clap_plugin_note_ports PluginBase<h, l>::_pluginNotePorts = {clapNotePortsCount,
+                                                                      clapNotePortsInfo};
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   const clap_plugin_note_name Plugin<h, l>::_pluginNoteName = {
+   const clap_plugin_note_name PluginBase<h, l>::_pluginNoteName = {
       clapNoteNameCount,
       clapNoteNameGet,
    };
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   const clap_plugin_timer_support Plugin<h, l>::_pluginTimerSupport = {clapOnTimer};
+   const clap_plugin_timer_support PluginBase<h, l>::_pluginTimerSupport = {clapOnTimer};
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   const clap_plugin_posix_fd_support Plugin<h, l>::_pluginPosixFdSupport = {
+   const clap_plugin_posix_fd_support PluginBase<h, l>::_pluginPosixFdSupport = {
       clapOnPosixFd,
    };
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   const clap_plugin_gui Plugin<h, l>::_pluginGui = {
+   const clap_plugin_gui PluginBase<h, l>::_pluginGui = {
       clapGuiIsApiSupported,
       clapGuiGetPreferredApi,
       clapGuiCreate,
@@ -138,13 +138,13 @@ namespace clap { namespace helpers {
    };
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   const clap_plugin_context_menu Plugin<h, l>::_pluginContextMenu = {
+   const clap_plugin_context_menu PluginBase<h, l>::_pluginContextMenu = {
       clapContextMenuPopulate,
       clapContextMenuPerform,
    };
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   const clap_plugin_resource_directory Plugin<h, l>::_pluginResourceDirectory = {
+   const clap_plugin_resource_directory PluginBase<h, l>::_pluginResourceDirectory = {
       clapResourceDirectorySetDirectory,
       clapResourceDirectoryCollect,
       clapResourceDirectoryGetFilesCount,
@@ -152,17 +152,17 @@ namespace clap { namespace helpers {
    };
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   const clap_plugin_voice_info Plugin<h, l>::_pluginVoiceInfo = {
+   const clap_plugin_voice_info PluginBase<h, l>::_pluginVoiceInfo = {
       clapVoiceInfoGet,
    };
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   const clap_plugin_tail Plugin<h, l>::_pluginTail = {
+   const clap_plugin_tail PluginBase<h, l>::_pluginTail = {
       clapTailGet,
    };
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   const clap_plugin_undo_delta Plugin<h, l>::_pluginUndoDelta = {
+   const clap_plugin_undo_delta PluginBase<h, l>::_pluginUndoDelta = {
       clapUndoDeltaGetDeltaProperties,
       clapUndoDeltaCanUseDeltaFormatVersion,
       clapUndoDeltaUndo,
@@ -170,7 +170,7 @@ namespace clap { namespace helpers {
    };
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   const clap_plugin_undo_context Plugin<h, l>::_pluginUndoContext = {
+   const clap_plugin_undo_context PluginBase<h, l>::_pluginUndoContext = {
       clapUndoContextSetCanUndo,
       clapUndoContextSetCanRedo,
       clapUndoContextSetUndoName,
@@ -178,17 +178,17 @@ namespace clap { namespace helpers {
    };
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   const clap_plugin_project_location Plugin<h, l>::_pluginProjectLocation = {
+   const clap_plugin_project_location PluginBase<h, l>::_pluginProjectLocation = {
       clapProjectLocationSet,
    };
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   const clap_plugin_gain_adjustment_metering Plugin<h, l>::_pluginGainAdjustmentMetering = {
+   const clap_plugin_gain_adjustment_metering PluginBase<h, l>::_pluginGainAdjustmentMetering = {
       clapGainAdjustmentMeteringGet,
    };
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   const clap_plugin_mini_curve_display Plugin<h, l>::_pluginMiniCurveDisplay = {
+   const clap_plugin_mini_curve_display PluginBase<h, l>::_pluginMiniCurveDisplay = {
       clapMiniCurveDisplayGetCurveCount,
       clapMiniCurveDisplayRender,
       clapMiniCurveDisplaySetObserved,
@@ -196,19 +196,20 @@ namespace clap { namespace helpers {
    };
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   Plugin<h, l>::Plugin(const clap_plugin_descriptor *desc, const clap_host *host) : _host(host) {
+   PluginBase<h, l>::PluginBase(const clap_plugin_descriptor &desc, HostProxy<h, l> &hostProxy)
+      : _hostProxy(hostProxy) {
       _plugin.plugin_data = this;
-      _plugin.desc = desc;
-      _plugin.init = Plugin<h, l>::clapInit;
-      _plugin.destroy = Plugin<h, l>::clapDestroy;
-      _plugin.get_extension = Plugin<h, l>::clapExtension;
-      _plugin.process = Plugin<h, l>::clapProcess;
-      _plugin.activate = Plugin<h, l>::clapActivate;
-      _plugin.deactivate = Plugin<h, l>::clapDeactivate;
-      _plugin.start_processing = Plugin<h, l>::clapStartProcessing;
-      _plugin.stop_processing = Plugin<h, l>::clapStopProcessing;
-      _plugin.reset = Plugin<h, l>::clapReset;
-      _plugin.on_main_thread = Plugin<h, l>::clapOnMainThread;
+      _plugin.desc = &desc;
+      _plugin.init = PluginBase<h, l>::clapInit;
+      _plugin.destroy = PluginBase<h, l>::clapDestroy;
+      _plugin.get_extension = PluginBase<h, l>::clapExtension;
+      _plugin.process = PluginBase<h, l>::clapProcess;
+      _plugin.activate = PluginBase<h, l>::clapActivate;
+      _plugin.deactivate = PluginBase<h, l>::clapDeactivate;
+      _plugin.start_processing = PluginBase<h, l>::clapStartProcessing;
+      _plugin.stop_processing = PluginBase<h, l>::clapStopProcessing;
+      _plugin.reset = PluginBase<h, l>::clapReset;
+      _plugin.on_main_thread = PluginBase<h, l>::clapOnMainThread;
    }
 
    /////////////////////
@@ -219,7 +220,7 @@ namespace clap { namespace helpers {
    // clap_plugin //
    //-------------//
    template <MisbehaviourHandler h, CheckingLevel l>
-   bool Plugin<h, l>::clapInit(const clap_plugin *plugin) noexcept {
+   bool PluginBase<h, l>::clapInit(const clap_plugin *plugin) noexcept {
       auto &self = from(plugin, false);
 
       if (l >= CheckingLevel::Minimal && self._wasInitialized) {
@@ -231,13 +232,13 @@ namespace clap { namespace helpers {
 
       self._wasInitialized = true;
 
-      self._host.init();
+      self._hostProxy.init();
       self.ensureMainThread("clap_plugin.init");
       return self.init();
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   void Plugin<h, l>::ensureInitialized(const char *method) const noexcept {
+   void PluginBase<h, l>::ensureInitialized(const char *method) const noexcept {
       if (l == CheckingLevel::None || _wasInitialized)
          return;
 
@@ -249,20 +250,21 @@ namespace clap { namespace helpers {
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   void Plugin<h, l>::clapDestroy(const clap_plugin *plugin) noexcept {
+   void PluginBase<h, l>::clapDestroy(const clap_plugin *plugin) noexcept {
       auto &self = from(plugin, false);
       self.ensureMainThread("clap_plugin.destroy");
       self._isBeingDestroyed = true;
 
       if (self._isGuiCreated) {
          if (l >= CheckingLevel::Minimal)
-            self._host.hostMisbehaving("host forgot to destroy the gui");
+            self._hostProxy.hostMisbehaving("host forgot to destroy the gui");
          clapGuiDestroy(plugin);
       }
 
       if (self._isActive) {
          if (l >= CheckingLevel::Minimal)
-            self._host.hostMisbehaving("host forgot to deactivate the plugin before destroying it");
+            self._hostProxy.hostMisbehaving(
+               "host forgot to deactivate the plugin before destroying it");
          clapDeactivate(plugin);
       }
       assert(!self._isActive);
@@ -273,7 +275,7 @@ namespace clap { namespace helpers {
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   void Plugin<h, l>::clapOnMainThread(const clap_plugin *plugin) noexcept {
+   void PluginBase<h, l>::clapOnMainThread(const clap_plugin *plugin) noexcept {
       auto &self = from(plugin);
       self.ensureInitialized("on_maint_thread");
       self.ensureMainThread("clap_plugin.on_main_thread");
@@ -283,10 +285,10 @@ namespace clap { namespace helpers {
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   void Plugin<h, l>::runCallbacksOnMainThread() {
+   void PluginBase<h, l>::runCallbacksOnMainThread() {
       if (l >= CheckingLevel::Minimal) {
-         if (_host.canUseThreadCheck() && !_host.isMainThread()) {
-            _host.pluginMisbehaving(
+         if (_hostProxy.canUseThreadCheck() && !_hostProxy.isMainThread()) {
+            _hostProxy.pluginMisbehaving(
                "plugin called runCallbacksOnMainThread(), but not on the main thread!");
             return;
          }
@@ -309,10 +311,10 @@ namespace clap { namespace helpers {
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   bool Plugin<h, l>::clapActivate(const clap_plugin *plugin,
-                                   double sample_rate,
-                                   uint32_t minFrameCount,
-                                   uint32_t maxFrameCount) noexcept {
+   bool PluginBase<h, l>::clapActivate(const clap_plugin *plugin,
+                                       double sample_rate,
+                                       uint32_t minFrameCount,
+                                       uint32_t maxFrameCount) noexcept {
       auto &self = from(plugin);
       self.ensureInitialized("activate");
       self.ensureMainThread("clap_plugin.activate");
@@ -383,7 +385,7 @@ namespace clap { namespace helpers {
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   void Plugin<h, l>::clapDeactivate(const clap_plugin *plugin) noexcept {
+   void PluginBase<h, l>::clapDeactivate(const clap_plugin *plugin) noexcept {
       auto &self = from(plugin);
       self.ensureInitialized("deactivate");
       self.ensureMainThread("clap_plugin.deactivate");
@@ -401,7 +403,7 @@ namespace clap { namespace helpers {
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   bool Plugin<h, l>::clapStartProcessing(const clap_plugin *plugin) noexcept {
+   bool PluginBase<h, l>::clapStartProcessing(const clap_plugin *plugin) noexcept {
       auto &self = from(plugin);
       self.ensureInitialized("start_processing");
       self.ensureAudioThread("clap_plugin.start_processing");
@@ -424,7 +426,7 @@ namespace clap { namespace helpers {
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   void Plugin<h, l>::clapStopProcessing(const clap_plugin *plugin) noexcept {
+   void PluginBase<h, l>::clapStopProcessing(const clap_plugin *plugin) noexcept {
       auto &self = from(plugin);
       self.ensureInitialized("stop_processing");
       self.ensureAudioThread("clap_plugin.stop_processing");
@@ -447,7 +449,7 @@ namespace clap { namespace helpers {
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   void Plugin<h, l>::clapReset(const clap_plugin *plugin) noexcept {
+   void PluginBase<h, l>::clapReset(const clap_plugin *plugin) noexcept {
       auto &self = from(plugin);
       self.ensureInitialized("reset");
       self.ensureAudioThread("clap_plugin.reset");
@@ -463,8 +465,8 @@ namespace clap { namespace helpers {
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   clap_process_status Plugin<h, l>::clapProcess(const clap_plugin *plugin,
-                                                 const clap_process *process) noexcept {
+   clap_process_status PluginBase<h, l>::clapProcess(const clap_plugin *plugin,
+                                                     const clap_process *process) noexcept {
       auto &self = from(plugin);
       self.ensureInitialized("process");
       self.ensureAudioThread("clap_plugin.process");
@@ -486,7 +488,7 @@ namespace clap { namespace helpers {
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   const void *Plugin<h, l>::clapExtension(const clap_plugin *plugin, const char *id) noexcept {
+   const void *PluginBase<h, l>::clapExtension(const clap_plugin *plugin, const char *id) noexcept {
       auto &self = from(plugin);
       self.ensureInitialized("extension");
 
@@ -571,7 +573,7 @@ namespace clap { namespace helpers {
    // clap_plugin_state //
    //-------------------//
    template <MisbehaviourHandler h, CheckingLevel l>
-   uint32_t Plugin<h, l>::clapLatencyGet(const clap_plugin *plugin) noexcept {
+   uint32_t PluginBase<h, l>::clapLatencyGet(const clap_plugin *plugin) noexcept {
       auto &self = from(plugin);
       self.ensureMainThread("clap_plugin_latency.get");
 
@@ -589,7 +591,7 @@ namespace clap { namespace helpers {
    // clap_plugin_tail //
    //------------------//
    template <MisbehaviourHandler h, CheckingLevel l>
-   uint32_t Plugin<h, l>::clapTailGet(const clap_plugin_t *plugin) noexcept {
+   uint32_t PluginBase<h, l>::clapTailGet(const clap_plugin_t *plugin) noexcept {
       auto &self = from(plugin);
 
       if (l >= CheckingLevel::Minimal) {
@@ -606,15 +608,15 @@ namespace clap { namespace helpers {
    // clap_plugin_render //
    //--------------------//
    template <MisbehaviourHandler h, CheckingLevel l>
-   bool Plugin<h, l>::clapRenderHasHardRealtimeRequirement(const clap_plugin *plugin) noexcept {
+   bool PluginBase<h, l>::clapRenderHasHardRealtimeRequirement(const clap_plugin *plugin) noexcept {
       auto &self = from(plugin);
       self.ensureMainThread("clap_plugin_render.has_hard_realtime_requirement");
       return self.renderHasHardRealtimeRequirement();
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   bool Plugin<h, l>::clapRenderSetMode(const clap_plugin *plugin,
-                                        clap_plugin_render_mode mode) noexcept {
+   bool PluginBase<h, l>::clapRenderSetMode(const clap_plugin *plugin,
+                                            clap_plugin_render_mode mode) noexcept {
       auto &self = from(plugin);
       self.ensureMainThread("clap_plugin_render.set_mode");
 
@@ -641,7 +643,8 @@ namespace clap { namespace helpers {
    // clap_plugin_thread_pool //
    //-------------------------//
    template <MisbehaviourHandler h, CheckingLevel l>
-   void Plugin<h, l>::clapThreadPoolExec(const clap_plugin *plugin, uint32_t task_index) noexcept {
+   void PluginBase<h, l>::clapThreadPoolExec(const clap_plugin *plugin,
+                                             uint32_t task_index) noexcept {
       auto &self = from(plugin);
 
       self.threadPoolExec(task_index);
@@ -651,8 +654,8 @@ namespace clap { namespace helpers {
    // clap_plugin_state //
    //-------------------//
    template <MisbehaviourHandler h, CheckingLevel l>
-   bool Plugin<h, l>::clapStateSave(const clap_plugin *plugin,
-                                    const clap_ostream *stream) noexcept {
+   bool PluginBase<h, l>::clapStateSave(const clap_plugin *plugin,
+                                        const clap_ostream *stream) noexcept {
       auto &self = from(plugin);
       self.ensureMainThread("clap_plugin_state.save");
 
@@ -660,8 +663,8 @@ namespace clap { namespace helpers {
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   bool Plugin<h, l>::clapStateLoad(const clap_plugin *plugin,
-                                    const clap_istream *stream) noexcept {
+   bool PluginBase<h, l>::clapStateLoad(const clap_plugin *plugin,
+                                        const clap_istream *stream) noexcept {
       auto &self = from(plugin);
       self.ensureMainThread("clap_plugin_state.load");
 
@@ -672,9 +675,9 @@ namespace clap { namespace helpers {
    // clap_plugin_state_context //
    //---------------------------//
    template <MisbehaviourHandler h, CheckingLevel l>
-   bool Plugin<h, l>::clapStateContextSave(const clap_plugin *plugin,
-                                           const clap_ostream *stream,
-                                           uint32_t context) noexcept {
+   bool PluginBase<h, l>::clapStateContextSave(const clap_plugin *plugin,
+                                               const clap_ostream *stream,
+                                               uint32_t context) noexcept {
       auto &self = from(plugin);
       self.ensureMainThread("clap_plugin_state_context.save");
 
@@ -682,9 +685,9 @@ namespace clap { namespace helpers {
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   bool Plugin<h, l>::clapStateContextLoad(const clap_plugin *plugin,
-                                           const clap_istream *stream,
-                                           uint32_t context) noexcept {
+   bool PluginBase<h, l>::clapStateContextLoad(const clap_plugin *plugin,
+                                               const clap_istream *stream,
+                                               uint32_t context) noexcept {
       auto &self = from(plugin);
       self.ensureMainThread("clap_plugin_state_context.load");
 
@@ -695,10 +698,10 @@ namespace clap { namespace helpers {
    // clap_plugin_preset_load //
    //-------------------------//
    template <MisbehaviourHandler h, CheckingLevel l>
-   bool Plugin<h, l>::clapPresetLoadFromLocation(const clap_plugin *plugin,
-                                                 uint32_t location_kind,
-                                                 const char *location,
-                                                 const char *load_key) noexcept {
+   bool PluginBase<h, l>::clapPresetLoadFromLocation(const clap_plugin *plugin,
+                                                     uint32_t location_kind,
+                                                     const char *location,
+                                                     const char *load_key) noexcept {
       auto &self = from(plugin);
       self.ensureMainThread("clap_plugin_preset_load.from_location");
 
@@ -718,12 +721,12 @@ namespace clap { namespace helpers {
    // clap_plugin_track_info //
    //------------------------//
    template <MisbehaviourHandler h, CheckingLevel l>
-   void Plugin<h, l>::clapTrackInfoChanged(const clap_plugin *plugin) noexcept {
+   void PluginBase<h, l>::clapTrackInfoChanged(const clap_plugin *plugin) noexcept {
       auto &self = from(plugin);
       self.ensureMainThread("clap_plugin_track_info.changed");
 
       if (l >= CheckingLevel::Minimal) {
-         if (!self._host.canUseTrackInfo()) {
+         if (!self._hostProxy.canUseTrackInfo()) {
             self.hostMisbehaving(
                "host called clap_plugin_track_info.changed() but does not provide a "
                "complete clap_host_track_info interface");
@@ -738,7 +741,8 @@ namespace clap { namespace helpers {
    // clap_plugin_audio_ports //
    //-------------------------//
    template <MisbehaviourHandler h, CheckingLevel l>
-   uint32_t Plugin<h, l>::clapAudioPortsCount(const clap_plugin *plugin, bool is_input) noexcept {
+   uint32_t PluginBase<h, l>::clapAudioPortsCount(const clap_plugin *plugin,
+                                                  bool is_input) noexcept {
       auto &self = from(plugin);
       self.ensureMainThread("clap_plugin_audio_ports.count");
 
@@ -746,10 +750,10 @@ namespace clap { namespace helpers {
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   bool Plugin<h, l>::clapAudioPortsInfo(const clap_plugin *plugin,
-                                         uint32_t index,
-                                         bool is_input,
-                                         clap_audio_port_info *info) noexcept {
+   bool PluginBase<h, l>::clapAudioPortsInfo(const clap_plugin *plugin,
+                                             uint32_t index,
+                                             bool is_input,
+                                             clap_audio_port_info *info) noexcept {
       auto &self = from(plugin);
       self.ensureMainThread("clap_plugin_audio_ports.info");
 
@@ -768,16 +772,16 @@ namespace clap { namespace helpers {
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   uint32_t Plugin<h, l>::clapAudioPortsConfigCount(const clap_plugin *plugin) noexcept {
+   uint32_t PluginBase<h, l>::clapAudioPortsConfigCount(const clap_plugin *plugin) noexcept {
       auto &self = from(plugin);
       self.ensureMainThread("clap_plugin_audio_ports.config_count");
       return self.audioPortsConfigCount();
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   bool Plugin<h, l>::clapAudioPortsGetConfig(const clap_plugin *plugin,
-                                              uint32_t index,
-                                              clap_audio_ports_config *config) noexcept {
+   bool PluginBase<h, l>::clapAudioPortsGetConfig(const clap_plugin *plugin,
+                                                  uint32_t index,
+                                                  clap_audio_ports_config *config) noexcept {
       auto &self = from(plugin);
       self.ensureMainThread("clap_plugin_audio_ports.get_config");
 
@@ -795,8 +799,8 @@ namespace clap { namespace helpers {
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   bool Plugin<h, l>::clapAudioPortsSetConfig(const clap_plugin *plugin,
-                                              clap_id config_id) noexcept {
+   bool PluginBase<h, l>::clapAudioPortsSetConfig(const clap_plugin *plugin,
+                                                  clap_id config_id) noexcept {
       auto &self = from(plugin);
       self.ensureMainThread("clap_plugin_audio_ports.set_config");
 
@@ -812,7 +816,7 @@ namespace clap { namespace helpers {
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   bool Plugin<h, l>::clapAudioPortsActivationCanActivateWhileProcessing(
+   bool PluginBase<h, l>::clapAudioPortsActivationCanActivateWhileProcessing(
       const clap_plugin_t *plugin) noexcept {
       auto &self = from(plugin);
       self.ensureMainThread("clap_plugin_audio_ports_activation.can_activate_while_processing");
@@ -821,11 +825,11 @@ namespace clap { namespace helpers {
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   bool Plugin<h, l>::clapAudioPortsActivationSetActive(const clap_plugin_t *plugin,
-                                                        bool is_input,
-                                                        uint32_t port_index,
-                                                        bool is_active,
-                                                        uint32_t sample_size) noexcept {
+   bool PluginBase<h, l>::clapAudioPortsActivationSetActive(const clap_plugin_t *plugin,
+                                                            bool is_input,
+                                                            uint32_t port_index,
+                                                            bool is_active,
+                                                            uint32_t sample_size) noexcept {
       auto &self = from(plugin);
       self.ensureMainThread("clap_plugin_audio_ports_activation.set_active");
 
@@ -843,7 +847,7 @@ namespace clap { namespace helpers {
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   uint32_t Plugin<h, l>::clapParamsCount(const clap_plugin *plugin) noexcept {
+   uint32_t PluginBase<h, l>::clapParamsCount(const clap_plugin *plugin) noexcept {
       auto &self = from(plugin);
       self.ensureMainThread("clap_plugin_params.count");
 
@@ -855,7 +859,7 @@ namespace clap { namespace helpers {
    //--------------------------------------//
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   bool Plugin<h, l>::clapConfigurableAudioPortsCanApplyConfiguration(
+   bool PluginBase<h, l>::clapConfigurableAudioPortsCanApplyConfiguration(
       const clap_plugin_t *plugin,
       const clap_audio_port_configuration_request *requests,
       uint32_t request_count) noexcept {
@@ -868,7 +872,7 @@ namespace clap { namespace helpers {
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   bool Plugin<h, l>::clapConfigurableAudioPortsApplyConfiguration(
+   bool PluginBase<h, l>::clapConfigurableAudioPortsApplyConfiguration(
       const clap_plugin_t *plugin,
       const clap_audio_port_configuration_request *requests,
       uint32_t request_count) noexcept {
@@ -887,7 +891,7 @@ namespace clap { namespace helpers {
          self.configurableAudioPortsApplyConfiguration(requests, request_count);
 
       if (l >= CheckingLevel::Minimal && canApplyConfiguration != applyConfigurationSuccess) {
-         self._host.pluginMisbehaving(
+         self._hostProxy.pluginMisbehaving(
             "Plugin's functions clap_plugin_configurable_audio_ports.can_apply_configuration and "
             "clap_plugin_configurable_audio_ports.apply_configuration returned different values "
             "for the same configuration.");
@@ -900,8 +904,8 @@ namespace clap { namespace helpers {
    // clap_plugin_surround //
    //----------------------//
    template <MisbehaviourHandler h, CheckingLevel l>
-   bool Plugin<h, l>::clapSurroundIsChannelMaskSupported(const clap_plugin_t *plugin,
-                                                         uint64_t channel_mask) noexcept {
+   bool PluginBase<h, l>::clapSurroundIsChannelMaskSupported(const clap_plugin_t *plugin,
+                                                             uint64_t channel_mask) noexcept {
       auto &self = from(plugin);
       auto methodName = "clap_plugin_surround.is_channel_mask_supported";
       self.ensureMainThread(methodName);
@@ -910,11 +914,11 @@ namespace clap { namespace helpers {
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   uint32_t Plugin<h, l>::clapSurroundGetChannelMap(const clap_plugin_t *plugin,
-                                                    bool is_input,
-                                                    uint32_t port_index,
-                                                    uint8_t *channel_map,
-                                                    uint32_t channel_map_capacity) noexcept {
+   uint32_t PluginBase<h, l>::clapSurroundGetChannelMap(const clap_plugin_t *plugin,
+                                                        bool is_input,
+                                                        uint32_t port_index,
+                                                        uint8_t *channel_map,
+                                                        uint32_t channel_map_capacity) noexcept {
       auto &self = from(plugin);
       auto methodName = "clap_plugin_surround.get_channel_map";
       self.ensureMainThread(methodName);
@@ -923,7 +927,7 @@ namespace clap { namespace helpers {
          self.getChannelMap(is_input, port_index, channel_map, channel_map_capacity);
 
       if (l >= CheckingLevel::Minimal && channel_count > channel_map_capacity) {
-         self._host.pluginMisbehaving(
+         self._hostProxy.pluginMisbehaving(
             "Plugin's functions clap_plugin_surround.get_channel_map cannot return a channel "
             "count greater than channel_map_capacity.");
          return channel_map_capacity;
@@ -936,9 +940,9 @@ namespace clap { namespace helpers {
    // clap_plugin_params //
    //--------------------//
    template <MisbehaviourHandler h, CheckingLevel l>
-   bool Plugin<h, l>::clapParamsInfo(const clap_plugin *plugin,
-                                     uint32_t param_index,
-                                     clap_param_info *param_info) noexcept {
+   bool PluginBase<h, l>::clapParamsInfo(const clap_plugin *plugin,
+                                         uint32_t param_index,
+                                         clap_param_info *param_info) noexcept {
       auto &self = from(plugin);
       self.ensureMainThread("clap_plugin_params.info");
 
@@ -958,16 +962,16 @@ namespace clap { namespace helpers {
       if (l >= CheckingLevel::Maximal && !res) {
          std::ostringstream os;
          os << "clap_plugin_params.info(" << param_index << ") failed";
-         self._host.pluginMisbehaving(os.str());
+         self._hostProxy.pluginMisbehaving(os.str());
       }
 
       return res;
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   bool Plugin<h, l>::clapParamsValue(const clap_plugin *plugin,
-                                      clap_id paramId,
-                                      double *value) noexcept {
+   bool PluginBase<h, l>::clapParamsValue(const clap_plugin *plugin,
+                                          clap_id paramId,
+                                          double *value) noexcept {
       auto &self = from(plugin);
       self.ensureMainThread("clap_plugin_params.value");
 
@@ -989,7 +993,7 @@ namespace clap { namespace helpers {
                std::ostringstream msg;
                msg << "clap_plugin_params.value(" << paramId << ") = " << *value
                    << ", is out of range [" << info.min_value << " .. " << info.max_value << "]";
-               self._host.pluginMisbehaving(msg.str());
+               self._hostProxy.pluginMisbehaving(msg.str());
             }
          }
       }
@@ -998,9 +1002,9 @@ namespace clap { namespace helpers {
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   void Plugin<h, l>::clapParamsFlush(const clap_plugin *plugin,
-                                      const clap_input_events *in,
-                                      const clap_output_events *out) noexcept {
+   void PluginBase<h, l>::clapParamsFlush(const clap_plugin *plugin,
+                                          const clap_input_events *in,
+                                          const clap_output_events *out) noexcept {
       auto &self = from(plugin);
       self.ensureParamThread("clap_plugin_params.flush");
 
@@ -1037,7 +1041,7 @@ namespace clap { namespace helpers {
 
                auto pev = reinterpret_cast<const clap_event_param_value *>(ev);
 
-               if (self._host.canUseThreadCheck() && self._host.isMainThread() &&
+               if (self._hostProxy.canUseThreadCheck() && self._hostProxy.isMainThread() &&
                    !self.isValidParamId(pev->param_id)) {
                   std::ostringstream msg;
                   msg << "clap_plugin_params.flush called unknown paramId: " << pev->param_id;
@@ -1052,7 +1056,7 @@ namespace clap { namespace helpers {
                      msg << "clap_plugin_params.flush() produced the value " << pev->value
                          << " for parameter " << pev->param_id << " which is out of bounds: ["
                          << info.min_value << " .. " << info.max_value << "]";
-                     self._host.pluginMisbehaving(msg.str());
+                     self._hostProxy.pluginMisbehaving(msg.str());
                   }
                }
             }
@@ -1067,11 +1071,11 @@ namespace clap { namespace helpers {
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   bool Plugin<h, l>::clapParamsValueToText(const clap_plugin *plugin,
-                                            clap_id param_id,
-                                            double value,
-                                            char *display,
-                                            uint32_t size) noexcept {
+   bool PluginBase<h, l>::clapParamsValueToText(const clap_plugin *plugin,
+                                                clap_id param_id,
+                                                double value,
+                                                char *display,
+                                                uint32_t size) noexcept {
       auto &self = from(plugin);
       self.ensureMainThread("clap_plugin_params.value_to_text");
 
@@ -1114,10 +1118,10 @@ namespace clap { namespace helpers {
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   bool Plugin<h, l>::clapParamsTextToValue(const clap_plugin *plugin,
-                                            clap_id param_id,
-                                            const char *display,
-                                            double *value) noexcept {
+   bool PluginBase<h, l>::clapParamsTextToValue(const clap_plugin *plugin,
+                                                clap_id param_id,
+                                                const char *display,
+                                                double *value) noexcept {
       auto &self = from(plugin);
       self.ensureMainThread("clap_plugin_params.text_to_value");
 
@@ -1153,7 +1157,7 @@ namespace clap { namespace helpers {
                msg << "clap_plugin_params.text_to_value() produced the value " << value
                    << " for parameter " << param_id << " which is out of bounds: ["
                    << info.min_value << " .. " << info.max_value << "]";
-               self._host.pluginMisbehaving(msg.str());
+               self._hostProxy.pluginMisbehaving(msg.str());
             }
          }
       }
@@ -1161,7 +1165,7 @@ namespace clap { namespace helpers {
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   int32_t Plugin<h, l>::getParamIndexForParamId(clap_id param_id) const noexcept {
+   int32_t PluginBase<h, l>::getParamIndexForParamId(clap_id param_id) const noexcept {
       checkMainThread();
 
       const auto count = paramsCount();
@@ -1178,8 +1182,8 @@ namespace clap { namespace helpers {
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   bool Plugin<h, l>::getParamInfoForParamId(clap_id paramId,
-                                             clap_param_info *info) const noexcept {
+   bool PluginBase<h, l>::getParamInfoForParamId(clap_id paramId,
+                                                 clap_param_info *info) const noexcept {
       checkMainThread();
 
       const auto count = paramsCount();
@@ -1191,7 +1195,7 @@ namespace clap { namespace helpers {
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   bool Plugin<h, l>::isValidParamId(clap_id param_id) const noexcept {
+   bool PluginBase<h, l>::isValidParamId(clap_id param_id) const noexcept {
       checkMainThread();
 
       return getParamIndexForParamId(param_id) != -1;
@@ -1202,12 +1206,12 @@ namespace clap { namespace helpers {
    //------------------------------//
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   void Plugin<h, l>::clapParamIndicationSetMapping(const clap_plugin_t *plugin,
-                                                    clap_id param_id,
-                                                    bool has_mapping,
-                                                    const clap_color_t *color,
-                                                    const char *label,
-                                                    const char *description) noexcept {
+   void PluginBase<h, l>::clapParamIndicationSetMapping(const clap_plugin_t *plugin,
+                                                        clap_id param_id,
+                                                        bool has_mapping,
+                                                        const clap_color_t *color,
+                                                        const char *label,
+                                                        const char *description) noexcept {
       auto &self = from(plugin);
       self.checkMainThread();
 
@@ -1225,10 +1229,10 @@ namespace clap { namespace helpers {
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   void Plugin<h, l>::clapParamIndicationSetAutomation(const clap_plugin_t *plugin,
-                                                       clap_id param_id,
-                                                       uint32_t automation_state,
-                                                       const clap_color_t *color) noexcept {
+   void PluginBase<h, l>::clapParamIndicationSetAutomation(const clap_plugin_t *plugin,
+                                                           clap_id param_id,
+                                                           uint32_t automation_state,
+                                                           const clap_color_t *color) noexcept {
       auto &self = from(plugin);
       self.checkMainThread();
 
@@ -1249,7 +1253,7 @@ namespace clap { namespace helpers {
    // clap_plugin_remote_controls //
    //----------------------------//
    template <MisbehaviourHandler h, CheckingLevel l>
-   uint32_t Plugin<h, l>::clapRemoteControlsPageCount(const clap_plugin *plugin) noexcept {
+   uint32_t PluginBase<h, l>::clapRemoteControlsPageCount(const clap_plugin *plugin) noexcept {
       auto &self = from(plugin);
       self.ensureMainThread("clap_plugin_remote_controls.page_count");
 
@@ -1257,9 +1261,9 @@ namespace clap { namespace helpers {
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   bool Plugin<h, l>::clapRemoteControlsPageGet(const clap_plugin *plugin,
-                                                uint32_t page_index,
-                                                clap_remote_controls_page *page) noexcept {
+   bool PluginBase<h, l>::clapRemoteControlsPageGet(const clap_plugin *plugin,
+                                                    uint32_t page_index,
+                                                    clap_remote_controls_page *page) noexcept {
       auto &self = from(plugin);
       self.ensureMainThread("clap_plugin_remote_controls.page_info");
 
@@ -1282,17 +1286,18 @@ namespace clap { namespace helpers {
    // clap_plugin_note_ports //
    //------------------------//
    template <MisbehaviourHandler h, CheckingLevel l>
-   uint32_t Plugin<h, l>::clapNotePortsCount(const clap_plugin *plugin, bool is_input) noexcept {
+   uint32_t PluginBase<h, l>::clapNotePortsCount(const clap_plugin *plugin,
+                                                 bool is_input) noexcept {
       auto &self = from(plugin);
       self.ensureMainThread("clap_plugin_note_port.count");
       return self.notePortsCount(is_input);
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   bool Plugin<h, l>::clapNotePortsInfo(const clap_plugin *plugin,
-                                        uint32_t index,
-                                        bool is_input,
-                                        clap_note_port_info *info) noexcept {
+   bool PluginBase<h, l>::clapNotePortsInfo(const clap_plugin *plugin,
+                                            uint32_t index,
+                                            bool is_input,
+                                            clap_note_port_info *info) noexcept {
       auto &self = from(plugin);
       self.ensureMainThread("clap_plugin_note_ports.info");
 
@@ -1314,16 +1319,16 @@ namespace clap { namespace helpers {
    // clap_plugin_note_name //
    //-----------------------//
    template <MisbehaviourHandler h, CheckingLevel l>
-   uint32_t Plugin<h, l>::clapNoteNameCount(const clap_plugin *plugin) noexcept {
+   uint32_t PluginBase<h, l>::clapNoteNameCount(const clap_plugin *plugin) noexcept {
       auto &self = from(plugin);
       self.ensureMainThread("clap_plugin_note_name.count");
       return self.noteNameCount();
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   bool Plugin<h, l>::clapNoteNameGet(const clap_plugin *plugin,
-                                      uint32_t index,
-                                      clap_note_name *note_name) noexcept {
+   bool PluginBase<h, l>::clapNoteNameGet(const clap_plugin *plugin,
+                                          uint32_t index,
+                                          clap_note_name *note_name) noexcept {
       auto &self = from(plugin);
       self.ensureMainThread("clap_plugin_note_name.get");
 
@@ -1345,7 +1350,7 @@ namespace clap { namespace helpers {
    // clap_plugin_event_loop //
    //------------------------//
    template <MisbehaviourHandler h, CheckingLevel l>
-   void Plugin<h, l>::clapOnTimer(const clap_plugin *plugin, clap_id timer_id) noexcept {
+   void PluginBase<h, l>::clapOnTimer(const clap_plugin *plugin, clap_id timer_id) noexcept {
       auto &self = from(plugin);
       self.ensureMainThread("clap_plugin_timer_support.on_timer");
 
@@ -1361,9 +1366,9 @@ namespace clap { namespace helpers {
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   void Plugin<h, l>::clapOnPosixFd(const clap_plugin *plugin,
-                                    int fd,
-                                    clap_posix_fd_flags_t flags) noexcept {
+   void PluginBase<h, l>::clapOnPosixFd(const clap_plugin *plugin,
+                                        int fd,
+                                        clap_posix_fd_flags_t flags) noexcept {
       auto &self = from(plugin);
       self.ensureMainThread("clap_plugin_event_loop.on_fd");
 
@@ -1375,7 +1380,8 @@ namespace clap { namespace helpers {
    //------------------------//
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   bool Plugin<h, l>::clapVoiceInfoGet(const clap_plugin *plugin, clap_voice_info *info) noexcept {
+   bool PluginBase<h, l>::clapVoiceInfoGet(const clap_plugin *plugin,
+                                           clap_voice_info *info) noexcept {
       auto &self = from(plugin);
       self.ensureMainThread("clap_plugin_voice_info.get");
 
@@ -1394,9 +1400,9 @@ namespace clap { namespace helpers {
    // clap_plugin_gui //
    //-----------------//
    template <MisbehaviourHandler h, CheckingLevel l>
-   bool Plugin<h, l>::clapGuiGetSize(const clap_plugin *plugin,
-                                     uint32_t *width,
-                                     uint32_t *height) noexcept {
+   bool PluginBase<h, l>::clapGuiGetSize(const clap_plugin *plugin,
+                                         uint32_t *width,
+                                         uint32_t *height) noexcept {
       auto &self = from(plugin);
       self.ensureMainThread("clap_plugin_gui.size");
 
@@ -1416,7 +1422,7 @@ namespace clap { namespace helpers {
          uint32_t testHeight = *height;
 
          if (!self.guiAdjustSize(&testWidth, &testHeight))
-            self._host.pluginMisbehaving(
+            self._hostProxy.pluginMisbehaving(
                "the plugin claims to be resizable but the value returned"
                " by guiGetSize() needs can't be adjusted using guiAdjustSize()");
       }
@@ -1425,7 +1431,7 @@ namespace clap { namespace helpers {
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   bool Plugin<h, l>::clapGuiCanResize(const clap_plugin *plugin) noexcept {
+   bool PluginBase<h, l>::clapGuiCanResize(const clap_plugin *plugin) noexcept {
       auto &self = from(plugin);
       self.ensureMainThread("clap_plugin_gui.can_resize");
 
@@ -1441,8 +1447,8 @@ namespace clap { namespace helpers {
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   bool Plugin<h, l>::clapGuiGetResizeHints(const clap_plugin_t *plugin,
-                                            clap_gui_resize_hints_t *hints) noexcept {
+   bool PluginBase<h, l>::clapGuiGetResizeHints(const clap_plugin_t *plugin,
+                                                clap_gui_resize_hints_t *hints) noexcept {
       auto &self = from(plugin);
       self.ensureMainThread("clap_plugin_gui.get_resize_hints");
 
@@ -1459,9 +1465,9 @@ namespace clap { namespace helpers {
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   bool Plugin<h, l>::clapGuiAdjustSize(const clap_plugin *plugin,
-                                        uint32_t *width,
-                                        uint32_t *height) noexcept {
+   bool PluginBase<h, l>::clapGuiAdjustSize(const clap_plugin *plugin,
+                                            uint32_t *width,
+                                            uint32_t *height) noexcept {
       auto &self = from(plugin);
       self.ensureMainThread("clap_plugin_gui.adjust_size");
 
@@ -1484,7 +1490,7 @@ namespace clap { namespace helpers {
          uint32_t testHeight = *height;
 
          if (!self.guiAdjustSize(&testWidth, &testHeight)) {
-            self._host.pluginMisbehaving(
+            self._hostProxy.pluginMisbehaving(
                "clap_plugin_gui.adjust_size() failed when called with adjusted values");
             return true;
          }
@@ -1497,7 +1503,7 @@ namespace clap { namespace helpers {
                << "  (" << *width << ", " << *height << ") -> (" << testWidth << ", " << testHeight
                << ")" << std::endl
                << "  !! Check you're rounding math!";
-            self._host.pluginMisbehaving(os.str());
+            self._hostProxy.pluginMisbehaving(os.str());
          }
       }
 
@@ -1505,9 +1511,9 @@ namespace clap { namespace helpers {
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   bool Plugin<h, l>::clapGuiSetSize(const clap_plugin *plugin,
-                                     uint32_t width,
-                                     uint32_t height) noexcept {
+   bool PluginBase<h, l>::clapGuiSetSize(const clap_plugin *plugin,
+                                         uint32_t width,
+                                         uint32_t height) noexcept {
       auto &self = from(plugin);
       self.ensureMainThread("clap_plugin_gui.set_size");
 
@@ -1541,7 +1547,7 @@ namespace clap { namespace helpers {
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   bool Plugin<h, l>::clapGuiSetScale(const clap_plugin *plugin, double scale) noexcept {
+   bool PluginBase<h, l>::clapGuiSetScale(const clap_plugin *plugin, double scale) noexcept {
       auto &self = from(plugin);
       self.ensureMainThread("clap_plugin_gui.set_scale");
 
@@ -1557,7 +1563,7 @@ namespace clap { namespace helpers {
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   bool Plugin<h, l>::clapGuiShow(const clap_plugin *plugin) noexcept {
+   bool PluginBase<h, l>::clapGuiShow(const clap_plugin *plugin) noexcept {
       auto &self = from(plugin);
       self.ensureMainThread("clap_plugin_gui.show");
 
@@ -1573,7 +1579,7 @@ namespace clap { namespace helpers {
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   bool Plugin<h, l>::clapGuiHide(const clap_plugin *plugin) noexcept {
+   bool PluginBase<h, l>::clapGuiHide(const clap_plugin *plugin) noexcept {
       auto &self = from(plugin);
       self.ensureMainThread("clap_plugin_gui.hide");
 
@@ -1589,9 +1595,9 @@ namespace clap { namespace helpers {
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   bool Plugin<h, l>::clapGuiIsApiSupported(const clap_plugin *plugin,
-                                            const char *api,
-                                            bool isFloating) noexcept {
+   bool PluginBase<h, l>::clapGuiIsApiSupported(const clap_plugin *plugin,
+                                                const char *api,
+                                                bool isFloating) noexcept {
       auto &self = from(plugin);
       self.ensureMainThread("clap_plugin_gui.is_api_supported");
 
@@ -1599,9 +1605,9 @@ namespace clap { namespace helpers {
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   bool Plugin<h, l>::clapGuiGetPreferredApi(const clap_plugin_t *plugin,
-                                             const char **api,
-                                             bool *isFloating) noexcept {
+   bool PluginBase<h, l>::clapGuiGetPreferredApi(const clap_plugin_t *plugin,
+                                                 const char **api,
+                                                 bool *isFloating) noexcept {
       auto &self = from(plugin);
       self.ensureMainThread("clap_plugin_gui.get_preferred_api");
 
@@ -1609,9 +1615,9 @@ namespace clap { namespace helpers {
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   bool Plugin<h, l>::clapGuiCreate(const clap_plugin *plugin,
-                                    const char *api,
-                                    bool isFloating) noexcept {
+   bool PluginBase<h, l>::clapGuiCreate(const clap_plugin *plugin,
+                                        const char *api,
+                                        bool isFloating) noexcept {
       auto &self = from(plugin);
       self.ensureMainThread("clap_plugin_gui.create");
 
@@ -1641,7 +1647,7 @@ namespace clap { namespace helpers {
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   void Plugin<h, l>::clapGuiDestroy(const clap_plugin *plugin) noexcept {
+   void PluginBase<h, l>::clapGuiDestroy(const clap_plugin *plugin) noexcept {
       auto &self = from(plugin);
       self.ensureMainThread("clap_plugin_gui.destroy");
 
@@ -1660,8 +1666,8 @@ namespace clap { namespace helpers {
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   bool Plugin<h, l>::clapGuiSetParent(const clap_plugin *plugin,
-                                       const clap_window *window) noexcept {
+   bool PluginBase<h, l>::clapGuiSetParent(const clap_plugin *plugin,
+                                           const clap_window *window) noexcept {
       auto &self = from(plugin);
       self.ensureMainThread("clap_plugin_gui.set_parent");
 
@@ -1687,8 +1693,8 @@ namespace clap { namespace helpers {
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   bool Plugin<h, l>::clapGuiSetTransient(const clap_plugin *plugin,
-                                          const clap_window *window) noexcept {
+   bool PluginBase<h, l>::clapGuiSetTransient(const clap_plugin *plugin,
+                                              const clap_window *window) noexcept {
       auto &self = from(plugin);
       self.ensureMainThread("clap_plugin_gui.set_transient");
 
@@ -1710,7 +1716,8 @@ namespace clap { namespace helpers {
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   void Plugin<h, l>::clapGuiSuggestTitle(const clap_plugin *plugin, const char *title) noexcept {
+   void PluginBase<h, l>::clapGuiSuggestTitle(const clap_plugin *plugin,
+                                              const char *title) noexcept {
       auto &self = from(plugin);
       self.ensureMainThread("clap_plugin_gui.suggest_title");
 
@@ -1741,9 +1748,10 @@ namespace clap { namespace helpers {
    // clap_plugin_context_menu //
    //--------------------------//
    template <MisbehaviourHandler h, CheckingLevel l>
-   bool Plugin<h, l>::clapContextMenuPopulate(const clap_plugin_t *plugin,
-                                              const clap_context_menu_target_t *target,
-                                              const clap_context_menu_builder_t *builder) noexcept {
+   bool
+   PluginBase<h, l>::clapContextMenuPopulate(const clap_plugin_t *plugin,
+                                             const clap_context_menu_target_t *target,
+                                             const clap_context_menu_builder_t *builder) noexcept {
       auto &self = from(plugin);
       self.ensureMainThread("clap_plugin_context_menu.populate");
 
@@ -1751,9 +1759,9 @@ namespace clap { namespace helpers {
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   bool Plugin<h, l>::clapContextMenuPerform(const clap_plugin_t *plugin,
-                                             const clap_context_menu_target_t *target,
-                                             clap_id action_id) noexcept {
+   bool PluginBase<h, l>::clapContextMenuPerform(const clap_plugin_t *plugin,
+                                                 const clap_context_menu_target_t *target,
+                                                 clap_id action_id) noexcept {
       auto &self = from(plugin);
       self.ensureMainThread("clap_plugin_context_menu.perform");
 
@@ -1764,33 +1772,35 @@ namespace clap { namespace helpers {
    // clap_plugin_resource_directory //
    //--------------------------------//
    template <MisbehaviourHandler h, CheckingLevel l>
-   void Plugin<h, l>::clapResourceDirectorySetDirectory(const clap_plugin_t *plugin,
-                                                        const char *path,
-                                                        bool is_shared) noexcept {
+   void PluginBase<h, l>::clapResourceDirectorySetDirectory(const clap_plugin_t *plugin,
+                                                            const char *path,
+                                                            bool is_shared) noexcept {
       auto &self = from(plugin);
       self.ensureMainThread("clap_plugin_resource_directory.set_directory");
       self.resourceDirectorySetDirectory(path, is_shared);
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   void Plugin<h, l>::clapResourceDirectoryCollect(const clap_plugin_t *plugin, bool all) noexcept {
+   void PluginBase<h, l>::clapResourceDirectoryCollect(const clap_plugin_t *plugin,
+                                                       bool all) noexcept {
       auto &self = from(plugin);
       self.ensureMainThread("clap_plugin_resource_directory.collect");
       self.resourceDirectoryCollect(all);
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   uint32_t Plugin<h, l>::clapResourceDirectoryGetFilesCount(const clap_plugin_t *plugin) noexcept {
+   uint32_t
+   PluginBase<h, l>::clapResourceDirectoryGetFilesCount(const clap_plugin_t *plugin) noexcept {
       auto &self = from(plugin);
       self.ensureMainThread("clap_plugin_resource_directory.get_files_count");
       return self.resourceDirectoryGetFilesCount();
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   int32_t Plugin<h, l>::clapResourceDirectoryGetFilePath(const clap_plugin_t *plugin,
-                                                          uint32_t index,
-                                                          char *path,
-                                                          uint32_t path_size) noexcept {
+   int32_t PluginBase<h, l>::clapResourceDirectoryGetFilePath(const clap_plugin_t *plugin,
+                                                              uint32_t index,
+                                                              char *path,
+                                                              uint32_t path_size) noexcept {
       auto &self = from(plugin);
       self.ensureMainThread("clap_plugin_resource_directory.get_file_path");
       return self.resourceDirectoryGetFilePath(index, path, path_size);
@@ -1800,7 +1810,7 @@ namespace clap { namespace helpers {
    // clap_plugin_undo //
    //------------------//
    template <MisbehaviourHandler h, CheckingLevel l>
-   void Plugin<h, l>::clapUndoDeltaGetDeltaProperties(
+   void PluginBase<h, l>::clapUndoDeltaGetDeltaProperties(
       const clap_plugin_t *plugin, clap_undo_delta_properties_t *properties) noexcept {
       auto &self = from(plugin);
       self.ensureMainThread("clap_undo_delta.get_delta_properties");
@@ -1808,60 +1818,60 @@ namespace clap { namespace helpers {
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   bool Plugin<h, l>::clapUndoDeltaCanUseDeltaFormatVersion(const clap_plugin_t *plugin,
-                                                            clap_id format_version) noexcept {
+   bool PluginBase<h, l>::clapUndoDeltaCanUseDeltaFormatVersion(const clap_plugin_t *plugin,
+                                                                clap_id format_version) noexcept {
       auto &self = from(plugin);
       self.ensureMainThread("clap_undo_delta.can_use_delta_format_version");
       return self.undoDeltaCanUseDeltaFormatVersion(format_version);
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   bool Plugin<h, l>::clapUndoDeltaUndo(const clap_plugin_t *plugin,
-                                        clap_id format_version,
-                                        const void *delta,
-                                        size_t delta_size) noexcept {
+   bool PluginBase<h, l>::clapUndoDeltaUndo(const clap_plugin_t *plugin,
+                                            clap_id format_version,
+                                            const void *delta,
+                                            size_t delta_size) noexcept {
       auto &self = from(plugin);
       self.ensureMainThread("clap_undo_delta.undo");
       return self.undoDeltaUndo(format_version, delta, delta_size);
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   bool Plugin<h, l>::clapUndoDeltaRedo(const clap_plugin_t *plugin,
-                                        clap_id format_version,
-                                        const void *delta,
-                                        size_t delta_size) noexcept {
+   bool PluginBase<h, l>::clapUndoDeltaRedo(const clap_plugin_t *plugin,
+                                            clap_id format_version,
+                                            const void *delta,
+                                            size_t delta_size) noexcept {
       auto &self = from(plugin);
       self.ensureMainThread("clap_undo_delta.redo");
       return self.undoDeltaRedo(format_version, delta, delta_size);
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   void Plugin<h, l>::clapUndoContextSetCanUndo(const clap_plugin_t *plugin,
-                                                bool can_undo) noexcept {
+   void PluginBase<h, l>::clapUndoContextSetCanUndo(const clap_plugin_t *plugin,
+                                                    bool can_undo) noexcept {
       auto &self = from(plugin);
       self.ensureMainThread("clap_undo.set_can_undo");
       self.undoContextSetCanUndo(can_undo);
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   void Plugin<h, l>::clapUndoContextSetCanRedo(const clap_plugin_t *plugin,
-                                                bool can_redo) noexcept {
+   void PluginBase<h, l>::clapUndoContextSetCanRedo(const clap_plugin_t *plugin,
+                                                    bool can_redo) noexcept {
       auto &self = from(plugin);
       self.ensureMainThread("clap_undo_context.set_can_redo");
       self.undoContextSetCanRedo(can_redo);
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   void Plugin<h, l>::clapUndoContextSetUndoName(const clap_plugin_t *plugin,
-                                                 const char *name) noexcept {
+   void PluginBase<h, l>::clapUndoContextSetUndoName(const clap_plugin_t *plugin,
+                                                     const char *name) noexcept {
       auto &self = from(plugin);
       self.ensureMainThread("clap_undo_context.set_undo_name");
       self.undoContextSetUndoName(name);
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   void Plugin<h, l>::clapUndoContextSetRedoName(const clap_plugin_t *plugin,
-                                                 const char *name) noexcept {
+   void PluginBase<h, l>::clapUndoContextSetRedoName(const clap_plugin_t *plugin,
+                                                     const char *name) noexcept {
       auto &self = from(plugin);
       self.ensureMainThread("clap_undo_context.set_redo_name");
       self.undoContextSetRedoName(name);
@@ -1872,9 +1882,9 @@ namespace clap { namespace helpers {
    //------------------//
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   void Plugin<h, l>::clapProjectLocationSet(const clap_plugin_t *plugin,
-                                             const clap_project_location_element_t *path,
-                                             uint32_t num_elements) noexcept {
+   void PluginBase<h, l>::clapProjectLocationSet(const clap_plugin_t *plugin,
+                                                 const clap_project_location_element_t *path,
+                                                 uint32_t num_elements) noexcept {
       auto &self = from(plugin);
       self.ensureMainThread("clap_plugin_location.set_location");
 
@@ -1899,7 +1909,7 @@ namespace clap { namespace helpers {
    // clap_plugin_gain_adjustment_metering //
    //--------------------------------------//
    template <MisbehaviourHandler h, CheckingLevel l>
-   double Plugin<h, l>::clapGainAdjustmentMeteringGet(const clap_plugin_t *plugin) noexcept {
+   double PluginBase<h, l>::clapGainAdjustmentMeteringGet(const clap_plugin_t *plugin) noexcept {
       auto &self = from(plugin);
       self.ensureAudioThread("clap_plugin_gain_adjustment_meterig.get");
 
@@ -1917,9 +1927,10 @@ namespace clap { namespace helpers {
    // clap_plugin_mini_curve_display //
    //--------------------------------//
    template <MisbehaviourHandler h, CheckingLevel l>
-   uint32_t Plugin<h, l>::clapMiniCurveDisplayRender(const clap_plugin_t *plugin,
-                                                     clap_mini_curve_display_curve_data_t *curves,
-                                                     uint32_t curves_size) noexcept {
+   uint32_t
+   PluginBase<h, l>::clapMiniCurveDisplayRender(const clap_plugin_t *plugin,
+                                                clap_mini_curve_display_curve_data_t *curves,
+                                                uint32_t curves_size) noexcept {
       auto &self = from(plugin);
       self.ensureMainThread("clap_plugin_mini_curve_display.render");
 
@@ -1941,8 +1952,8 @@ namespace clap { namespace helpers {
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   void Plugin<h, l>::clapMiniCurveDisplaySetObserved(const clap_plugin_t *plugin,
-                                                      bool is_observed) noexcept {
+   void PluginBase<h, l>::clapMiniCurveDisplaySetObserved(const clap_plugin_t *plugin,
+                                                          bool is_observed) noexcept {
       auto &self = from(plugin);
       self.ensureMainThread("clap_plugin_mini_curve_display.set_observed");
 
@@ -1950,7 +1961,8 @@ namespace clap { namespace helpers {
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   uint32_t Plugin<h, l>::clapMiniCurveDisplayGetCurveCount(const clap_plugin_t *plugin) noexcept {
+   uint32_t
+   PluginBase<h, l>::clapMiniCurveDisplayGetCurveCount(const clap_plugin_t *plugin) noexcept {
       auto &self = from(plugin);
       self.ensureMainThread("clap_plugin_mini_curve_display.get_curve_count");
 
@@ -1958,11 +1970,11 @@ namespace clap { namespace helpers {
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   bool Plugin<h, l>::clapMiniCurveDisplayGetAxisName(const clap_plugin_t *plugin,
-                                                      uint32_t curve_index,
-                                                      char *x_name,
-                                                      char *y_name,
-                                                      uint32_t name_capacity) noexcept {
+   bool PluginBase<h, l>::clapMiniCurveDisplayGetAxisName(const clap_plugin_t *plugin,
+                                                          uint32_t curve_index,
+                                                          char *x_name,
+                                                          char *y_name,
+                                                          uint32_t name_capacity) noexcept {
       auto &self = from(plugin);
       self.ensureMainThread("clap_plugin_mini_curve_display.get_axis_name");
 
@@ -1990,13 +2002,13 @@ namespace clap { namespace helpers {
    // Logging //
    /////////////
    template <MisbehaviourHandler h, CheckingLevel l>
-   void Plugin<h, l>::log(clap_log_severity severity, const char *msg) const noexcept {
+   void PluginBase<h, l>::log(clap_log_severity severity, const char *msg) const noexcept {
       logTee(severity, msg);
-      _host.log(severity, msg);
+      _hostProxy.log(severity, msg);
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   void Plugin<h, l>::hostMisbehaving(const char *msg) const noexcept {
+   void PluginBase<h, l>::hostMisbehaving(const char *msg) const noexcept {
       log(CLAP_LOG_HOST_MISBEHAVING, msg);
 
       if (h == MisbehaviourHandler::Terminate)
@@ -2004,7 +2016,7 @@ namespace clap { namespace helpers {
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   void Plugin<h, l>::pluginMisbehaving(const char *msg) const noexcept {
+   void PluginBase<h, l>::pluginMisbehaving(const char *msg) const noexcept {
       log(CLAP_LOG_PLUGIN_MISBEHAVING, msg);
 
       if (h == MisbehaviourHandler::Terminate)
@@ -2015,11 +2027,11 @@ namespace clap { namespace helpers {
    // Thread Checking //
    /////////////////////
    template <MisbehaviourHandler h, CheckingLevel l>
-   void Plugin<h, l>::checkMainThread() const noexcept {
+   void PluginBase<h, l>::checkMainThread() const noexcept {
       if (l == CheckingLevel::None)
          return;
 
-      if (!_host.canUseThreadCheck() || _host.isMainThread())
+      if (!_hostProxy.canUseThreadCheck() || _hostProxy.isMainThread())
          return;
 
       std::cerr << "thread-error: this code must be running on the main thread" << std::endl;
@@ -2029,11 +2041,11 @@ namespace clap { namespace helpers {
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   void Plugin<h, l>::checkAudioThread() const noexcept {
+   void PluginBase<h, l>::checkAudioThread() const noexcept {
       if (l == CheckingLevel::None)
          return;
 
-      if (!_host.canUseThreadCheck() || _host.isAudioThread())
+      if (!_hostProxy.canUseThreadCheck() || _hostProxy.isAudioThread())
          return;
 
       std::cerr << "thread-error: this code must be running on the audio thread" << std::endl;
@@ -2043,7 +2055,7 @@ namespace clap { namespace helpers {
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   void Plugin<h, l>::checkParamThread() const noexcept {
+   void PluginBase<h, l>::checkParamThread() const noexcept {
       if (l == CheckingLevel::None)
          return;
 
@@ -2054,7 +2066,7 @@ namespace clap { namespace helpers {
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   void Plugin<h, l>::ensureParamThread(const char *method) const noexcept {
+   void PluginBase<h, l>::ensureParamThread(const char *method) const noexcept {
       if (l == CheckingLevel::None)
          return;
 
@@ -2065,11 +2077,11 @@ namespace clap { namespace helpers {
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   void Plugin<h, l>::ensureMainThread(const char *method) const noexcept {
+   void PluginBase<h, l>::ensureMainThread(const char *method) const noexcept {
       if (l == CheckingLevel::None)
          return;
 
-      if (!_host.canUseThreadCheck() || _host.isMainThread())
+      if (!_hostProxy.canUseThreadCheck() || _hostProxy.isMainThread())
          return;
 
       std::ostringstream msg;
@@ -2079,11 +2091,11 @@ namespace clap { namespace helpers {
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   void Plugin<h, l>::ensureAudioThread(const char *method) const noexcept {
+   void PluginBase<h, l>::ensureAudioThread(const char *method) const noexcept {
       if (l == CheckingLevel::None)
          return;
 
-      if (!_host.canUseThreadCheck() || _host.isAudioThread())
+      if (!_hostProxy.canUseThreadCheck() || _hostProxy.isAudioThread())
          return;
 
       std::ostringstream msg;
@@ -2096,7 +2108,7 @@ namespace clap { namespace helpers {
    // General Checks //
    ////////////////////
    template <MisbehaviourHandler h, CheckingLevel l>
-   void Plugin<h, l>::ensureIsInactive(const char *methodName) const noexcept {
+   void PluginBase<h, l>::ensureIsInactive(const char *methodName) const noexcept {
       if (l == CheckingLevel::None)
          return;
 
@@ -2109,7 +2121,7 @@ namespace clap { namespace helpers {
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   void Plugin<h, l>::ensureIsActive(const char *methodName) const noexcept {
+   void PluginBase<h, l>::ensureIsActive(const char *methodName) const noexcept {
       if (l == CheckingLevel::None)
          return;
 
@@ -2125,7 +2137,8 @@ namespace clap { namespace helpers {
    // Utilities //
    ///////////////
    template <MisbehaviourHandler h, CheckingLevel l>
-   Plugin<h, l> &Plugin<h, l>::from(const clap_plugin *plugin, bool requireInitialized) noexcept {
+   PluginBase<h, l> &PluginBase<h, l>::from(const clap_plugin *plugin,
+                                            bool requireInitialized) noexcept {
       if (l >= CheckingLevel::Minimal) {
          if (!plugin) {
             std::cerr << "called with a null clap_plugin pointer!" << std::endl;
@@ -2139,7 +2152,7 @@ namespace clap { namespace helpers {
             std::terminate();
          }
 
-         auto &self = *static_cast<Plugin *>(plugin->plugin_data);
+         auto &self = *static_cast<PluginBase *>(plugin->plugin_data);
          if (requireInitialized && !self._wasInitialized) {
             self.hostMisbehaving("Host is required to call clap_plugin.init() first");
             if (h == MisbehaviourHandler::Terminate)
@@ -2147,24 +2160,24 @@ namespace clap { namespace helpers {
          }
       }
 
-      return *static_cast<Plugin *>(plugin->plugin_data);
+      return *static_cast<PluginBase *>(plugin->plugin_data);
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   void Plugin<h, l>::runOnMainThread(std::function<void()> callback) {
-      if (_host.canUseThreadCheck() && _host.isMainThread()) {
+   void PluginBase<h, l>::runOnMainThread(std::function<void()> callback) {
+      if (_hostProxy.canUseThreadCheck() && _hostProxy.isMainThread()) {
          callback();
          return;
       }
 
       std::lock_guard<std::mutex> guard(_mainThreadCallbacksLock);
       _mainThreadCallbacks.emplace(std::move(callback));
-      _host.requestCallback();
+      _hostProxy.requestCallback();
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   uint32_t Plugin<h, l>::compareAudioPortsInfo(const clap_audio_port_info &a,
-                                                const clap_audio_port_info &b) noexcept {
+   uint32_t PluginBase<h, l>::compareAudioPortsInfo(const clap_audio_port_info &a,
+                                                    const clap_audio_port_info &b) noexcept {
       uint32_t flags = 0;
 
       if (strncmp(a.name, b.name, sizeof(a.name)))
@@ -2184,4 +2197,8 @@ namespace clap { namespace helpers {
 
       return flags;
    }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   Plugin<h, l>::Plugin(const clap_plugin_descriptor *desc, const clap_host *host)
+      : _host(host), PluginBase<h, l>(*desc, _host) {}
 }} // namespace clap::helpers
