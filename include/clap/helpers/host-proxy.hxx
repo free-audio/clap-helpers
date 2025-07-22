@@ -13,6 +13,8 @@ namespace clap { namespace helpers {
 
    template <MisbehaviourHandler h, CheckingLevel l>
    void HostProxy<h, l>::init() {
+      initCustomExtensions();
+
       getExtension(_hostLog, CLAP_EXT_LOG);
       getExtension(_hostThreadCheck, CLAP_EXT_THREAD_CHECK);
       getExtension(_hostThreadPool, CLAP_EXT_THREAD_POOL);

@@ -221,6 +221,8 @@ namespace clap { namespace helpers {
       void ensureMainThread(const char *method) const noexcept;
       void ensureAudioThread(const char *method) const noexcept;
 
+      virtual void initCustomExtensions() noexcept {}
+
       const clap_host *const _host;
 
       const clap_host_log *_hostLog = nullptr;
