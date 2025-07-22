@@ -12,6 +12,13 @@ namespace clap { namespace helpers {
    public:
       PluginProxy(const clap_plugin &plugin, const Host<h, l> &host)
          : _host{host}, _plugin{plugin} {}
+      virtual ~PluginProxy() = default;
+
+      // not copyable, not moveable
+      PluginProxy(const PluginProxy &) = delete;
+      PluginProxy(PluginProxy &&) = delete;
+      PluginProxy &operator=(const PluginProxy &) = delete;
+      PluginProxy &operator=(PluginProxy &&) = delete;
 
       /////////////////
       // clap_plugin //
@@ -144,7 +151,7 @@ namespace clap { namespace helpers {
       //////////////////////////
       bool canUseLocation() const noexcept;
       void projectLocationSet(const clap_project_location_element_t *path,
-                               uint32_t num_elements) const noexcept;
+                              uint32_t num_elements) const noexcept;
 
       ///////////////////////////////////
       // clap_gain_adjustment_metering //

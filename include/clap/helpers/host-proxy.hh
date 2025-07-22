@@ -12,6 +12,7 @@ namespace clap { namespace helpers {
    class HostProxy {
    public:
       HostProxy(const clap_host *host);
+      virtual ~HostProxy() = default;
 
       // not copyable, not moveable
       HostProxy(const HostProxy &) = delete;
