@@ -811,10 +811,10 @@ namespace clap { namespace helpers {
    bool HostProxy<h, l>::miniCurveDisplayGetHints(
       uint32_t kind, clap_mini_curve_display_curve_hints_t *hints) const noexcept {
       assert(canUseMiniCurveDisplay());
-      ensureMainThread("mini_curve_display_get_hints");
+      ensureMainThread("mini_curve_display.get_hints");
 
       if (!hints) {
-         pluginMisbehaving("mini_curve_display_get_hints() called with a null hints pointer");
+         pluginMisbehaving("mini_curve_display.get_hints() called with a null hints pointer");
          return false;
       }
 
