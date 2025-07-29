@@ -196,6 +196,12 @@ namespace clap { namespace helpers {
    };
 
    template <MisbehaviourHandler h, CheckingLevel l>
+   const clap_plugin_webview Plugin<h, l>::_pluginWebview = {
+      clapWebviewGetUri,
+      clapWebviewReceive,
+   };
+
+   template <MisbehaviourHandler h, CheckingLevel l>
    Plugin<h, l>::Plugin(const clap_plugin_descriptor *desc, const clap_host *host) : _host(host) {
       _plugin.plugin_data = this;
       _plugin.desc = desc;
@@ -562,6 +568,8 @@ namespace clap { namespace helpers {
             return &_pluginGainAdjustmentMetering;
          if (!strcmp(id, CLAP_EXT_MINI_CURVE_DISPLAY) && self.implementsMiniCurveDisplay())
             return &_pluginMiniCurveDisplay;
+         if (!strcmp(id, CLAP_EXT_WEBVIEW) && self.implementsWebview())
+            return &_pluginWebview;
       }
 
       return nullptr;
@@ -1984,6 +1992,26 @@ namespace clap { namespace helpers {
       }
 
       return self.miniCurveDisplayGetAxisName(curve_index, x_name, y_name, name_capacity);
+   }
+
+   //--------------------------------//
+   // clap_plugin_mini_curve_display //
+   //--------------------------------//
+   template <MisbehaviourHandler h, CheckingLevel l>
+   int32_t
+   Plugin<h, l>::clapWebviewGetUri(const clap_plugin_t *plugin, char *uri, uint32_t uri_capacity) {
+      auto &self = from(plugin);
+      self.ensureMainThread("clap_plugin_webview.get_uri");
+      return self.webviewGetUri(uri, uri_capacity);
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   bool Plugin<h, l>::clapWebviewReceive(const clap_plugin_t *plugin,
+                                         const void *buffer,
+                                         uint32_t size) {
+      auto &self = from(plugin);
+      self.ensureMainThread("clap_plugin_webview.receive");
+      return self.webviewReceive(buffer, size);
    }
 
    /////////////

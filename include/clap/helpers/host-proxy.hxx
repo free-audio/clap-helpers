@@ -43,6 +43,7 @@ namespace clap { namespace helpers {
       getExtension(_hostUndo, CLAP_EXT_UNDO);
       getExtension(_hostScratchMemory, CLAP_EXT_SCRATCH_MEMORY);
       getExtension(_hostMiniCurveDisplay, CLAP_EXT_MINI_CURVE_DISPLAY);
+      getExtension(_hostWebview, CLAP_EXT_WEBVIEW);
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
@@ -820,4 +821,18 @@ namespace clap { namespace helpers {
       return _hostMiniCurveDisplay->get_hints(_host, kind, hints);
    }
 
+   ////////////////////////
+   // clap_host_web_view //
+   ////////////////////////
+   template <MisbehaviourHandler h, CheckingLevel l>
+   bool HostProxy<h, l>::canUseWebview() const noexcept {
+      return _hostWebview && _hostWebview->send;
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   bool HostProxy<h, l>::webviewSend(const void *buffer, uint32_t size) const noexcept {
+      assert(canUseWebview());
+      this->ensureMainThread("webview.send");
+      return _hostWebview->send(this->_host, buffer, size);
+   }
 }} // namespace clap::helpers
