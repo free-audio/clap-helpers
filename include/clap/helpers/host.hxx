@@ -87,6 +87,11 @@ namespace clap { namespace helpers {
    };
 
    template <MisbehaviourHandler h, CheckingLevel l>
+   const clap_host_webview Host<h, l>::_hostWebview = {
+      clapWebviewSend,
+   };
+
+   template <MisbehaviourHandler h, CheckingLevel l>
    Host<h, l>::Host(const char *name, const char *vendor, const char *url, const char *version)
       : _host{
            CLAP_VERSION,
@@ -169,6 +174,8 @@ namespace clap { namespace helpers {
          return &_hostSurround;
 
       if (self.enableDraftExtensions()) {
+         if (!strcmp(extension_id, CLAP_EXT_WEBVIEW) && self.implementsWebview())
+            return &_hostWebview;
          // put draft ext here
       }
 
@@ -412,6 +419,16 @@ namespace clap { namespace helpers {
       auto &self = from(host);
       self.ensureMainThread("surround.changed");
       self.surroundChanged();
+   }
+
+   //-------------------//
+   // clap_host_webview //
+   //-------------------//
+   template <MisbehaviourHandler h, CheckingLevel l>
+   bool Host<h, l>::clapWebviewSend(const clap_host_t *host, const void *buffer, uint32_t size) {
+      auto &self = from(host);
+      self.ensureMainThread("webview.send");
+      return self.webviewSend(buffer, size);
    }
 
    /////////////////////

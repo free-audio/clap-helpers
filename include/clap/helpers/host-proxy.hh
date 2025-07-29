@@ -216,6 +216,12 @@ namespace clap { namespace helpers {
       bool miniCurveDisplayGetHints(uint32_t kind,
                                     clap_mini_curve_display_curve_hints_t *hints) const noexcept;
 
+      ////////////////////////////
+      // nl_clap_plugin_webview //
+      ////////////////////////////
+      bool canUseWebview() const noexcept;
+      bool webviewSend(const void *buffer, uint32_t size) const noexcept;
+
    protected:
       void ensureMainThread(const char *method) const noexcept;
       void ensureAudioThread(const char *method) const noexcept;
@@ -245,5 +251,6 @@ namespace clap { namespace helpers {
       const clap_host_undo *_hostUndo = nullptr;
       const clap_host_scratch_memory *_hostScratchMemory = nullptr;
       const clap_host_mini_curve_display *_hostMiniCurveDisplay = nullptr;
+      const clap_host_webview *_hostWebview = nullptr;
    };
 }} // namespace clap::helpers

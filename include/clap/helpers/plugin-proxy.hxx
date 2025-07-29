@@ -35,6 +35,7 @@ namespace clap { namespace helpers {
       getExtension(_pluginProjectLocation, CLAP_EXT_PROJECT_LOCATION);
       getExtension(_pluginGainAdjustmentMetering, CLAP_EXT_GAIN_ADJUSTMENT_METERING);
       getExtension(_pluginMiniCurveDisplay, CLAP_EXT_MINI_CURVE_DISPLAY);
+      getExtension(_pluginWebview, CLAP_EXT_WEBVIEW);
       return true;
    }
 
@@ -642,6 +643,28 @@ namespace clap { namespace helpers {
          }
       }
       return gain;
+   }
+
+   /////////////////////////
+   // clap_plugin_webview //
+   /////////////////////////
+   template <MisbehaviourHandler h, CheckingLevel l>
+   bool PluginProxy<h, l>::canUseWebview() const noexcept {
+      return _pluginWebview && _pluginWebview->get_uri && _pluginWebview->receive;
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   int32_t PluginProxy<h, l>::webviewGetUri(char *uri, uint32_t uriCapacity) const noexcept {
+      assert(canUseWebview());
+      ensureMainThread("webview.get_uri");
+      return _pluginWebview->get_uri(&this->_plugin, uri, uriCapacity);
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   bool PluginProxy<h, l>::webviewReceive(const void *buffer, uint32_t size) const noexcept {
+      assert(canUseWebview());
+      ensureMainThread("webview.receive");
+      return _pluginWebview->receive(&this->_plugin, buffer, size);
    }
 
    /////////////////////
