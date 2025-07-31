@@ -216,10 +216,15 @@ namespace clap { namespace helpers {
       bool miniCurveDisplayGetHints(uint32_t kind,
                                     clap_mini_curve_display_curve_hints_t *hints) const noexcept;
 
-   protected:
+      //////////////////////////////
+      // Custom extension helpers //
+      //////////////////////////////
+
       void ensureMainThread(const char *method) const noexcept;
       void ensureAudioThread(const char *method) const noexcept;
+      const clap_host *clapHost() const noexcept { return _host; }
 
+   protected:
       const clap_host *const _host;
 
       const clap_host_log *_hostLog = nullptr;

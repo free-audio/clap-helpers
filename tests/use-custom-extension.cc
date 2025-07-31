@@ -52,8 +52,11 @@ namespace {
       test_plugin_proxy(const clap_plugin &plugin, const test_host_base &host)
          : test_plugin_proxy_base(plugin, host) {}
 
-      void initCustomExtensions() noexcept override {
+      bool init() noexcept {
+         if (!test_plugin_proxy_base::init())
+            return false;
          getExtension(_pluginPingPong, CLAP_HELPERS_EXT_TEST_PING_PONG);
+         return true;
       }
 
       bool canUsePingPong() const {
@@ -108,32 +111,32 @@ namespace {
    // test plugin implementation //
    ////////////////////////////////
 
-   using test_host_proxy_base = clap::helpers::HostProxy<test_mh, test_cl>;
-   using test_plugin_base = clap::helpers::PluginBase<test_mh, test_cl>;
+   using test_host_proxy = clap::helpers::HostProxy<test_mh, test_cl>;
+   using test_plugin_base = clap::helpers::Plugin<test_mh, test_cl>;
 
-   struct test_host_proxy : test_host_proxy_base {
+   struct test_host_custom_extension_proxy {
+      test_host_proxy &_hostProxy;
       const clap_host_test_ping_pong *_hostPingPong{};
 
-      test_host_proxy(const clap_host *host) : test_host_proxy_base(host) {}
-      void initCustomExtensions() noexcept override {
-         getExtension(_hostPingPong, CLAP_HELPERS_EXT_TEST_PING_PONG);
-      }
+      test_host_custom_extension_proxy(test_host_proxy &hostProxy) : _hostProxy(hostProxy) {}
+      void init() { _hostProxy.getExtension(_hostPingPong, CLAP_HELPERS_EXT_TEST_PING_PONG); }
 
       bool canUsePingPong() const {
          return _hostPingPong && _hostPingPong->ping && _hostPingPong->pong;
       }
       void ping() const noexcept {
-         ensureMainThread("test_ping_pong.ping");
-         _hostPingPong->ping(_host);
+         _hostProxy.ensureMainThread("test_ping_pong.ping");
+         _hostPingPong->ping(_hostProxy.clapHost());
       }
       void pong() const noexcept {
-         ensureMainThread("test_ping_pong.ping");
-         _hostPingPong->pong(_host);
+         _hostProxy.ensureMainThread("test_ping_pong.ping");
+         _hostPingPong->pong(_hostProxy.clapHost());
       }
    };
 
    struct test_plugin : test_plugin_base {
       test_host_proxy _hostProxy;
+      test_host_custom_extension_proxy _hostExtensionProxy;
       bool _hostCalledPong{};
 
       static clap_plugin_descriptor &dummyDesc() {
@@ -141,7 +144,8 @@ namespace {
          return d;
       }
       test_plugin(const clap_host *host)
-         : _hostProxy(host), test_plugin_base(dummyDesc(), _hostProxy) {}
+         : _hostProxy(host), test_plugin_base(&dummyDesc(), host), _hostExtensionProxy(_hostProxy) {
+      }
 
       const void *extension(const char *id) noexcept {
          if (!strcmp(id, CLAP_HELPERS_EXT_TEST_PING_PONG)) {
@@ -149,7 +153,7 @@ namespace {
                [](const clap_plugin *plugin) {
                   auto &self = *static_cast<test_plugin *>(&from(plugin));
                   self.ensureMainThread("clap_plugin_test_ping_pong.ping");
-                  self._hostProxy.pong();
+                  self._hostExtensionProxy.pong();
                },
                [](const clap_plugin *plugin) {
                   auto &self = *static_cast<test_plugin *>(&from(plugin));
@@ -160,6 +164,11 @@ namespace {
             return &pluginPingPong;
          }
          return nullptr;
+      }
+
+      bool init() noexcept override {
+         _hostExtensionProxy.init();
+         return true;
       }
    };
 } // namespace
@@ -182,8 +191,8 @@ CATCH_TEST_CASE("Use a custom extension") {
       }
 
       CATCH_AND_WHEN("plugin calls ping on host") {
-         CATCH_REQUIRE(plugin->_hostProxy.canUsePingPong());
-         plugin->_hostProxy.ping();
+         CATCH_REQUIRE(plugin->_hostExtensionProxy.canUsePingPong());
+         plugin->_hostExtensionProxy.ping();
          CATCH_THEN("host responds with pong") { CATCH_CHECK(plugin->_hostCalledPong); }
       }
    }
