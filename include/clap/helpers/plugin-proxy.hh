@@ -168,8 +168,6 @@ namespace clap { namespace helpers {
       void ensureActivated(const char *method, bool expectedState) const noexcept;
       void ensureProcessing(const char *method, bool expectedState) const noexcept;
 
-      virtual void initCustomExtensions() noexcept {}
-
       const Host<h, l> &_host;
 
       const clap_plugin &_plugin;

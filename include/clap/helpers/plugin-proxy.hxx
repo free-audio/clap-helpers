@@ -15,8 +15,6 @@ namespace clap { namespace helpers {
       if (!_plugin.init(&_plugin))
          return false;
 
-      initCustomExtensions();
-
       getExtension(_pluginAudioPorts, CLAP_EXT_AUDIO_PORTS);
       getExtension(_pluginGui, CLAP_EXT_GUI);
       getExtension(_pluginLatency, CLAP_EXT_LATENCY);
@@ -611,7 +609,7 @@ namespace clap { namespace helpers {
 
    template <MisbehaviourHandler h, CheckingLevel l>
    void PluginProxy<h, l>::projectLocationSet(const clap_project_location_element_t *path,
-                                              uint32_t num_elements) const noexcept {
+                                               uint32_t num_elements) const noexcept {
       assert(canUseLocation());
       ensureMainThread("clap_plugin_project_location.set");
       _pluginProjectLocation->set(&_plugin, path, num_elements);
