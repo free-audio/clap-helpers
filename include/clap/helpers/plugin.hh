@@ -20,19 +20,19 @@ namespace clap { namespace helpers {
    ///
    /// @note for an higher level implementation, see @ref PluginHelper
    template <MisbehaviourHandler h, CheckingLevel l>
-   class PluginBase {
+   class Plugin {
    public:
       // not copyable, not moveable
-      PluginBase(const PluginBase &) = delete;
-      PluginBase(PluginBase &&) = delete;
-      PluginBase &operator=(const PluginBase &) = delete;
-      PluginBase &operator=(PluginBase &&) = delete;
+      Plugin(const Plugin &) = delete;
+      Plugin(Plugin &&) = delete;
+      Plugin &operator=(const Plugin &) = delete;
+      Plugin &operator=(Plugin &&) = delete;
 
       const clap_plugin *clapPlugin() noexcept { return &_plugin; }
 
    protected:
-      PluginBase(const clap_plugin_descriptor &desc, HostProxy<h, l> &hostProxy);
-      virtual ~PluginBase() = default;
+      Plugin(const clap_plugin_descriptor *desc, const clap_host *host);
+      virtual ~Plugin() = default;
 
       /////////////////////////
       // Methods to override //
@@ -398,7 +398,7 @@ namespace clap { namespace helpers {
       ///////////////
       // Utilities //
       ///////////////
-      static PluginBase &from(const clap_plugin *plugin, bool requireInitialized = true) noexcept;
+      static Plugin &from(const clap_plugin *plugin, bool requireInitialized = true) noexcept;
 
       // runs the callback immediately if on the main thread, otherwise queue it.
       // be aware that the callback may be ran during the plugin destruction phase,
@@ -425,7 +425,7 @@ namespace clap { namespace helpers {
       bool isBeingDestroyed() const noexcept { return _isBeingDestroyed; }
 
    protected:
-      HostProxy<h, l> &_hostProxy;
+      HostProxy<h, l> _host;
 
    private:
       void ensureInitialized(const char *method) const noexcept;
@@ -723,13 +723,5 @@ namespace clap { namespace helpers {
 
       std::mutex _mainThreadCallbacksLock;
       std::queue<std::function<void()>> _mainThreadCallbacks;
-   };
-
-   // for compatibility. If you want to derive from HostProxy, use PluginBase instead
-   template <MisbehaviourHandler h, CheckingLevel l>
-   class Plugin : public PluginBase<h, l> {
-   protected:
-      Plugin(const clap_plugin_descriptor *desc, const clap_host *host);
-      HostProxy<h, l> _host;
    };
 }} // namespace clap::helpers
