@@ -147,7 +147,7 @@ namespace {
          : _hostProxy(host), test_plugin_base(&dummyDesc(), host), _hostExtensionProxy(_hostProxy) {
       }
 
-      const void *extension(const char *id) noexcept {
+      const void *extension(const char *id) noexcept override {
          if (!strcmp(id, CLAP_HELPERS_EXT_TEST_PING_PONG)) {
             static const clap_plugin_test_ping_pong pluginPingPong{
                [](const clap_plugin *plugin) {
