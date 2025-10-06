@@ -152,6 +152,13 @@ namespace clap { namespace helpers {
       bool canUseGainAdjustmentMetering() const noexcept;
       double gainAdjustmentMeteringGet() const noexcept;
 
+      /////////////////////////
+      // clap_plugin_webview //
+      /////////////////////////
+      bool canUseWebview() const noexcept;
+      int32_t webviewGetUri(char *uri, uint32_t uriCapacity) const noexcept;
+      bool webviewReceive(const void *buffer, uint32_t size) const noexcept;
+
    protected:
       /////////////////////
       // Thread Checking //
@@ -181,6 +188,7 @@ namespace clap { namespace helpers {
       const clap_plugin_project_location *_pluginProjectLocation = nullptr;
       const clap_plugin_gain_adjustment_metering *_pluginGainAdjustmentMetering = nullptr;
       const clap_plugin_mini_curve_display *_pluginMiniCurveDisplay = nullptr;
+      const clap_plugin_webview* _pluginWebview = nullptr;
 
       // state
       bool _isActive = false;
