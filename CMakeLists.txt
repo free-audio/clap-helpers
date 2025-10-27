@@ -98,4 +98,4 @@ if (${CLAP_HELPERS_BUILD_TESTS})
 endif()
 
 install(DIRECTORY include DESTINATION ".")
-install(FILES "cmake/clap-helpers-config.cmake" DESTINATION "./lib/cmake/clap-helpers")
+install(FILES "cmake/clap-helpers-config.cmake" DESTINATION "lib/cmake/clap-helpers")
