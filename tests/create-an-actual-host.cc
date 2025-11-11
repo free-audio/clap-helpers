@@ -2,9 +2,7 @@
  * Actually use host.hh / host.hxx to create a host. Assert that it is constructable
  */
 
-#include "clap/helpers/host.hh"
 #include "clap/helpers/host.hxx"
-#include "clap/helpers/plugin-proxy.hh"
 #include "clap/helpers/plugin-proxy.hxx"
 
 #include <type_traits>
