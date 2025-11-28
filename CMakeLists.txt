@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.17)
 cmake_policy(SET CMP0100 NEW)  # handle .hh files
 project(clap-helpers C CXX)
+include(GNUInstallDirs)
 
 option(CLAP_HELPERS_BUILD_TESTS "Build tests for the CLAP Helper" FALSE)
 option(CLAP_HELPERS_DOWNLOAD_DEPENDENCIES "Resolve CLAP Targets with CPM if not defined" FALSE)
@@ -97,5 +98,5 @@ if (${CLAP_HELPERS_BUILD_TESTS})
     )
 endif()
 
-install(DIRECTORY include DESTINATION ".")
-install(FILES "cmake/clap-helpers-config.cmake" DESTINATION "lib/cmake/clap-helpers")
+install(DIRECTORY "include/" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
+install(FILES "cmake/clap-helpers-config.cmake" DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/clap-helpers")
