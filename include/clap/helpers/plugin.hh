@@ -369,6 +369,12 @@ namespace clap { namespace helpers {
       //---------------------//
       virtual bool implementsWebview() const noexcept { return false; }
       virtual int32_t webviewGetUri(char *uri, uint32_t uriCapacity) const noexcept { return 0; }
+      virtual bool webviewGetResource(const char *path,
+                                      char *mime,
+                                      uint32_t mime_capacity,
+                                      const clap_ostream_t *data_stream) {
+         return false;
+      }
       virtual bool webviewReceive(const void *buffer, uint32_t size) const noexcept {
          return false;
       }
@@ -689,6 +695,11 @@ namespace clap { namespace helpers {
       // clap_plugin_webview
       static int32_t
       clapWebviewGetUri(const clap_plugin_t *plugin, char *uri, uint32_t uri_capacity);
+      static bool clapWebviewGetResource(const clap_plugin_t *plugin,
+                                         const char *path,
+                                         char *mime,
+                                         uint32_t mime_capacity,
+                                         const clap_ostream_t *data_stream);
       static bool
       clapWebviewReceive(const clap_plugin_t *plugin, const void *buffer, uint32_t size);
 
