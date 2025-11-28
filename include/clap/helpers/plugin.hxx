@@ -198,6 +198,7 @@ namespace clap { namespace helpers {
    template <MisbehaviourHandler h, CheckingLevel l>
    const clap_plugin_webview Plugin<h, l>::_pluginWebview = {
       clapWebviewGetUri,
+      clapWebviewGetResource,
       clapWebviewReceive,
    };
 
@@ -2003,6 +2004,17 @@ namespace clap { namespace helpers {
       auto &self = from(plugin);
       self.ensureMainThread("clap_plugin_webview.get_uri");
       return self.webviewGetUri(uri, uri_capacity);
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   bool Plugin<h, l>::clapWebviewGetResource(const clap_plugin_t *plugin,
+                                             const char *path,
+                                             char *mime,
+                                             uint32_t mime_capacity,
+                                             const clap_ostream_t *data_stream) {
+      auto &self = from(plugin);
+      self.ensureMainThread("clap_plugin_webview.get_resource");
+      return self.webviewGetResource(path, mime, mime_capacity, data_stream);
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
