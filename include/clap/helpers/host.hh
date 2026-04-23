@@ -108,6 +108,17 @@ namespace clap { namespace helpers {
       virtual bool implementsThreadPool() const noexcept { return false; }
       virtual bool threadPoolRequestExec(uint32_t numTasks) noexcept { return false; }
 
+      // clap_host_preset_load
+      virtual bool implementsPresetLoad() const noexcept { return false; }
+      virtual void presetLoadLoaded(uint32_t locationKind,
+                                    const char *location,
+                                    const char *loadKey) noexcept {}
+      virtual void presetLoadOnError(uint32_t locationKind,
+                                     const char *location,
+                                     const char *loadKey,
+                                     int32_t osError,
+                                     const char *msg) noexcept {}
+
       // clap_host_surround
       virtual bool implementsSurround() const noexcept { return false; }
       virtual void surroundChanged() noexcept {}
@@ -197,6 +208,18 @@ namespace clap { namespace helpers {
       // clap_host_thread_pool
       static bool clapThreadPoolRequestExec(const clap_host *host, uint32_t num_tasks) noexcept;
 
+      // clap_host_preset_load
+      static void clapPresetLoadLoaded(const clap_host *host,
+                                       uint32_t location_kind,
+                                       const char *location,
+                                       const char *load_key) noexcept;
+      static void clapPresetLoadOnError(const clap_host *host,
+                                        uint32_t location_kind,
+                                        const char *location,
+                                        const char *load_key,
+                                        int32_t os_error,
+                                        const char *msg) noexcept;
+
       // clap_host_surround
       static void clapSurroundChanged(const clap_host_t *host) noexcept;
 
@@ -210,6 +233,7 @@ namespace clap { namespace helpers {
       static const clap_host_log _hostLog;
       static const clap_host_params _hostParams;
       static const clap_host_posix_fd_support _hostPosixFdSupport;
+      static const clap_host_preset_load _hostPresetLoad;
       static const clap_host_remote_controls _hostRemoteControls;
       static const clap_host_state _hostState;
       static const clap_host_timer_support _hostTimerSupport;

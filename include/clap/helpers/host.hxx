@@ -49,6 +49,12 @@ namespace clap { namespace helpers {
    };
 
    template <MisbehaviourHandler h, CheckingLevel l>
+   const clap_host_preset_load Host<h, l>::_hostPresetLoad = {
+      clapPresetLoadOnError,
+      clapPresetLoadLoaded,
+   };
+
+   template <MisbehaviourHandler h, CheckingLevel l>
    const clap_host_remote_controls Host<h, l>::_hostRemoteControls = {
       clapRemoteControlsChanged,
       clapRemoteControlsSuggestPage,
@@ -156,6 +162,10 @@ namespace clap { namespace helpers {
          return &_hostParams;
       if (!strcmp(extension_id, CLAP_EXT_POSIX_FD_SUPPORT) && self.implementsPosixFdSupport())
          return &_hostPosixFdSupport;
+      if ((!strcmp(extension_id, CLAP_EXT_PRESET_LOAD) ||
+           !strcmp(extension_id, CLAP_EXT_PRESET_LOAD_COMPAT)) &&
+          self.implementsPresetLoad())
+         return &_hostPresetLoad;
       if ((!strcmp(extension_id, CLAP_EXT_REMOTE_CONTROLS) ||
            !strcmp(extension_id, CLAP_EXT_REMOTE_CONTROLS_COMPAT)) &&
           self.implementsRemoteControls())
@@ -327,6 +337,31 @@ namespace clap { namespace helpers {
       auto &self = from(host);
       self.ensureMainThread("posix_fd_support.unregister_fd");
       return self.posixFdSupportUnregisterFd(fd);
+   }
+
+   //-------------------------//
+   // clap_host_preset_load //
+   //-------------------------//
+   template <MisbehaviourHandler h, CheckingLevel l>
+   void Host<h, l>::clapPresetLoadLoaded(const clap_host *host,
+                                          uint32_t location_kind,
+                                          const char *location,
+                                          const char *load_key) noexcept {
+      auto &self = from(host);
+      self.ensureMainThread("preset_load.loaded");
+      self.presetLoadLoaded(location_kind, location, load_key);
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   void Host<h, l>::clapPresetLoadOnError(const clap_host *host,
+                                           uint32_t location_kind,
+                                           const char *location,
+                                           const char *load_key,
+                                           int32_t os_error,
+                                           const char *msg) noexcept {
+      auto &self = from(host);
+      self.ensureMainThread("preset_load.on_error");
+      self.presetLoadOnError(location_kind, location, load_key, os_error, msg);
    }
 
    //---------------------------//
