@@ -46,6 +46,7 @@ namespace clap { namespace helpers {
       getExtension(_hostMiniCurveDisplay, CLAP_EXT_MINI_CURVE_DISPLAY);
       getExtension(_hostWebview, CLAP_EXT_WEBVIEW);
       getExtension(_hostFlushEvents, CLAP_EXT_FLUSH_EVENTS);
+      getExtension(_hostBackgroundProgress, CLAP_EXT_BACKGROUND_PROGRESS);
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
@@ -888,5 +889,25 @@ namespace clap { namespace helpers {
       assert(canUseFlushEvents());
       this->ensureNotAudioThread("flush_events.request_flush");
       return _hostFlushEvents->request_flush(_host);
+   }
+
+   ///////////////////////////////////
+   // clap_host_background_progress //
+   ///////////////////////////////////
+   template <MisbehaviourHandler h, CheckingLevel l>
+   bool HostProxy<h, l>::canUseBackgroundProgress() const noexcept {
+      return _hostBackgroundProgress && _hostBackgroundProgress->progress &&
+             _hostBackgroundProgress->is_canceled;
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   bool HostProxy<h, l>::backgroundProgressIsCanceled() const noexcept {
+      return _hostBackgroundProgress->is_canceled(_host);
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   void HostProxy<h, l>::backgroundProgressProgress(double progress,
+                                                    const char *msg) const noexcept {
+      return _hostBackgroundProgress->progress(_host, progress, msg);
    }
 }} // namespace clap::helpers

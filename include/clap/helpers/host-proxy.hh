@@ -234,6 +234,13 @@ namespace clap { namespace helpers {
       bool canUseFlushEvents() const noexcept;
       void flushEventsRequestFlush() const noexcept;
 
+      ///////////////////////////////////
+      // clap_host_background_progress //
+      ///////////////////////////////////
+      bool canUseBackgroundProgress() const noexcept;
+      bool backgroundProgressIsCanceled() const noexcept;
+      void backgroundProgressProgress(double progress, const char *msg) const noexcept;
+
    protected:
       void ensureMainThread(const char *method) const noexcept;
       void ensureAudioThread(const char *method) const noexcept;
@@ -243,6 +250,7 @@ namespace clap { namespace helpers {
 
       const clap_host_audio_ports *_hostAudioPorts = nullptr;
       const clap_host_audio_ports_config *_hostAudioPortsConfig = nullptr;
+      const clap_host_background_progress *_hostBackgroundProgress = nullptr;
       const clap_host_context_menu *_hostContextMenu = nullptr;
       const clap_host_flush_events *_hostFlushEvents = nullptr;
       const clap_host_gui *_hostGui = nullptr;
