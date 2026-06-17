@@ -149,6 +149,11 @@ namespace clap { namespace helpers {
    };
 
    template <MisbehaviourHandler h, CheckingLevel l>
+   const clap_plugin_flush_events Plugin<h, l>::_pluginFlushEvent = {
+      clapFlushEventsFlush,
+   };
+
+   template <MisbehaviourHandler h, CheckingLevel l>
    const clap_plugin_resource_directory Plugin<h, l>::_pluginResourceDirectory = {
       clapResourceDirectorySetDirectory,
       clapResourceDirectoryCollect,
@@ -578,6 +583,8 @@ namespace clap { namespace helpers {
             return &_pluginWebview;
          if (!strcmp(id, CLAP_EXT_PARAMS_ORIGIN) && self.implementsParamsOrigin())
             return &_pluginParamsOrigin;
+         if (!strcmp(id, CLAP_EXT_FLUSH_EVENTS) && self.implementsFlushEvents())
+            return &_pluginFlushEvent;
       }
 
       return nullptr;
@@ -1018,7 +1025,7 @@ namespace clap { namespace helpers {
                                       const clap_input_events *in,
                                       const clap_output_events *out) noexcept {
       auto &self = from(plugin);
-      self.ensureParamThread("clap_plugin_params.flush");
+      self.ensureFlushThread("clap_plugin_params.flush");
 
       if (l >= CheckingLevel::Maximal) {
          if (!in)
@@ -1028,14 +1035,8 @@ namespace clap { namespace helpers {
             uint32_t N = in->size(in);
             for (uint32_t i = 0; i < N; ++i) {
                auto ev = in->get(in, i);
-               if (!ev) {
-                  std::ostringstream msg;
-                  msg << "clap_plugin_params.flush called null event inside the input list at "
-                         "index: "
-                      << i;
-                  self.hostMisbehaving(msg.str());
+               if (!self.checkValidFlushEvent(ev, i, "clap_plugin_params"))
                   continue;
-               }
 
                const bool isCoreSpace = ev->space_id == CLAP_CORE_EVENT_SPACE_ID;
                const bool isParamEvent =
@@ -1049,27 +1050,6 @@ namespace clap { namespace helpers {
                          " event type from CLAP_CORE_EVENT_SPACE_ID.";
                   self.hostMisbehaving(msg.str());
                   continue;
-               }
-
-               auto pev = reinterpret_cast<const clap_event_param_value *>(ev);
-
-               if (self._host.canUseThreadCheck() && self._host.isMainThread() &&
-                   !self.isValidParamId(pev->param_id)) {
-                  std::ostringstream msg;
-                  msg << "clap_plugin_params.flush called unknown paramId: " << pev->param_id;
-                  self.hostMisbehaving(msg.str());
-                  continue;
-               }
-
-               clap_param_info info;
-               if (self.getParamInfoForParamId(pev->param_id, &info)) {
-                  if (pev->value < info.min_value || info.max_value < pev->value) {
-                     std::ostringstream msg;
-                     msg << "clap_plugin_params.flush() produced the value " << pev->value
-                         << " for parameter " << pev->param_id << " which is out of bounds: ["
-                         << info.min_value << " .. " << info.max_value << "]";
-                     self._host.pluginMisbehaving(msg.str());
-                  }
                }
             }
          }
@@ -1281,6 +1261,89 @@ namespace clap { namespace helpers {
       }
 
       return self.paramsOriginGet(param_id, out_value);
+   }
+
+   //--------------------------//
+   // clap_plugin_flush_events //
+   //--------------------------//
+   template <MisbehaviourHandler h, CheckingLevel l>
+   void Plugin<h, l>::clapFlushEventsFlush(const clap_plugin_t *plugin,
+                                           const clap_input_events_t *in,
+                                           const clap_output_events_t *out) noexcept {
+      auto &self = from(plugin);
+      self.ensureFlushThread("clap_plugin_flush_events.flush");
+
+      if (l >= CheckingLevel::Maximal) {
+         if (!in)
+            self.hostMisbehaving(
+               "clap_plugin_flush_events.flush called with an null input parameter change list");
+         else {
+            uint32_t N = in->size(in);
+            for (uint32_t i = 0; i < N; ++i) {
+               auto ev = in->get(in, i);
+               if (!self.checkValidFlushEvent(ev, i, "clap_plugin_flush_events"))
+                  continue;
+            }
+         }
+
+         if (!out)
+            self.hostMisbehaving(
+               "clap_plugin_flush_events.flush called with an null output parameter change list");
+      }
+
+      self.flushEventsFlush(in, out);
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   bool Plugin<h, l>::checkValidFlushEvent(const clap_event_header *ev,
+                                           size_t ev_index,
+                                           const char *ext) const noexcept {
+      if (l < CheckingLevel::Minimal)
+         return true;
+
+      if (!ev) {
+         std::ostringstream msg;
+         msg << ext
+             << ".flush called null event inside the input list at "
+                "index: "
+             << ev_index;
+         hostMisbehaving(msg.str());
+         return false;
+      }
+
+      switch (ev->space_id) {
+      case CLAP_CORE_EVENT_SPACE_ID: {
+         switch (ev->type) {
+         case CLAP_EVENT_PARAM_VALUE: // fallthrough
+         case CLAP_EVENT_PARAM_MOD: {
+            auto pev = reinterpret_cast<const clap_event_param_value *>(ev);
+
+            if (_host.canUseThreadCheck() && _host.isMainThread() &&
+                !isValidParamId(pev->param_id)) {
+               std::ostringstream msg;
+               msg << ext << ".flush called unknown paramId: " << pev->param_id;
+               hostMisbehaving(msg.str());
+               return false;
+            }
+
+            clap_param_info info;
+            if (getParamInfoForParamId(pev->param_id, &info)) {
+               if (pev->value < info.min_value || info.max_value < pev->value) {
+                  std::ostringstream msg;
+                  msg << ext << ".flush() produced the value " << pev->value << " for parameter "
+                      << pev->param_id << " which is out of bounds: [" << info.min_value << " .. "
+                      << info.max_value << "]";
+                  _host.pluginMisbehaving(msg.str());
+               }
+            }
+            break;
+         }
+         }
+         break;
+      }
+      }
+
+      return true;
    }
 
    //----------------------------//
@@ -2123,7 +2186,7 @@ namespace clap { namespace helpers {
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
-   void Plugin<h, l>::ensureParamThread(const char *method) const noexcept {
+   void Plugin<h, l>::ensureFlushThread(const char *method) const noexcept {
       if (l == CheckingLevel::None)
          return;
 

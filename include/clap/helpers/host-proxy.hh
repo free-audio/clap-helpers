@@ -222,21 +222,29 @@ namespace clap { namespace helpers {
       bool miniCurveDisplayGetHints(uint32_t kind,
                                     clap_mini_curve_display_curve_hints_t *hints) const noexcept;
 
-      ////////////////////////////
-      // nl_clap_plugin_webview //
-      ////////////////////////////
+      //////////////////////////////
+      // clap_host_plugin_webview //
+      //////////////////////////////
       bool canUseWebview() const noexcept;
       bool webviewSend(const void *buffer, uint32_t size) const noexcept;
+
+      ////////////////////////////
+      // clap_host_flush_events //
+      ////////////////////////////
+      bool canUseFlushEvents() const noexcept;
+      void flushEventsRequestFlush() const noexcept;
 
    protected:
       void ensureMainThread(const char *method) const noexcept;
       void ensureAudioThread(const char *method) const noexcept;
+      void ensureNotAudioThread(const char *method) const noexcept;
 
       const clap_host *const _host;
 
       const clap_host_audio_ports *_hostAudioPorts = nullptr;
       const clap_host_audio_ports_config *_hostAudioPortsConfig = nullptr;
       const clap_host_context_menu *_hostContextMenu = nullptr;
+      const clap_host_flush_events *_hostFlushEvents = nullptr;
       const clap_host_gui *_hostGui = nullptr;
       const clap_host_latency *_hostLatency = nullptr;
       const clap_host_log *_hostLog = nullptr;

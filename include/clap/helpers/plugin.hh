@@ -220,6 +220,13 @@ namespace clap { namespace helpers {
       virtual bool implementsParamsOrigin() const noexcept { return false; }
       virtual bool paramsOriginGet(clap_id param_id, double *out_value) noexcept { return false; }
 
+      //--------------------------//
+      // clap_plugin_flush_events //
+      //--------------------------//
+      virtual bool implementsFlushEvents() const noexcept { return false; }
+      virtual void flushEventsFlush(const clap_input_events_t *in,
+                                    const clap_output_events_t *out) noexcept {}
+
       //----------------------------//
       // clap_plugin_remote_controls //
       //----------------------------//
@@ -408,7 +415,7 @@ namespace clap { namespace helpers {
       void checkParamThread() const noexcept;
       void ensureMainThread(const char *method) const noexcept;
       void ensureAudioThread(const char *method) const noexcept;
-      void ensureParamThread(const char *method) const noexcept;
+      void ensureFlushThread(const char *method) const noexcept;
 
       ////////////////////
       // General Checks //
@@ -450,6 +457,9 @@ namespace clap { namespace helpers {
 
    private:
       void ensureInitialized(const char *method) const noexcept;
+      bool checkValidFlushEvent(const clap_event_header *ev,
+                                size_t ev_index,
+                                const char *ext) const noexcept;
 
       /////////////////////
       // CLAP Interfaces //
@@ -579,10 +589,15 @@ namespace clap { namespace helpers {
                                                    uint32_t automation_state,
                                                    const clap_color_t *color) noexcept;
 
-      // clap_params_origin
+      // clap_plugin_params_origin
       static bool clapParamsOriginGet(const clap_plugin_t *plugin,
                                       clap_id param_id,
                                       double *out_value) noexcept;
+
+      // clap_plugin_flush_events
+      static void clapFlushEventsFlush(const clap_plugin_t *plugin,
+                                      const clap_input_events_t *in,
+                                      const clap_output_events_t *out) noexcept;
 
       // clap_plugin_remote_controls
       static uint32_t clapRemoteControlsPageCount(const clap_plugin *plugin) noexcept;
@@ -716,35 +731,36 @@ namespace clap { namespace helpers {
 
       // interfaces
       static const clap_plugin_audio_ports _pluginAudioPorts;
-      static const clap_plugin_audio_ports_config _pluginAudioPortsConfig;
       static const clap_plugin_audio_ports_activation _pluginAudioPortsActivation;
+      static const clap_plugin_audio_ports_config _pluginAudioPortsConfig;
       static const clap_plugin_configurable_audio_ports _pluginConfigurableAudioPorts;
-      static const clap_plugin_surround_t _pluginSurroundConfig;
+      static const clap_plugin_context_menu _pluginContextMenu;
+      static const clap_plugin_flush_events _pluginFlushEvent;
+      static const clap_plugin_gain_adjustment_metering _pluginGainAdjustmentMetering;
       static const clap_plugin_gui _pluginGui;
       static const clap_plugin_latency _pluginLatency;
+      static const clap_plugin_mini_curve_display _pluginMiniCurveDisplay;
       static const clap_plugin_note_name _pluginNoteName;
       static const clap_plugin_note_ports _pluginNotePorts;
-      static const clap_plugin_params _pluginParams;
       static const clap_plugin_param_indication _pluginParamIndication;
+      static const clap_plugin_params _pluginParams;
       static const clap_plugin_params_origin _pluginParamsOrigin;
       static const clap_plugin_posix_fd_support _pluginPosixFdSupport;
       static const clap_plugin_preset_load _pluginPresetLoad;
+      static const clap_plugin_project_location _pluginProjectLocation;
       static const clap_plugin_remote_controls _pluginRemoteControls;
       static const clap_plugin_render _pluginRender;
+      static const clap_plugin_resource_directory _pluginResourceDirectory;
       static const clap_plugin_state _pluginState;
       static const clap_plugin_state_context _pluginStateContext;
+      static const clap_plugin_surround _pluginSurroundConfig;
       static const clap_plugin_tail _pluginTail;
       static const clap_plugin_thread_pool _pluginThreadPool;
       static const clap_plugin_timer_support _pluginTimerSupport;
       static const clap_plugin_track_info _pluginTrackInfo;
-      static const clap_plugin_voice_info _pluginVoiceInfo;
-      static const clap_plugin_context_menu _pluginContextMenu;
-      static const clap_plugin_resource_directory _pluginResourceDirectory;
-      static const clap_plugin_undo_delta _pluginUndoDelta;
       static const clap_plugin_undo_context _pluginUndoContext;
-      static const clap_plugin_project_location _pluginProjectLocation;
-      static const clap_plugin_gain_adjustment_metering _pluginGainAdjustmentMetering;
-      static const clap_plugin_mini_curve_display _pluginMiniCurveDisplay;
+      static const clap_plugin_undo_delta _pluginUndoDelta;
+      static const clap_plugin_voice_info _pluginVoiceInfo;
       static const clap_plugin_webview _pluginWebview;
 
       // state

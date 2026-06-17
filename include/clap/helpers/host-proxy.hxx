@@ -45,6 +45,7 @@ namespace clap { namespace helpers {
       getExtension(_hostScratchMemory, CLAP_EXT_SCRATCH_MEMORY);
       getExtension(_hostMiniCurveDisplay, CLAP_EXT_MINI_CURVE_DISPLAY);
       getExtension(_hostWebview, CLAP_EXT_WEBVIEW);
+      getExtension(_hostFlushEvents, CLAP_EXT_FLUSH_EVENTS);
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
@@ -164,6 +165,20 @@ namespace clap { namespace helpers {
       std::ostringstream msg;
       msg << "Plugin called the method clap_host_" << method
           << "() on wrong thread! It must be called on audio thread!";
+      pluginMisbehaving(msg.str());
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   void HostProxy<h, l>::ensureNotAudioThread(const char *method) const noexcept {
+      if (l == CheckingLevel::None)
+         return;
+
+      if (!canUseThreadCheck() || isAudioThread())
+         return;
+
+      std::ostringstream msg;
+      msg << "Plugin called the method clap_host_" << method
+          << "() on wrong thread! It must NOT be called on audio thread!";
       pluginMisbehaving(msg.str());
    }
 
@@ -354,6 +369,7 @@ namespace clap { namespace helpers {
    template <MisbehaviourHandler h, CheckingLevel l>
    void HostProxy<h, l>::paramsRequestFlush() const noexcept {
       assert(canUseParams());
+      this->ensureNotAudioThread("params.request_flush");
       _hostParams->request_flush(_host);
    }
 
@@ -857,5 +873,20 @@ namespace clap { namespace helpers {
       assert(canUseWebview());
       this->ensureMainThread("webview.send");
       return _hostWebview->send(this->_host, buffer, size);
+   }
+
+   ////////////////////////////
+   // clap_host_flush_events //
+   ////////////////////////////
+   template <MisbehaviourHandler h, CheckingLevel l>
+   bool HostProxy<h, l>::canUseFlushEvents() const noexcept {
+      return _hostFlushEvents && _hostFlushEvents->request_flush;
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   void HostProxy<h, l>::flushEventsRequestFlush() const noexcept {
+      assert(canUseFlushEvents());
+      this->ensureNotAudioThread("flush_events.request_flush");
+      return _hostFlushEvents->request_flush(_host);
    }
 }} // namespace clap::helpers
