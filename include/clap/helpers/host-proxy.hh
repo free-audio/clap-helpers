@@ -101,6 +101,12 @@ namespace clap { namespace helpers {
       void paramsClear(clap_id param_id, clap_param_clear_flags flags) const noexcept;
       void paramsRequestFlush() const noexcept;
 
+      /////////////////////////////
+      // clap_host_params_origin //
+      /////////////////////////////
+      bool canUseParamsOrigin() const noexcept;
+      void paramsOriginChanged() const noexcept;
+
       //////////////////////////
       // clap_host_track_info //
       //////////////////////////
@@ -228,29 +234,30 @@ namespace clap { namespace helpers {
 
       const clap_host *const _host;
 
-      const clap_host_log *_hostLog = nullptr;
-      const clap_host_thread_check *_hostThreadCheck = nullptr;
-      const clap_host_thread_pool *_hostThreadPool = nullptr;
       const clap_host_audio_ports *_hostAudioPorts = nullptr;
       const clap_host_audio_ports_config *_hostAudioPortsConfig = nullptr;
-      const clap_host_note_ports *_hostNotePorts = nullptr;
-      const clap_host_resource_directory *_hostResourceDirectory = nullptr;
-      const clap_host_latency *_hostLatency = nullptr;
-      const clap_host_gui *_hostGui = nullptr;
-      const clap_host_timer_support *_hostTimerSupport = nullptr;
-      const clap_host_posix_fd_support *_hostPosixFdSupport = nullptr;
-      const clap_host_params *_hostParams = nullptr;
-      const clap_host_track_info *_hostTrackInfo = nullptr;
-      const clap_host_state *_hostState = nullptr;
-      const clap_host_note_name *_hostNoteName = nullptr;
-      const clap_host_remote_controls *_hostRemoteControls = nullptr;
-      const clap_host_voice_info *_hostVoiceInfo = nullptr;
-      const clap_host_tail *_hostTail = nullptr;
       const clap_host_context_menu *_hostContextMenu = nullptr;
-      const clap_host_preset_load *_hostPresetLoad = nullptr;
-      const clap_host_undo *_hostUndo = nullptr;
-      const clap_host_scratch_memory *_hostScratchMemory = nullptr;
+      const clap_host_gui *_hostGui = nullptr;
+      const clap_host_latency *_hostLatency = nullptr;
+      const clap_host_log *_hostLog = nullptr;
       const clap_host_mini_curve_display *_hostMiniCurveDisplay = nullptr;
+      const clap_host_note_name *_hostNoteName = nullptr;
+      const clap_host_note_ports *_hostNotePorts = nullptr;
+      const clap_host_params *_hostParams = nullptr;
+      const clap_host_params_origin *_hostParamsOrigin = nullptr;
+      const clap_host_posix_fd_support *_hostPosixFdSupport = nullptr;
+      const clap_host_preset_load *_hostPresetLoad = nullptr;
+      const clap_host_remote_controls *_hostRemoteControls = nullptr;
+      const clap_host_resource_directory *_hostResourceDirectory = nullptr;
+      const clap_host_scratch_memory *_hostScratchMemory = nullptr;
+      const clap_host_state *_hostState = nullptr;
+      const clap_host_tail *_hostTail = nullptr;
+      const clap_host_thread_check *_hostThreadCheck = nullptr;
+      const clap_host_thread_pool *_hostThreadPool = nullptr;
+      const clap_host_timer_support *_hostTimerSupport = nullptr;
+      const clap_host_track_info *_hostTrackInfo = nullptr;
+      const clap_host_undo *_hostUndo = nullptr;
+      const clap_host_voice_info *_hostVoiceInfo = nullptr;
       const clap_host_webview *_hostWebview = nullptr;
    };
 }} // namespace clap::helpers

@@ -356,6 +356,28 @@ namespace clap { namespace helpers {
       _hostParams->request_flush(_host);
    }
 
+   /////////////////////////////
+   // clap_host_params_origin //
+   /////////////////////////////
+   template <MisbehaviourHandler h, CheckingLevel l>
+   bool HostProxy<h, l>::canUseParamsOrigin() const noexcept {
+      if (!_hostParamsOrigin)
+         return false;
+
+      if (_hostParamsOrigin->changed)
+         return true;
+
+      hostMisbehaving("clap_host_params_origin is partially implemented");
+      return false;
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   void HostProxy<h, l>::paramsOriginChanged() const noexcept {
+      assert(canUseParamsOrigin());
+      ensureMainThread("params_origin.changed");
+      _hostParamsOrigin->changed(_host);
+   }
+
    //////////////////////////
    // clap_host_track_info //
    //////////////////////////

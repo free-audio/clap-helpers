@@ -92,6 +92,11 @@ namespace clap { namespace helpers {
    };
 
    template <MisbehaviourHandler h, CheckingLevel l>
+   const clap_plugin_params_origin Plugin<h, l>::_pluginParamsOrigin = {
+      clapParamsOriginGet,
+   };
+
+   template <MisbehaviourHandler h, CheckingLevel l>
    const clap_plugin_remote_controls Plugin<h, l>::_pluginRemoteControls = {
       clapRemoteControlsPageCount, clapRemoteControlsPageGet};
 
@@ -571,6 +576,8 @@ namespace clap { namespace helpers {
             return &_pluginMiniCurveDisplay;
          if (!strcmp(id, CLAP_EXT_WEBVIEW) && self.implementsWebview())
             return &_pluginWebview;
+         if (!strcmp(id, CLAP_EXT_PARAMS_ORIGIN) && self.implementsParamsOrigin())
+            return &_pluginParamsOrigin;
       }
 
       return nullptr;
@@ -1252,6 +1259,28 @@ namespace clap { namespace helpers {
       }
 
       self.paramIndicationSetAutomation(param_id, automation_state, color);
+   }
+
+   //---------------------------//
+   // clap_plugin_params_origin //
+   //---------------------------//
+   template <MisbehaviourHandler h, CheckingLevel l>
+   bool Plugin<h, l>::clapParamsOriginGet(const clap_plugin_t *plugin,
+                                          clap_id param_id,
+                                          double *out_value) noexcept {
+      auto &self = from(plugin);
+      self.checkMainThread();
+
+      if (l >= CheckingLevel::Minimal) {
+         if (!self.isValidParamId(param_id)) {
+            std::ostringstream msg;
+            msg << "clap_plugin_params_origin.get() called with invalid param_id: " << param_id;
+            self.hostMisbehaving(msg.str());
+            return false;
+         }
+      }
+
+      return self.paramsOriginGet(param_id, out_value);
    }
 
    //----------------------------//

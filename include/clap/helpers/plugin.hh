@@ -214,6 +214,12 @@ namespace clap { namespace helpers {
                                                 uint32_t automation_state,
                                                 const clap_color_t *color) noexcept {}
 
+      //---------------------------//
+      // clap_plugin_params_origin //
+      //---------------------------//
+      virtual bool implementsParamsOrigin() const noexcept { return false; }
+      virtual bool paramsOriginGet(clap_id param_id, double *out_value) noexcept { return false; }
+
       //----------------------------//
       // clap_plugin_remote_controls //
       //----------------------------//
@@ -573,6 +579,11 @@ namespace clap { namespace helpers {
                                                    uint32_t automation_state,
                                                    const clap_color_t *color) noexcept;
 
+      // clap_params_origin
+      static bool clapParamsOriginGet(const clap_plugin_t *plugin,
+                                      clap_id param_id,
+                                      double *out_value) noexcept;
+
       // clap_plugin_remote_controls
       static uint32_t clapRemoteControlsPageCount(const clap_plugin *plugin) noexcept;
       static bool clapRemoteControlsPageGet(const clap_plugin *plugin,
@@ -715,6 +726,7 @@ namespace clap { namespace helpers {
       static const clap_plugin_note_ports _pluginNotePorts;
       static const clap_plugin_params _pluginParams;
       static const clap_plugin_param_indication _pluginParamIndication;
+      static const clap_plugin_params_origin _pluginParamsOrigin;
       static const clap_plugin_posix_fd_support _pluginPosixFdSupport;
       static const clap_plugin_preset_load _pluginPresetLoad;
       static const clap_plugin_remote_controls _pluginRemoteControls;
