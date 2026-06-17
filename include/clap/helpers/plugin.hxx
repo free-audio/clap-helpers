@@ -213,6 +213,18 @@ namespace clap { namespace helpers {
    };
 
    template <MisbehaviourHandler h, CheckingLevel l>
+   const clap_plugin_background_activation Plugin<h, l>::_pluginBackgroundActivation = {
+      clapBackgroundActivationActivateFromBackgroundThread,
+      clapBackgroundActivationDeactivateFromBackgroundThread,
+   };
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   const clap_plugin_background_state_context Plugin<h, l>::_pluginBackgroundStateContext = {
+      clapBackgroundStateContextSaveFromBackgroundThread,
+      clapBackgroundStateContextLoadFromBackgroundThread,
+   };
+
+   template <MisbehaviourHandler h, CheckingLevel l>
    Plugin<h, l>::Plugin(const clap_plugin_descriptor *desc, const clap_host *host) : _host(host) {
       _plugin.plugin_data = this;
       _plugin.desc = desc;
@@ -585,6 +597,10 @@ namespace clap { namespace helpers {
             return &_pluginParamsOrigin;
          if (!strcmp(id, CLAP_EXT_FLUSH_EVENTS) && self.implementsFlushEvents())
             return &_pluginFlushEvent;
+         if (!strcmp(id, CLAP_EXT_BACKGROUND_STATE_CONTEXT))
+            return &_pluginBackgroundStateContext;
+         if (!strcmp(id, CLAP_EXT_BACKGROUND_ACTIVATION))
+            return &_pluginBackgroundActivation;
       }
 
       return nullptr;
@@ -2091,8 +2107,9 @@ namespace clap { namespace helpers {
    // clap_plugin_mini_curve_display //
    //--------------------------------//
    template <MisbehaviourHandler h, CheckingLevel l>
-   int32_t
-   Plugin<h, l>::clapWebviewGetUri(const clap_plugin_t *plugin, char *uri, uint32_t uri_capacity) {
+   int32_t Plugin<h, l>::clapWebviewGetUri(const clap_plugin_t *plugin,
+                                           char *uri,
+                                           uint32_t uri_capacity) noexcept {
       auto &self = from(plugin);
       self.ensureMainThread("clap_plugin_webview.get_uri");
       return self.webviewGetUri(uri, uri_capacity);
@@ -2103,7 +2120,7 @@ namespace clap { namespace helpers {
                                              const char *path,
                                              char *mime,
                                              uint32_t mime_capacity,
-                                             const clap_ostream_t *data_stream) {
+                                             const clap_ostream_t *data_stream) noexcept {
       auto &self = from(plugin);
       self.ensureMainThread("clap_plugin_webview.get_resource");
       return self.webviewGetResource(path, mime, mime_capacity, data_stream);
@@ -2112,10 +2129,55 @@ namespace clap { namespace helpers {
    template <MisbehaviourHandler h, CheckingLevel l>
    bool Plugin<h, l>::clapWebviewReceive(const clap_plugin_t *plugin,
                                          const void *buffer,
-                                         uint32_t size) {
+                                         uint32_t size) noexcept {
       auto &self = from(plugin);
       self.ensureMainThread("clap_plugin_webview.receive");
       return self.webviewReceive(buffer, size);
+   }
+
+   //-----------------------------------//
+   // clap_plugin_background_activation //
+   //-----------------------------------//
+   template <MisbehaviourHandler h, CheckingLevel l>
+   bool Plugin<h, l>::clapBackgroundActivationActivateFromBackgroundThread(
+      clap_plugin_t *plugin,
+      double sample_rate,
+      uint32_t min_frames_count,
+      uint32_t max_frames_count) noexcept {
+      auto &self = from(plugin);
+      self.ensureBackgroundThread("clap_plugin_background_activation.activate_from_background_thread");
+      return self.backgroundActivationActivateFromBackgroundThread(
+         sample_rate, min_frames_count, max_frames_count);
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   void Plugin<h, l>::clapBackgroundActivationDeactivateFromBackgroundThread(
+      const struct clap_plugin *plugin) noexcept {
+      auto &self = from(plugin);
+      self.ensureBackgroundThread(
+         "clap_plugin_background_activation.deactivate_from_background_thread");
+      self.backgroundActivationDeactivateFromBackgroundThread();
+   }
+
+   //--------------------------------------//
+   // clap_plugin_background_state_context //
+   //--------------------------------------//
+   template <MisbehaviourHandler h, CheckingLevel l>
+   bool Plugin<h, l>::clapBackgroundStateContextSaveFromBackgroundThread(
+      const clap_plugin_t *plugin, const clap_ostream_t *stream, uint32_t context_type) noexcept {
+      auto &self = from(plugin);
+      self.ensureBackgroundThread(
+         "clap_plugin_background_state_context.save_from_background_thread");
+      return self.backgroundStateContextSaveFromBackgroundThread(stream, context_type);
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   bool Plugin<h, l>::clapBackgroundStateContextLoadFromBackgroundThread(
+      const clap_plugin_t *plugin, const clap_istream_t *stream, uint32_t context_type) noexcept {
+      auto &self = from(plugin);
+      self.ensureBackgroundThread(
+         "clap_plugin_background_state_context.load_from_background_thread");
+      return self.backgroundStateContextLoadFromBackgroundThread(stream, context_type);
    }
 
    /////////////
@@ -2221,6 +2283,20 @@ namespace clap { namespace helpers {
       std::ostringstream msg;
       msg << "Host called the method " << method
           << "() on wrong thread! It must be called on audio thread!";
+      hostMisbehaving(msg.str());
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   void Plugin<h, l>::ensureBackgroundThread(const char *method) const noexcept {
+      if (l == CheckingLevel::None)
+         return;
+
+      if (!_host.canUseThreadCheck() || (!_host.isAudioThread() && !_host.isMainThread()))
+         return;
+
+      std::ostringstream msg;
+      msg << "Host called the method " << method
+          << "() on wrong thread! It must be called on background thread!";
       hostMisbehaving(msg.str());
    }
 

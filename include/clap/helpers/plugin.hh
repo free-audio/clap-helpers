@@ -57,6 +57,17 @@ namespace clap { namespace helpers {
       virtual const void *extension(const char *id) noexcept { return nullptr; }
       virtual bool enableDraftExtensions() const noexcept { return false; }
 
+      //-----------------------------------//
+      // clap_plugin_background_activation //
+      //-----------------------------------//
+      virtual bool implementsBackgroundActivation() const noexcept { return false; }
+      virtual bool backgroundActivationActivateFromBackgroundThread(
+         double sample_rate, uint32_t min_frames_count, uint32_t max_frames_count) noexcept {
+         return false;
+      }
+
+      virtual void backgroundActivationDeactivateFromBackgroundThread() noexcept {}
+
       //---------------------//
       // clap_plugin_latency //
       //---------------------//
@@ -98,6 +109,19 @@ namespace clap { namespace helpers {
       }
       virtual bool stateContextLoad(const clap_istream *stream, uint32_t context) noexcept {
          return stateLoad(stream);
+      }
+
+      //--------------------------------------//
+      // clap_plugin_background_state_context //
+      //--------------------------------------//
+      virtual bool implementsBackgroundStateContext() const noexcept { return false; }
+      virtual bool backgroundStateContextSaveFromBackgroundThread(const clap_ostream_t *stream,
+                                                                  uint32_t context_type) noexcept {
+         return false;
+      }
+      virtual bool backgroundStateContextLoadFromBackgroundThread(const clap_istream_t *stream,
+                                                                  uint32_t context_type) noexcept {
+         return false;
       }
 
       //-------------------------//
@@ -416,6 +440,7 @@ namespace clap { namespace helpers {
       void ensureMainThread(const char *method) const noexcept;
       void ensureAudioThread(const char *method) const noexcept;
       void ensureFlushThread(const char *method) const noexcept;
+      void ensureBackgroundThread(const char *method) const noexcept;
 
       ////////////////////
       // General Checks //
@@ -720,19 +745,36 @@ namespace clap { namespace helpers {
 
       // clap_plugin_webview
       static int32_t
-      clapWebviewGetUri(const clap_plugin_t *plugin, char *uri, uint32_t uri_capacity);
+      clapWebviewGetUri(const clap_plugin_t *plugin, char *uri, uint32_t uri_capacity) noexcept;
       static bool clapWebviewGetResource(const clap_plugin_t *plugin,
                                          const char *path,
                                          char *mime,
                                          uint32_t mime_capacity,
-                                         const clap_ostream_t *data_stream);
+                                         const clap_ostream_t *data_stream) noexcept;
       static bool
-      clapWebviewReceive(const clap_plugin_t *plugin, const void *buffer, uint32_t size);
+      clapWebviewReceive(const clap_plugin_t *plugin, const void *buffer, uint32_t size) noexcept;
+
+      // clap_plugin_background_activation
+      static bool
+      clapBackgroundActivationActivateFromBackgroundThread(clap_plugin_t *plugin,
+                                                           double sample_rate,
+                                                           uint32_t min_frames_count,
+                                                           uint32_t max_frames_count) noexcept;
+      static void clapBackgroundActivationDeactivateFromBackgroundThread(
+         const struct clap_plugin *plugin) noexcept;
+
+      // clap_plugin_background_state_context
+      static bool clapBackgroundStateContextSaveFromBackgroundThread(
+         const clap_plugin_t *plugin, const clap_ostream_t *stream, uint32_t context_type) noexcept;
+      static bool clapBackgroundStateContextLoadFromBackgroundThread(
+         const clap_plugin_t *plugin, const clap_istream_t *stream, uint32_t context_type) noexcept;
 
       // interfaces
       static const clap_plugin_audio_ports _pluginAudioPorts;
       static const clap_plugin_audio_ports_activation _pluginAudioPortsActivation;
       static const clap_plugin_audio_ports_config _pluginAudioPortsConfig;
+      static const clap_plugin_background_activation _pluginBackgroundActivation;
+      static const clap_plugin_background_state_context _pluginBackgroundStateContext;
       static const clap_plugin_configurable_audio_ports _pluginConfigurableAudioPorts;
       static const clap_plugin_context_menu _pluginContextMenu;
       static const clap_plugin_flush_events _pluginFlushEvent;
