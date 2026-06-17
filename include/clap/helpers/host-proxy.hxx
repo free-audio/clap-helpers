@@ -25,6 +25,7 @@ namespace clap { namespace helpers {
       getExtension(_hostLatency, CLAP_EXT_LATENCY);
       getExtension(_hostGui, CLAP_EXT_GUI);
       getExtension(_hostParams, CLAP_EXT_PARAMS);
+      getExtension(_hostParamsOrigin, CLAP_EXT_PARAMS_ORIGIN);
       getExtension(_hostTrackInfo, CLAP_EXT_TRACK_INFO);
       if (!_hostTrackInfo)
          getExtension(_hostTrackInfo, CLAP_EXT_TRACK_INFO_COMPAT);
