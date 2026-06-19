@@ -47,6 +47,7 @@ namespace clap { namespace helpers {
       getExtension(_hostWebview, CLAP_EXT_WEBVIEW);
       getExtension(_hostFlushEvents, CLAP_EXT_FLUSH_EVENTS);
       getExtension(_hostBackgroundProgress, CLAP_EXT_BACKGROUND_PROGRESS);
+      getExtension(_hostTransportControl, CLAP_EXT_TRANSPORT_CONTROL);
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
@@ -910,4 +911,122 @@ namespace clap { namespace helpers {
                                                     const char *msg) const noexcept {
       return _hostBackgroundProgress->progress(_host, progress, msg);
    }
+
+   /////////////////////////////////
+   // clap_host_transport_control //
+   /////////////////////////////////
+   template <MisbehaviourHandler h, CheckingLevel l>
+   bool HostProxy<h, l>::canUseTransportControl() const noexcept {
+      return _hostTransportControl && _hostTransportControl->request_start &&
+             _hostTransportControl->request_stop && _hostTransportControl->request_continue &&
+             _hostTransportControl->request_pause && _hostTransportControl->request_toggle_play &&
+             _hostTransportControl->request_jump && _hostTransportControl->request_loop_region &&
+             _hostTransportControl->request_toggle_loop &&
+             _hostTransportControl->request_enable_loop && _hostTransportControl->request_record &&
+             _hostTransportControl->request_toggle_record && _hostTransportControl->request_tempo &&
+             _hostTransportControl->request_time_signature;
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   void HostProxy<h, l>::transportControlRequestStart() const noexcept
+   {
+      assert(canUseTransportControl());
+      ensureMainThread("transport_control.request_start");
+      _hostTransportControl->request_start(_host);
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   void HostProxy<h, l>::transportControlRequestStop() const noexcept
+   {
+      assert(canUseTransportControl());
+      ensureMainThread("transport_control.request_stop");
+      _hostTransportControl->request_stop(_host);
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   void HostProxy<h, l>::transportControlRequestContinue() const noexcept
+   {
+      assert(canUseTransportControl());
+      ensureMainThread("transport_control.request_continue");
+      _hostTransportControl->request_continue(_host);
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   void HostProxy<h, l>::transportControlRequestPause() const noexcept
+   {
+      assert(canUseTransportControl());
+      ensureMainThread("transport_control.request_pause");
+      _hostTransportControl->request_pause(_host);
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   void HostProxy<h, l>::transportControlRequestTogglePlay() const noexcept
+   {
+      assert(canUseTransportControl());
+      ensureMainThread("transport_control.request_toggle_play");
+      _hostTransportControl->request_toggle_play(_host);
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   void HostProxy<h, l>::transportControlRequestJump(clap_beattime position) const noexcept
+   {
+      assert(canUseTransportControl());
+      ensureMainThread("transport_control.request_jump");
+      _hostTransportControl->request_jump(_host, position);
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   void HostProxy<h, l>::transportControlRequestLoopRegion(clap_beattime start,
+                                                           clap_beattime duration) const noexcept {
+      assert(canUseTransportControl());
+      ensureMainThread("transport_control.request_loop_region");
+      _hostTransportControl->request_loop_region(_host, start, duration);
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   void HostProxy<h, l>::transportControlRequestToggleLoop() const noexcept
+   {
+      assert(canUseTransportControl());
+      ensureMainThread("transport_control.request_toggle_loop");
+      _hostTransportControl->request_toggle_loop(_host);
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   void HostProxy<h, l>::transportControlRequestEnableLoop(bool is_enabled) const noexcept
+   {
+      assert(canUseTransportControl());
+      ensureMainThread("transport_control.request_enable_loop");
+      _hostTransportControl->request_enable_loop(_host, is_enabled);
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   void HostProxy<h, l>::transportControlRequestRecord(bool is_recording) const noexcept
+   {
+      assert(canUseTransportControl());
+      ensureMainThread("transport_control.request_record");
+      _hostTransportControl->request_record(_host, is_recording);
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   void HostProxy<h, l>::transportControlRequestToggleRecord() const noexcept {
+      assert(canUseTransportControl());
+      ensureMainThread("transport_control.request_toggle_record");
+      _hostTransportControl->request_toggle_record(_host);
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   void HostProxy<h, l>::transportControlRequestTempo(double tempo) const noexcept {
+      assert(canUseTransportControl());
+      ensureMainThread("transport_control.request_tempo");
+      _hostTransportControl->request_tempo(_host, tempo);
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   void HostProxy<h, l>::transportControlRequestTimeSignature(uint16_t tsig_num,
+                                                              uint16_t tsig_denom) const noexcept {
+      assert(canUseTransportControl());
+      ensureMainThread("transport_control.request_time_signature");
+      _hostTransportControl->request_time_signature(_host, tsig_num, tsig_denom);
+   }
+
 }} // namespace clap::helpers

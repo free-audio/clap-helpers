@@ -241,6 +241,24 @@ namespace clap { namespace helpers {
       bool backgroundProgressIsCanceled() const noexcept;
       void backgroundProgressProgress(double progress, const char *msg) const noexcept;
 
+      /////////////////////////////////
+      // clap_host_transport_control //
+      /////////////////////////////////
+      bool canUseTransportControl() const noexcept;
+      void transportControlRequestStart() const noexcept;
+      void transportControlRequestStop() const noexcept;
+      void transportControlRequestContinue() const noexcept;
+      void transportControlRequestPause() const noexcept;
+      void transportControlRequestTogglePlay() const noexcept;
+      void transportControlRequestJump(clap_beattime position) const noexcept;
+      void transportControlRequestLoopRegion(clap_beattime start, clap_beattime duration) const noexcept;
+      void transportControlRequestToggleLoop() const noexcept;
+      void transportControlRequestEnableLoop(bool is_enabled) const noexcept;
+      void transportControlRequestRecord(bool is_recording) const noexcept;
+      void transportControlRequestToggleRecord() const noexcept;
+      void transportControlRequestTempo(double tempo) const noexcept;
+      void transportControlRequestTimeSignature(uint16_t tsig_num, uint16_t tsig_denom) const noexcept;
+
    protected:
       void ensureMainThread(const char *method) const noexcept;
       void ensureAudioThread(const char *method) const noexcept;
@@ -272,6 +290,7 @@ namespace clap { namespace helpers {
       const clap_host_thread_pool *_hostThreadPool = nullptr;
       const clap_host_timer_support *_hostTimerSupport = nullptr;
       const clap_host_track_info *_hostTrackInfo = nullptr;
+      const clap_host_transport_control *_hostTransportControl = nullptr;
       const clap_host_undo *_hostUndo = nullptr;
       const clap_host_voice_info *_hostVoiceInfo = nullptr;
       const clap_host_webview *_hostWebview = nullptr;
