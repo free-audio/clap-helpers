@@ -107,6 +107,12 @@ namespace clap { namespace helpers {
       bool canUseParamsOrigin() const noexcept;
       void paramsOriginChanged() const noexcept;
 
+      /////////////////////////////
+      // clap_host_param_hovered //
+      /////////////////////////////
+      bool canUseParamHovered() const noexcept;
+      void paramHoveredUpdate(clap_id hovered_param_id) const noexcept;
+
       //////////////////////////
       // clap_host_track_info //
       //////////////////////////
@@ -277,6 +283,7 @@ namespace clap { namespace helpers {
       const clap_host_mini_curve_display *_hostMiniCurveDisplay = nullptr;
       const clap_host_note_name *_hostNoteName = nullptr;
       const clap_host_note_ports *_hostNotePorts = nullptr;
+      const clap_host_param_hovered *_hostParamHovered = nullptr;
       const clap_host_params *_hostParams = nullptr;
       const clap_host_params_origin *_hostParamsOrigin = nullptr;
       const clap_host_posix_fd_support *_hostPosixFdSupport = nullptr;

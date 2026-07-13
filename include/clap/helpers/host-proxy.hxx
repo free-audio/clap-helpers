@@ -24,6 +24,7 @@ namespace clap { namespace helpers {
       getExtension(_hostResourceDirectory, CLAP_EXT_RESOURCE_DIRECTORY);
       getExtension(_hostLatency, CLAP_EXT_LATENCY);
       getExtension(_hostGui, CLAP_EXT_GUI);
+      getExtension(_hostParamHovered, CLAP_EXT_PARAM_HOVERED);
       getExtension(_hostParams, CLAP_EXT_PARAMS);
       getExtension(_hostParamsOrigin, CLAP_EXT_PARAMS_ORIGIN);
       getExtension(_hostTrackInfo, CLAP_EXT_TRACK_INFO);
@@ -371,7 +372,7 @@ namespace clap { namespace helpers {
    template <MisbehaviourHandler h, CheckingLevel l>
    void HostProxy<h, l>::paramsRequestFlush() const noexcept {
       assert(canUseParams());
-      this->ensureNotAudioThread("params.request_flush");
+      ensureNotAudioThread("params.request_flush");
       _hostParams->request_flush(_host);
    }
 
@@ -395,6 +396,30 @@ namespace clap { namespace helpers {
       assert(canUseParamsOrigin());
       ensureMainThread("params_origin.changed");
       _hostParamsOrigin->changed(_host);
+   }
+
+   /////////////////////////////
+   // clap_host_param_hovered //
+   /////////////////////////////
+   template <MisbehaviourHandler h, CheckingLevel l>
+   bool HostProxy<h, l>::canUseParamHovered() const noexcept
+   {
+      if (!_hostParamHovered)
+         return false;
+
+      if (_hostParamHovered && _hostParamHovered->update)
+         return true;
+
+      hostMisbehaving("clap_host_param_hovered is partially implemented");
+      return false;
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
+   void HostProxy<h, l>::paramHoveredUpdate(clap_id hovered_param_id) const noexcept
+   {
+      assert(canUseParamHovered());
+      ensureMainThread("param_hovered.update");
+      _hostParamHovered->update(_host, hovered_param_id);
    }
 
    //////////////////////////
