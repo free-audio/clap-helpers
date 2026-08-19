@@ -23,6 +23,7 @@ namespace clap { namespace helpers {
       getExtension(_hostPosixFdSupport, CLAP_EXT_POSIX_FD_SUPPORT);
       getExtension(_hostResourceDirectory, CLAP_EXT_RESOURCE_DIRECTORY);
       getExtension(_hostLatency, CLAP_EXT_LATENCY);
+      getExtension(_hostTail, CLAP_EXT_TAIL);
       getExtension(_hostGui, CLAP_EXT_GUI);
       getExtension(_hostParamHovered, CLAP_EXT_PARAM_HOVERED);
       getExtension(_hostParams, CLAP_EXT_PARAMS);
