@@ -1178,19 +1178,24 @@ namespace clap { namespace helpers {
 
    template <MisbehaviourHandler h, CheckingLevel l>
    void Plugin<h, l>::invalidateParamIndexCache() const noexcept {
-      _paramIndexCache.clear();
-      _paramIndexCacheCount = 0;
-      _paramIndexCacheIsBuilt = false;
+      checkMainThread();
+
+      std::lock_guard<std::recursive_mutex> guard(_paramIndexCacheMutex);
+      _paramIndexCache.reset();
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
    int32_t Plugin<h, l>::getParamIndexForParamId(clap_id param_id) const noexcept {
       checkMainThread();
 
+      std::lock_guard<std::recursive_mutex> guard(_paramIndexCacheMutex);
+
       const auto count = paramsCount();
-      if (!_paramIndexCacheIsBuilt || _paramIndexCacheCount != count) {
-         _paramIndexCache.clear();
-         _paramIndexCache.reserve(count);
+      if (!_paramIndexCache || _paramIndexCache->count != count) {
+         // not std::make_unique: this header still builds as C++11, which CI covers
+         std::unique_ptr<ParamIndexCache> cache(new ParamIndexCache);
+         cache->count = count;
+         cache->indexByParamId.reserve(count);
 
          clap_param_info info;
          for (uint32_t i = 0; i < count; ++i) {
@@ -1199,21 +1204,25 @@ namespace clap { namespace helpers {
 
             // first index wins, which is what the linear scan this replaces answered when a
             // plugin gave two parameters the same id
-            _paramIndexCache.emplace(info.id, i);
+            cache->indexByParamId.emplace(info.id, i);
          }
 
-         _paramIndexCacheCount = count;
-         _paramIndexCacheIsBuilt = true;
+         _paramIndexCache = std::move(cache);
       }
 
-      const auto it = _paramIndexCache.find(param_id);
-      return it == _paramIndexCache.end() ? -1 : static_cast<int32_t>(it->second);
+      const auto &indexByParamId = _paramIndexCache->indexByParamId;
+      const auto it = indexByParamId.find(param_id);
+      return it == indexByParamId.end() ? -1 : static_cast<int32_t>(it->second);
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
    bool Plugin<h, l>::getParamInfoForParamId(clap_id paramId,
                                              clap_param_info *info) const noexcept {
       checkMainThread();
+
+      // held across the retry below, so the cache cannot be rebuilt between deciding it is
+      // stale and reading the answer out of the new one
+      std::lock_guard<std::recursive_mutex> guard(_paramIndexCacheMutex);
 
       auto index = getParamIndexForParamId(paramId);
       if (index < 0)

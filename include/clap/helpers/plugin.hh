@@ -2,6 +2,7 @@
 
 #include <cassert>
 #include <functional>
+#include <memory>
 #include <mutex>
 #include <queue>
 #include <string>
@@ -223,14 +224,16 @@ namespace clap { namespace helpers {
       // The default implementations answer from a param id -> index map built on first use, so
       // they cost one pass over the parameter list and then a hash lookup each.
       // getParamIndexForParamId() returns -1 if the parameter isn't found.
+      // [main-thread]
       virtual int32_t getParamIndexForParamId(clap_id paramId) const noexcept;
+      // [main-thread]
       virtual bool isValidParamId(clap_id paramId) const noexcept;
+      // [main-thread]
       virtual bool getParamInfoForParamId(clap_id paramId, clap_param_info *info) const noexcept;
 
       // Drops that map. Called on deactivation, which is the only point at which
-      // CLAP_PARAM_RESCAN_ALL is legal, so a plugin that adds or removes parameters the way
-      // ext/params.h describes never has to call this. One that changes its parameter list
-      // while it has never been activated does.
+      // CLAP_PARAM_RESCAN_ALL is legal. A plugin should never need to call this directly.
+      // [main-thread]
       void invalidateParamIndexCache() const noexcept;
 
       //------------------------------//
@@ -813,12 +816,22 @@ namespace clap { namespace helpers {
       static const clap_plugin_voice_info _pluginVoiceInfo;
       static const clap_plugin_webview _pluginWebview;
 
-      // param id -> index, for the three lookups above. Built lazily on the main thread and
-      // dropped on deactivate; _paramIndexCacheCount is the paramsCount() it was built for, so
-      // that a list which changes size is noticed even without a deactivation.
-      mutable std::unordered_map<clap_id, uint32_t> _paramIndexCache;
-      mutable uint32_t _paramIndexCacheCount = 0;
-      mutable bool _paramIndexCacheIsBuilt = false;
+      // param id -> index, for the three lookups above. Replaced wholesale rather than
+      // updated, so a reader either sees a complete map or no map at all.
+      //
+      // Count is a safety measure to detect if a plugin improperly changes its param
+      // list without calling rescan.
+      struct ParamIndexCache {
+         std::unordered_map<clap_id, uint32_t> indexByParamId;
+         uint32_t count = 0;
+      };
+
+      // Hold the map. Null until the cache is built. Written and read on the main thread.
+      mutable std::unique_ptr<const ParamIndexCache> _paramIndexCache;
+      // All these methods are main thread and re-entrant, but in the event a plugin calls
+      // them from the wrong thread, the map would have UB. An uncontested main thread mutex
+      // is free, so add one for safety.
+      mutable std::recursive_mutex _paramIndexCacheMutex;
 
       // state
       bool _wasInitialized = false;
