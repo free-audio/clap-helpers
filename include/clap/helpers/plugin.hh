@@ -5,6 +5,7 @@
 #include <mutex>
 #include <queue>
 #include <string>
+#include <unordered_map>
 
 #include <clap/all.h>
 
@@ -218,12 +219,19 @@ namespace clap { namespace helpers {
       virtual void paramsFlush(const clap_input_events *in,
                                const clap_output_events *out) noexcept {}
 
-      // This method is meant for implementing contract checking, it isn't part of CLAP.
-      // The default implementation will be slow, so consider overriding it with a faster one.
-      // Returns -1 if the parameter isn't found.
+      // These methods are meant for implementing contract checking, they aren't part of CLAP.
+      // The default implementations answer from a param id -> index map built on first use, so
+      // they cost one pass over the parameter list and then a hash lookup each.
+      // getParamIndexForParamId() returns -1 if the parameter isn't found.
       virtual int32_t getParamIndexForParamId(clap_id paramId) const noexcept;
       virtual bool isValidParamId(clap_id paramId) const noexcept;
       virtual bool getParamInfoForParamId(clap_id paramId, clap_param_info *info) const noexcept;
+
+      // Drops that map. Called on deactivation, which is the only point at which
+      // CLAP_PARAM_RESCAN_ALL is legal, so a plugin that adds or removes parameters the way
+      // ext/params.h describes never has to call this. One that changes its parameter list
+      // while it has never been activated does.
+      void invalidateParamIndexCache() const noexcept;
 
       //------------------------------//
       // clap_plugin_param_indication //
@@ -804,6 +812,13 @@ namespace clap { namespace helpers {
       static const clap_plugin_undo_delta _pluginUndoDelta;
       static const clap_plugin_voice_info _pluginVoiceInfo;
       static const clap_plugin_webview _pluginWebview;
+
+      // param id -> index, for the three lookups above. Built lazily on the main thread and
+      // dropped on deactivate; _paramIndexCacheCount is the paramsCount() it was built for, so
+      // that a list which changes size is noticed even without a deactivation.
+      mutable std::unordered_map<clap_id, uint32_t> _paramIndexCache;
+      mutable uint32_t _paramIndexCacheCount = 0;
+      mutable bool _paramIndexCacheIsBuilt = false;
 
       // state
       bool _wasInitialized = false;

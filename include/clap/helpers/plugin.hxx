@@ -427,6 +427,10 @@ namespace clap { namespace helpers {
       self.deactivate();
       self._isActive = false;
       self._sampleRate = 0;
+
+      // deactivation is the only point at which CLAP_PARAM_RESCAN_ALL is legal, so it is also
+      // the only point at which the parameter list can have moved under the cache
+      self.invalidateParamIndexCache();
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
@@ -1173,20 +1177,37 @@ namespace clap { namespace helpers {
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
+   void Plugin<h, l>::invalidateParamIndexCache() const noexcept {
+      _paramIndexCache.clear();
+      _paramIndexCacheCount = 0;
+      _paramIndexCacheIsBuilt = false;
+   }
+
+   template <MisbehaviourHandler h, CheckingLevel l>
    int32_t Plugin<h, l>::getParamIndexForParamId(clap_id param_id) const noexcept {
       checkMainThread();
 
       const auto count = paramsCount();
-      clap_param_info info;
-      for (uint32_t i = 0; i < count; ++i) {
-         if (!clapParamsInfo(&_plugin, i, &info))
-            continue;
+      if (!_paramIndexCacheIsBuilt || _paramIndexCacheCount != count) {
+         _paramIndexCache.clear();
+         _paramIndexCache.reserve(count);
 
-         if (info.id == param_id)
-            return static_cast<int32_t>(i);
+         clap_param_info info;
+         for (uint32_t i = 0; i < count; ++i) {
+            if (!clapParamsInfo(&_plugin, i, &info))
+               continue;
+
+            // first index wins, which is what the linear scan this replaces answered when a
+            // plugin gave two parameters the same id
+            _paramIndexCache.emplace(info.id, i);
+         }
+
+         _paramIndexCacheCount = count;
+         _paramIndexCacheIsBuilt = true;
       }
 
-      return -1;
+      const auto it = _paramIndexCache.find(param_id);
+      return it == _paramIndexCache.end() ? -1 : static_cast<int32_t>(it->second);
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
@@ -1194,12 +1215,26 @@ namespace clap { namespace helpers {
                                              clap_param_info *info) const noexcept {
       checkMainThread();
 
-      const auto count = paramsCount();
-      for (uint32_t i = 0; i < count; ++i)
-         if (!clapParamsInfo(&_plugin, i, info) && info->id == paramId)
-            return true;
+      auto index = getParamIndexForParamId(paramId);
+      if (index < 0)
+         return false;
 
-      return false;
+      if (!clapParamsInfo(&_plugin, static_cast<uint32_t>(index), info))
+         return false;
+
+      if (info->id == paramId)
+         return true;
+
+      // the cache outlived the list it was built from: the count did not move but the ids did,
+      // which only happens if a plugin reordered them without the deactivation
+      // CLAP_PARAM_RESCAN_ALL requires. Pay for one rebuild rather than answer with the wrong
+      // parameter's info
+      invalidateParamIndexCache();
+      index = getParamIndexForParamId(paramId);
+      if (index < 0)
+         return false;
+
+      return clapParamsInfo(&_plugin, static_cast<uint32_t>(index), info) && info->id == paramId;
    }
 
    template <MisbehaviourHandler h, CheckingLevel l>
@@ -1334,8 +1369,12 @@ namespace clap { namespace helpers {
          case CLAP_EVENT_PARAM_MOD: {
             auto pev = reinterpret_cast<const clap_event_param_value *>(ev);
 
-            if (_host.canUseThreadCheck() && _host.isMainThread() &&
-                !isValidParamId(pev->param_id)) {
+            // both lookups below read the parameter list and are [main-thread]; flush() is on
+            // the audio thread while the plugin is active
+            if (!_host.canUseThreadCheck() || !_host.isMainThread())
+               break;
+
+            if (!isValidParamId(pev->param_id)) {
                std::ostringstream msg;
                msg << ext << ".flush called unknown paramId: " << pev->param_id;
                hostMisbehaving(msg.str());
