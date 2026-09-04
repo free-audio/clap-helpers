@@ -1192,6 +1192,19 @@ namespace clap { namespace helpers {
 
       const auto count = paramsCount();
       if (!_paramIndexCache || _paramIndexCache->count != count) {
+         // a count that moved under a live cache means the rescan which should have dropped it
+         // never came
+         if (l >= CheckingLevel::Minimal && _paramIndexCache)
+            log(CLAP_LOG_PLUGIN_MISBEHAVING,
+                "the parameter count changed without a call to clap_host_params.rescan()");
+
+         // no contract check reaches this at None, so the plugin called a lookup itself
+         if (l == CheckingLevel::None)
+            log(CLAP_LOG_WARNING,
+                "building the clap-helpers param index cache at CheckingLevel::None: the "
+                "contract checks never do this, so the plugin called getParamIndexForParamId(), "
+                "isValidParamId() or getParamInfoForParamId() itself");
+
          // not std::make_unique: this header still builds as C++11, which CI covers
          std::unique_ptr<ParamIndexCache> cache(new ParamIndexCache);
          cache->count = count;
@@ -1238,6 +1251,14 @@ namespace clap { namespace helpers {
       // which only happens if a plugin reordered them without the deactivation
       // CLAP_PARAM_RESCAN_ALL requires. Pay for one rebuild rather than answer with the wrong
       // parameter's info
+      if (l >= CheckingLevel::Minimal) {
+         std::ostringstream msg;
+         msg << "the parameter list changed without a call to clap_host_params.rescan(): the index "
+                "cached for param id "
+             << paramId << " now holds param id " << info->id;
+         log(CLAP_LOG_PLUGIN_MISBEHAVING, msg.str().c_str());
+      }
+
       invalidateParamIndexCache();
       index = getParamIndexForParamId(paramId);
       if (index < 0)
