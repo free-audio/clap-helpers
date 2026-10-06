@@ -317,9 +317,7 @@ namespace clap { namespace helpers {
       virtual bool guiGetSize(uint32_t *width, uint32_t *height) noexcept { return false; }
       virtual bool guiCanResize() const noexcept { return false; }
       virtual bool guiGetResizeHints(clap_gui_resize_hints_t *hints) noexcept { return false; }
-      virtual bool guiAdjustSize(uint32_t *width, uint32_t *height) noexcept {
-         return guiGetSize(width, height);
-      }
+      virtual bool guiAdjustSize(uint32_t *width, uint32_t *height) noexcept { return false; }
       virtual bool guiSetSize(uint32_t width, uint32_t height) noexcept { return false; }
       virtual void guiSuggestTitle(const char *title) noexcept {}
       virtual bool guiSetParent(const clap_window *window) noexcept { return false; }
