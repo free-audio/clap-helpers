@@ -1030,7 +1030,7 @@ namespace clap { namespace helpers {
 
       const bool succeed = self.paramsValue(paramId, value);
 
-      if (l >= CheckingLevel::Maximal) {
+      if (succeed && l >= CheckingLevel::Maximal) {
          clap_param_info info;
          if (self.getParamInfoForParamId(paramId, &info)) {
             if (*value < info.min_value || info.max_value < *value) {
