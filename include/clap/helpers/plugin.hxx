@@ -1015,6 +1015,11 @@ namespace clap { namespace helpers {
       self.ensureMainThread("clap_plugin_params.value");
 
       if (l >= CheckingLevel::Minimal) {
+         if (!value) {
+            self.hostMisbehaving("clap_plugin_params.value called with null value pointer");
+            return false;
+         }
+
          if (!self.isValidParamId(paramId)) {
             std::ostringstream msg;
             msg << "clap_plugin_params.value called with invalid param_id: " << paramId;
