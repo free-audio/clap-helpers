@@ -870,7 +870,7 @@ namespace clap { namespace helpers {
                                                         bool is_active,
                                                         uint32_t sample_size) noexcept {
       auto &self = from(plugin);
-      self.ensureMainThread("clap_plugin_audio_ports_activation.set_active");
+      self.ensureFlushThread("clap_plugin_audio_ports_activation.set_active");
 
       if (l >= CheckingLevel::Minimal) {
          if (self.isActive() && !self.audioPortsActivationCanActivateWhileProcessing()) {
