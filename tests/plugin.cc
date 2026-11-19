@@ -37,7 +37,7 @@ CATCH_TEST_CASE("Plugin - Link") {
 }
 
 namespace {
-   struct params_plugin : clap::helpers::Plugin<clap::helpers::MisbehaviourHandler::Terminate,
+   struct params_plugin : clap::helpers::Plugin<clap::helpers::MisbehaviourHandler::Ignore,
                                                 clap::helpers::CheckingLevel::Maximal> {
       params_plugin(const clap_plugin_descriptor *desc, const clap_host *host)
          : Plugin(desc, host) {}
@@ -93,4 +93,78 @@ CATCH_TEST_CASE("Plugin - params.value with a null out pointer") {
       clapPlugin->get_extension(clapPlugin, CLAP_EXT_PARAMS));
    CATCH_REQUIRE(params != nullptr);
    CATCH_CHECK(!params->get_value(clapPlugin, 0, nullptr));
+}
+
+namespace {
+   bool onAudioThread = false;
+
+   struct audio_ports_activation_plugin
+      : clap::helpers::Plugin<clap::helpers::MisbehaviourHandler::Ignore,
+                              clap::helpers::CheckingLevel::Maximal> {
+      audio_ports_activation_plugin(const clap_plugin_descriptor *desc, const clap_host *host)
+         : Plugin(desc, host) {}
+
+      bool implementsAudioPortsActivation() const noexcept override { return true; }
+      bool audioPortsActivationCanActivateWhileProcessing() const noexcept override { return true; }
+      bool audioPortsActivationSetActive(bool is_input,
+                                         uint32_t port_index,
+                                         bool is_active,
+                                         uint32_t sample_size) noexcept override {
+         return true;
+      }
+
+      void logTee(clap_log_severity severity, const char *msg) const noexcept override {
+         if (severity == CLAP_LOG_HOST_MISBEHAVING)
+            ++misbehaviourCount;
+      }
+
+      mutable int misbehaviourCount = 0;
+   };
+} // namespace
+
+CATCH_TEST_CASE("Plugin - audio_ports_activation.set_active on the audio thread while active") {
+   static const clap_host_thread_check threadCheck = {
+      [](const clap_host *) { return !onAudioThread; },
+      [](const clap_host *) { return onAudioThread; }};
+   static const clap_host host = {CLAP_VERSION,
+                                  nullptr,
+                                  "Test Case Host",
+                                  "Free Audio",
+                                  "http://cleveraudio.org",
+                                  "1.0.0",
+                                  [](const clap_host *, const char *id) -> const void * {
+                                     if (!strcmp(id, CLAP_EXT_THREAD_CHECK))
+                                        return &threadCheck;
+                                     return nullptr;
+                                  },
+                                  [](const clap_host *) {},
+                                  [](const clap_host *) {},
+                                  [](const clap_host *) {}};
+   static const char *features[] = {CLAP_PLUGIN_FEATURE_INSTRUMENT, nullptr};
+   static const clap_plugin_descriptor desc = {CLAP_VERSION,
+                                               "org.free-audio.test-case.audio-ports-activation",
+                                               "Test Case Audio Ports Activation",
+                                               "Free Audio",
+                                               "http://cleveraudio.org",
+                                               "",
+                                               "",
+                                               "1.0.0",
+                                               "",
+                                               &features[0]};
+
+   audio_ports_activation_plugin plugin(&desc, &host);
+   auto clapPlugin = plugin.clapPlugin();
+   CATCH_REQUIRE(clapPlugin->init(clapPlugin));
+   CATCH_REQUIRE(clapPlugin->activate(clapPlugin, 48000, 1, 1024));
+
+   auto activation = static_cast<const clap_plugin_audio_ports_activation *>(
+      clapPlugin->get_extension(clapPlugin, CLAP_EXT_AUDIO_PORTS_ACTIVATION));
+   CATCH_REQUIRE(activation != nullptr);
+
+   onAudioThread = true;
+   CATCH_CHECK(activation->set_active(clapPlugin, true, 0, false, 32));
+   onAudioThread = false;
+   CATCH_CHECK(plugin.misbehaviourCount == 0);
+
+   clapPlugin->deactivate(clapPlugin);
 }
